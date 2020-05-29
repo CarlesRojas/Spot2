@@ -18,15 +18,10 @@
     width: 96vw;
     height: 96vw;
     left: 2vw;
-    bottom: 2vw;
+    top: 2vw;
     background-color: rgb(228, 255, 220);
     border-radius: 4vw;
     touch-action: none;
-}
-
-.app_controls {
-    width: 100%;
-    background-color: rgb(220, 221, 255);
 }
 
 .app_queue {
