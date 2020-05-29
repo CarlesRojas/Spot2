@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
+
 import "./App.css";
+
+import Cover from "./jsx/Cover";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;
@@ -42,9 +45,9 @@ export default function App() {
         set({ y: yBig });
     };
 
-    // Drag Hook (first frame, last frame, velocity xy, movement xy, cancel callback, cancelled boolean)
+    // Drag Hook (first frame, last frame, velocity xy, movement xy, cancel callback)
     const bind = useDrag(
-        ({ first, last, vxvy: [vx, vy], movement: [mx, my], cancel }) => {
+        ({ first, last, vxvy: [vx, vy], movement: [my], cancel }) => {
             if (first) setDraggingVertically(Math.abs(vy) >= Math.abs(vx));
 
             // Dragging Vertically
@@ -59,9 +62,6 @@ export default function App() {
                 }
                 // If user keeps dragging -> move panel following the position
                 else if (!wrong_direction) set({ y: my, immediate: false, config: config.stiff });
-            }
-            // Dragging Horizontally
-            else {
             }
         },
         { initial: () => [0, y.get()], filterTaps: true, bounds: { top: 0 }, rubberband: true }
@@ -87,7 +87,9 @@ export default function App() {
     return (
         <>
             <a.div className="app_library" style={libraryStyle}></a.div>
-            <a.div className="app_cover" {...bind()} style={{ y, height }}></a.div>
+            <a.div className="app_cover" {...bind()} style={{ y, height }}>
+                <Cover></Cover>
+            </a.div>
             <a.div className="app_queue" style={queueStyle}></a.div>
         </>
     );
