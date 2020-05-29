@@ -18,7 +18,6 @@ const ySmall = viewHeight - heightSmall;
 export default function App() {
     // State to hold weather we are dragging vertically or horizontally
     const [draggingVertically, setDraggingVertically] = useState(false);
-    const [draggingHorizontally, setDraggingHorizontally] = useState(false);
 
     // Spring hook
     const [{ y }, set] = useSpring(() => ({ y: ySmall, config: { clamp: true } }));
@@ -46,18 +45,12 @@ export default function App() {
     // Drag Hook (first frame, last frame, velocity xy, movement xy, cancel callback, cancelled boolean)
     const bind = useDrag(
         ({ first, last, vxvy: [vx, vy], movement: [mx, my], cancel }) => {
-            if (first) {
-                var verticalDrag = Math.abs(vy) >= Math.abs(vx);
-                setDraggingVertically(verticalDrag);
-                setDraggingHorizontally(!verticalDrag);
-            }
+            if (first) setDraggingVertically(Math.abs(vy) >= Math.abs(vx));
 
             // Dragging Vertically
             if (draggingVertically) {
                 const wrong_direction = my < yBig || my > ySmall;
-                if (wrong_direction) {
-                    cancel();
-                }
+                if (wrong_direction) cancel();
 
                 // If user releases after the threshold we open, othersie close it
                 if (last) {
@@ -67,8 +60,8 @@ export default function App() {
                 // If user keeps dragging -> move panel following the position
                 else if (!wrong_direction) set({ y: my, immediate: false, config: config.stiff });
             }
-
-            if (draggingHorizontally) {
+            // Dragging Horizontally
+            else {
             }
         },
         { initial: () => [0, y.get()], filterTaps: true, bounds: { top: 0 }, rubberband: true }
