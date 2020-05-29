@@ -18,32 +18,34 @@ export default function Cover() {
 
     // Function to cancel the Prev opening
     const cancelShowPrev = () => {
-        console.log("CancelShowPrev");
         set({ x: currentX });
     };
 
     // Function to open the Prev
     const showPrev = (velocity = 0) => {
-        console.log("ShowPrev");
+        // Move all to the right
         set({ x: currentX + viewWidth });
         setCurrentX(currentX + viewWidth);
+
+        // Move the one on the right to the left
         let indexOfMax = leftPositions.indexOf(Math.max(...leftPositions));
-        setLeftPositions(leftPositions.map((x, i) => (i === indexOfMax ? viewWidth : x)));
+        setLeftPositions(leftPositions.map((x, i) => (i === indexOfMax ? x - viewWidth * 3 : x)));
     };
 
     // Function to cancel the Next opening
     const cancelShowNext = () => {
-        console.log("CancelShowNext");
         set({ x: currentX });
     };
 
     // Function to open the Next
     const showNext = (velocity = 0) => {
-        console.log("ShowNext");
+        // Move all to the left
         set({ x: currentX - viewWidth });
         setCurrentX(currentX - viewWidth);
+
+        // Move the one on the left to the right
         let indexOfMin = leftPositions.indexOf(Math.min(...leftPositions));
-        setLeftPositions(leftPositions.map((x, i) => (i === indexOfMin ? viewWidth : x)));
+        setLeftPositions(leftPositions.map((x, i) => (i === indexOfMin ? x + viewWidth * 3 : x)));
     };
 
     // Drag Hook (first frame, last frame, velocity xy, movement xy, cancel callback)
@@ -65,11 +67,15 @@ export default function Cover() {
         { initial: () => [x.get(), 0], filterTaps: true, bounds: { top: 0 }, rubberband: true }
     );
 
+    var prevStyle = { x, left: leftPositions[0] + "px" };
+    var currStyle = { x, left: leftPositions[1] + "px" };
+    var nextStyle = { x, left: leftPositions[2] + "px" };
+
     return (
         <>
-            <a.div className="cover_prev" {...bind()} style={{ x, left: leftPositions[0] + "px" }}></a.div>
-            <a.div className="cover_curr" {...bind()} style={{ x, left: leftPositions[1] + "px" }}></a.div>
-            <a.div className="cover_next" {...bind()} style={{ x, left: leftPositions[2] + "px" }}></a.div>
+            <a.div className="cover_prev" {...bind()} style={prevStyle}></a.div>
+            <a.div className="cover_curr" {...bind()} style={currStyle}></a.div>
+            <a.div className="cover_next" {...bind()} style={nextStyle}></a.div>
         </>
     );
 }
