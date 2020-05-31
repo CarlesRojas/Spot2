@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
+import { lerp, invlerp } from "./Utils";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;
@@ -13,11 +14,6 @@ const heightSmall = viewWidth * 0.25;
 // Y position of the Cover in the 2 states
 const yBig = 0;
 const ySmall = viewHeight - heightSmall;
-
-// Helper functions
-const clamp = (a, min = 0, max = 1) => Math.min(max, Math.max(min, a));
-const lerp = (start, end, t) => start * (1 - t) + end * t;
-const invlerp = (x, y, a) => clamp((a - x) / (y - x));
 
 export default function App() {
     // State to hold weather we are dragging vertically or horizontally
