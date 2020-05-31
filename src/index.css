@@ -1,4 +1,6 @@
-/*      MAIN ELEMENTS    */
+/* ####################################### */
+/*      MAIN ELEMENTS                      */
+/* ####################################### */
 
 * {
     margin: 0;
@@ -33,7 +35,9 @@ button {
     height: 100%;
 }
 
-/*      SCROLLBAR    */
+/* ####################################### */
+/*      SCROLLBAR                          */
+/* ####################################### */
 
 /* Width */
 ::-webkit-scrollbar {
@@ -57,16 +61,65 @@ button {
     background: rgba(150, 150, 150, 0.35);
 }
 
-/*    ROTATION LOCK    */
+/* ####################################### */
+/*      ROTATION LOCK                      */
+/* ####################################### */
 
-@media screen and (orientation: landscape) {
+@media screen and (min-width: 320px) and (max-width: 767px) and (orientation: landscape) {
     html {
-        position: absolute;
-        overflow-x: hidden;
-        top: 100%;
-        left: 0;
-        width: 100vh;
         transform: rotate(-90deg);
         transform-origin: left top;
+        width: 100vh;
+        overflow-x: hidden;
+        position: absolute;
+        top: 100%;
+        left: 0;
     }
+}
+
+/* ####################################### */
+/*      APP                                */
+/* ####################################### */
+
+.app_library {
+    z-index: 50;
+    position: fixed;
+    width: 100vw;
+    height: calc(100vh - 25vw);
+    left: 0;
+    background-color: rgb(255, 249, 193);
+}
+
+.app_cover_prev {
+    z-index: 100;
+    position: fixed;
+    width: 100vw;
+    top: 0;
+    touch-action: none;
+    background-color: rgb(255, 167, 167);
+}
+.app_cover_curr {
+    z-index: 100;
+    position: fixed;
+    width: 100vw;
+    top: 0;
+    touch-action: none;
+    background-color: rgb(152, 255, 157);
+}
+.app_cover_next {
+    z-index: 100;
+    position: fixed;
+    width: 100vw;
+    top: 0;
+    touch-action: none;
+    background-color: rgb(165, 189, 255);
+}
+
+.app_queue {
+    z-index: 50;
+    position: fixed;
+    width: 100vw;
+    height: calc(100vh - 100vw);
+    left: 0;
+    background-color: rgb(255, 198, 252);
 }

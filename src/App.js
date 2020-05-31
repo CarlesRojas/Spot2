@@ -2,10 +2,6 @@ import React, { useState } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
 
-import "./App.css";
-
-import Cover from "./jsx/Cover";
-
 // Size of the viewport
 const viewHeight = window.innerHeight;
 const viewWidth = window.innerWidth;
