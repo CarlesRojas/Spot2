@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { useSpring, a } from "react-spring";
+
+// Components
+import Songs from "./Songs";
 
 // Icons
 import SongIcon from "../resources/song.svg";
@@ -6,48 +10,53 @@ import AlbumIcon from "../resources/album.svg";
 import ArtistIcon from "../resources/artist.svg";
 import PlaylistIcon from "../resources/playlist.svg";
 
+// Size of the viewport
+const viewWidth = window.innerWidth;
+
 const sections = {
     song: {
         name: "song",
         icon: SongIcon,
-        left: "0%",
+        x: 0,
     },
     album: {
         name: "album",
         icon: AlbumIcon,
-        left: "-100%",
+        x: -viewWidth,
     },
     artist: {
         name: "artist",
         icon: ArtistIcon,
-        left: "-200%",
+        x: -viewWidth * 2,
     },
     playlist: {
         name: "playlist",
         icon: PlaylistIcon,
-        left: "-300%",
+        x: -viewWidth * 3,
     },
 };
 
-export default function Library() {
+const Library = () => {
     // Current section state
     const [currentSection, setCurrentSection] = useState("song");
 
-    const changeSection = (name) => {
+    // Spring hook
+    const [{ x }, set] = useSpring(() => ({ x: 0, config: { clamp: true } }));
+
+    // Function to open the Library
+    const showSection = (name) => {
+        set({ x: sections[name].x });
         setCurrentSection(name);
     };
 
     return (
         <>
-            <div className="library_sectionsWrapper" style={{ left: sections[currentSection].left }}>
-                <div className="library_section">{/*<Songs isOpen={currentSection === "song"} />*/}</div>
-
+            <a.div className="library_sectionsWrapper" style={{ x }}>
+                <div className="library_section">{<Songs isOpen={currentSection === "song"} />}</div>
                 <div className="library_section">{/*<Albums isOpen={currentSection === "album"} />*/}</div>
-
                 <div className="library_section">{/*<Artists isOpen={currentSection === "artist"} />*/}</div>
-
                 <div className="library_section">{/*<Playlists isOpen={currentSection === "playlist"} />*/}</div>
-            </div>
+            </a.div>
 
             <div className="library_navBar">
                 {Object.values(sections).map((section) => (
@@ -56,13 +65,15 @@ export default function Library() {
                         name={section.name}
                         icon={section.icon}
                         selected={section.name === currentSection}
-                        changeSection={changeSection}
+                        changeSection={showSection}
                     />
                 ))}
             </div>
         </>
     );
-}
+};
+
+export default Library;
 
 const NavItem = (props) => {
     const { name, icon, selected, changeSection } = props;

@@ -90,7 +90,7 @@ export default function App() {
         setLeftPositions(leftPositions.map((x, i) => (i === indexOfMin ? x + viewWidth * 3 : x)));
     };
 
-    // Drag Hook (first frame, last frame, velocity xy, movement xy, cancel callback)
+    // Drag Hook
     const bind = useDrag(
         ({ first, last, vxvy: [vx, vy], movement: [mx, my], cancel }) => {
             if (first) {
@@ -168,7 +168,8 @@ export default function App() {
                 <div className="app_background" style={{ backgroundImage: "url(" + image + ")" }} />
             </div>
             <a.div className="app_library" style={libraryStyle}>
-                <Library></Library>
+                {" "}
+                <Library></Library>{" "}
             </a.div>
             <a.div className="app_cover_prev" {...bind()} style={prevStyle}></a.div>
             <a.div className="app_cover_curr" {...bind()} style={currStyle}>

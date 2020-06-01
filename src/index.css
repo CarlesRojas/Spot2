@@ -4,9 +4,10 @@
 
 :root {
     /* Background */
-    --background: rgb(240, 240, 240);
-    --text: rgb(20, 20, 20);
+    --background: rgb(30, 30, 30);
+    --text: rgb(255, 255, 255);
     --scrollbar: rgb(150, 150, 150);
+    --green: rgb(29, 185, 84);
 }
 
 /* ####################################### */
@@ -28,7 +29,7 @@ body {
     width: 100%;
     height: 100%;
     background: var(--background);
-    font-family: "Segoe UI", "Roboto", "Nunito", "Helvetica Neue", sans-serif;
+    font-family: "Nunito", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
     color: var(--text);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -129,7 +130,7 @@ button {
     width: 100vw;
     top: 0;
     touch-action: none;
-    /*background-color: rgb(255, 167, 167);*/
+    background-color: rgb(255, 167, 167);
 }
 .app_cover_curr {
     z-index: 100;
@@ -137,6 +138,7 @@ button {
     width: 100vw;
     top: 0;
     touch-action: none;
+    background-color: rgb(167, 255, 167);
 }
 .app_cover_next {
     z-index: 100;
@@ -144,7 +146,7 @@ button {
     width: 100vw;
     top: 0;
     touch-action: none;
-    /*background-color: rgb(165, 189, 255);*/
+    background-color: rgb(165, 189, 255);
 }
 
 .app_queue {
@@ -207,7 +209,7 @@ button {
 
 .cover_song {
     font-size: 1.25rem;
-    font-weight: 500;
+    font-weight: bold;
     text-align: center;
     text-shadow: black 0 0 0.25rem;
     text-overflow: ellipsis;
@@ -219,7 +221,7 @@ button {
 
 .cover_artist {
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: bold;
     text-align: center;
     text-shadow: black 0 0 0.25rem;
     text-overflow: ellipsis;
@@ -248,6 +250,8 @@ button {
     width: 25%;
     height: 100%;
     padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .library_navBar {
@@ -289,3 +293,160 @@ button {
     pointer-events: none;
     user-select: none;
 }
+
+/* ####################################### */
+/*      POPUPS                             */
+/* ####################################### */
+
+.popup_wrapper {
+    position: fixed;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+}
+
+.popup_mainArea {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: calc(100vw - 1rem);
+    background-color: var(--background);
+    align-items: center;
+    border-radius: 1rem;
+    margin: 0.5rem;
+}
+
+.popup_titleWrapper {
+    position: absolute;
+    z-index: 1002;
+    width: 90%;
+    padding: 1rem 0;
+    pointer-events: none;
+    user-select: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.popup_title {
+    width: 100%;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text);
+    opacity: 0.75;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+}
+
+.popup_itemList {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    z-index: 1002;
+    flex-grow: 1;
+    margin: 3.7rem 0 0.5rem 0;
+    width: 100%;
+}
+
+.popup_button {
+    z-index: 1002;
+    outline: 0;
+    border: none;
+    width: 100%;
+    padding: 1rem 0;
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text);
+    opacity: 0.75;
+    overflow: hidden;
+}
+
+.popup_buttonSelected {
+    z-index: 1002;
+    color: var(--green);
+}
+
+.popup_closeArea {
+    position: relative;
+    width: 100%;
+    flex-grow: 1;
+    pointer-events: all;
+}
+
+/* ####################################### */
+/*      SONGS                              */
+/* ####################################### */
+
+.songs_title {
+    margin: 1rem 0;
+    padding: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    color: var(--text);
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.songs_sortButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    outline: 0;
+    border: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 1rem;
+    background: transparent;
+    opacity: 0.3;
+    pointer-events: all;
+}
+
+.songs_sortIcon {
+    transition: transform 0.2s;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+}
+
+.songs_listWrapper {
+    position: relative;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.songs_shuffle {
+    margin: 0.5rem auto;
+    outline: none;
+    border: none;
+    border-radius: 8.5rem;
+    width: 60%;
+    padding: 0.5rem 0;
+    background-color: var(--green);
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* ####################################### */
+/*      ALBUMS                             */
+/* ####################################### */
+
+/* ####################################### */
+/*      ARTISTS                            */
+/* ####################################### */
+
+/* ####################################### */
+/*      PLAYLISTS                          */
+/* ####################################### */

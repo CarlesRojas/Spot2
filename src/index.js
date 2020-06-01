@@ -6,6 +6,8 @@ import EventsPubSub from "./EventsPubSub";
 import SpotifyContextProvider from "./contexts/SpotifyContext";
 import LibraryContextProvider from "./contexts/LibraryContext";
 import PlaybackContextProvider, { PlaybackContext } from "./contexts/PlaybackContext";
+import PopupContextProvider from "./contexts/PopupContext";
+
 import App from "./App";
 
 import "./index.css";
@@ -26,7 +28,9 @@ ReactDOM.render(
                 {(playbackContext) => {
                     return (
                         <SpotifyContextProvider playbackContext={playbackContext}>
-                            <App />
+                            <PopupContextProvider>
+                                <App />
+                            </PopupContextProvider>
                         </SpotifyContextProvider>
                     );
                 }}
