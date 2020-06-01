@@ -18,11 +18,9 @@ const LibraryContextProvider = (props) => {
         // If not logged in, go to spotify login page
         if (!mounted.current) mounted.current = true;
         else {
-            deleteTempLibrary();
-
+            console.log("LIBRARY LOADED");
             console.log(library);
-            // Loading library complete
-            window.PubSub.emit("onLibraryLoaded");
+            deleteTempLibrary();
         }
     }, [library]);
 
@@ -178,6 +176,7 @@ const LibraryContextProvider = (props) => {
                     var playlists = Object.keys(window.library.playlists);
                     let promises = [];
                     for (var i = 0; i < playlists.length; ++i) promises.push(getPlaylistSongs(playlists[i], 0));
+
                     // Wait until all the playlist songs are fetched
                     Promise.all(promises).then(() => {
                         // Set the library

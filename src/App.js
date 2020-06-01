@@ -3,6 +3,8 @@ import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
 import { lerp, invlerp } from "./Utils";
 
+import Cover from "./components/Cover";
+
 // Size of the viewport
 const viewHeight = window.innerHeight;
 const viewWidth = window.innerWidth;
@@ -159,7 +161,9 @@ export default function App() {
             <a.div className="app_library" style={libraryStyle}></a.div>
 
             <a.div className="app_cover_prev" {...bind()} style={prevStyle}></a.div>
-            <a.div className="app_cover_curr" {...bind()} style={currStyle}></a.div>
+            <a.div className="app_cover_curr" {...bind()} style={currStyle}>
+                <Cover></Cover>
+            </a.div>
             <a.div className="app_cover_next" {...bind()} style={nextStyle}></a.div>
 
             <a.div className="app_queue" style={queueStyle}></a.div>

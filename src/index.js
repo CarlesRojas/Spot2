@@ -5,7 +5,7 @@ import SpotifyWebApi from "spotify-web-api-js";
 import EventsPubSub from "./EventsPubSub";
 import SpotifyContextProvider from "./contexts/SpotifyContext";
 import LibraryContextProvider from "./contexts/LibraryContext";
-import PlaybackContextProvider from "./contexts/PlaybackContext";
+import PlaybackContextProvider, { PlaybackContext } from "./contexts/PlaybackContext";
 import App from "./App";
 
 import "./index.css";
@@ -21,9 +21,15 @@ document.oncontextmenu = () => false;
 ReactDOM.render(
     <LibraryContextProvider>
         <PlaybackContextProvider>
-            <SpotifyContextProvider>
-                <App />
-            </SpotifyContextProvider>
+            <PlaybackContext.Consumer>
+                {(playbackContext) => {
+                    return (
+                        <SpotifyContextProvider playbackContext={playbackContext}>
+                            <App />
+                        </SpotifyContextProvider>
+                    );
+                }}
+            </PlaybackContext.Consumer>
         </PlaybackContextProvider>
     </LibraryContextProvider>,
     document.getElementById("root")

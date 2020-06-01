@@ -53,3 +53,21 @@ export const getHashParams = () => {
     while ((e = r.exec(q))) hashParams[e[1]] = decodeURIComponent(e[2]);
     return hashParams;
 };
+
+// #######################################
+//      PRETTIFY NAME
+// #######################################
+
+// Remove extra info from a song, album or artist name
+export const prettifyName = (name) => {
+    const separators = [" - ", "(", ":", ",", " /"];
+
+    var index = Number.MAX_SAFE_INTEGER;
+    for (var i = 0; i < separators.length; ++i) {
+        var result = name.indexOf(separators[i]);
+        if (result > 0) index = Math.min(index, name.indexOf(separators[i]));
+    }
+
+    if (index > 0 && index < name.length) name = name.substring(0, index);
+    return name.trim();
+};

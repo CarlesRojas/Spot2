@@ -8,10 +8,10 @@ export const SpotifyContext = createContext();
 
 export default class SpotifyContextProvider extends Component {
     // Get the library context
-    static contextType = LibraryContext; //getUserLibrary
+    static contextType = LibraryContext;
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         // Get hash parameters (for oauth autentication)
         const params = getHashParams();
@@ -199,7 +199,7 @@ export default class SpotifyContextProvider extends Component {
 
                     // Playback status updates
                     player.addListener("player_state_changed", (state) => {
-                        //this.handlePlaybackChange(); ROJAS
+                        this.props.playbackContext.handlePlaybackChange();
                     });
 
                     // Ready
@@ -234,7 +234,7 @@ export default class SpotifyContextProvider extends Component {
                 window.spotifyAPI.transferMyPlayback([deviceID], { play: true }).then(
                     (response) => {
                         console.log("Now Playing on Spot");
-                        //this.handlePlaybackChange(); ROJAS
+                        this.props.playbackContext.handlePlaybackChange();
                     },
                     (err) => {
                         if (err.status === 401) window.location.assign("http://localhost:8888/login");
