@@ -49,7 +49,7 @@ export default class SpotifyContextProvider extends Component {
         const { loggedIn } = this.state;
         // If not logged in, go to spotify login page
         if (!loggedIn) {
-            window.location.assign("http://localhost:8888/login");
+            window.location.assign(window.serverLocation);
             console.log("update");
         }
     }
@@ -61,7 +61,7 @@ export default class SpotifyContextProvider extends Component {
 
         // If not logged in, go to spotify login page
         if (!loggedIn) {
-            window.location.assign("http://localhost:8888/login");
+            window.location.assign(window.serverLocation);
             console.log("not logged");
         } else {
             // Set up the refresh token behaviour
@@ -237,7 +237,7 @@ export default class SpotifyContextProvider extends Component {
                         this.props.playbackContext.handlePlaybackChange();
                     },
                     (err) => {
-                        if (err.status === 401) window.location.assign("http://localhost:8888/login");
+                        if (err.status === 401) window.location.assign(window.serverLocation);
                         else if (err.status === 404) this.transferPlayer(deviceID);
                         else console.error(err);
                     }

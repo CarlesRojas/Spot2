@@ -1,0 +1,187 @@
+Transfer a User's Playback
+    PUT https://api.spotify.com/v1/me/player
+    transferMyPlayback ()
+
+Get a User's Available Devices
+    GET https://api.spotify.com/v1/me/player/devices
+    getMyDevices ()
+
+
+
+Skip User’s Playback To Previous Track
+    POST https://api.spotify.com/v1/me/player/previous
+    skipToPrevious ()
+
+
+Skip User’s Playback To Next Track
+    POST https://api.spotify.com/v1/me/player/next
+    skipToNext ()
+
+
+Pause a User's Playback
+    PUT https://api.spotify.com/v1/me/player/pause
+    pause ()
+
+Start/Resume a User's Playback
+    PUT https://api.spotify.com/v1/me/player/play
+    play ()
+
+
+Seek To Position In Currently Playing Track
+    PUT https://api.spotify.com/v1/me/player/seek
+    seek ()
+
+
+Toggle Shuffle For User’s Playback
+    PUT https://api.spotify.com/v1/me/player/shuffle
+    setShuffle ()
+
+
+Set Repeat Mode On User’s Playback
+    PUT https://api.spotify.com/v1/me/player/repeat
+    setRepeat ()
+
+
+
+
+
+
+Get a Track
+    GET https://api.spotify.com/v1/tracks/{id}
+    getTrack ()
+
+
+Get Several Tracks
+    GET https://api.spotify.com/v1/tracks
+    getTracks ()
+
+
+Get an Album
+    GET https://api.spotify.com/v1/albums/{id}
+    getAlbum ()
+
+
+Get Multiple Albums
+    GET https://api.spotify.com/v1/albums
+    getAlbums ()
+
+
+Get an Artist
+    GET https://api.spotify.com/v1/artists/{id}
+    getArtist ()
+
+
+Get Multiple Artists
+    GET https://api.spotify.com/v1/artists
+    getArtists ()
+
+
+Get an Album's Tracks
+    GET https://api.spotify.com/v1/albums/{id}/tracks
+    getAlbumTracks ()
+
+
+
+
+
+
+
+Get User's Saved Tracks
+    GET https://api.spotify.com/v1/me/tracks
+    getMySavedTracks ()
+
+
+Remove User's Saved Tracks
+    DELETE https://api.spotify.com/v1/me/tracks
+    removeFromMySavedTracks ()
+
+
+Save Tracks for User
+    PUT https://api.spotify.com/v1/me/tracks
+    addToMySavedTracks ()
+
+
+Check User's Saved Tracks
+    GET https://api.spotify.com/v1/me/tracks/contains
+    containsMySavedTracks ()
+
+
+
+
+
+
+
+
+Create a Playlist
+    POST https://api.spotify.com/v1/users/{user_id}/playlists
+    createPlaylist ()
+
+Get a Playlist
+    GET https://api.spotify.com/v1/playlists/{playlist_id}
+    getPlaylist ()
+
+
+Get a Playlist's Tracks
+    GET https://api.spotify.com/v1/playlists/{playlist_id}/tracks
+    getPlaylistTracks ()
+
+
+Get a Playlist Cover Image
+    GET https://api.spotify.com/v1/playlists/{playlist_id}/images
+    ??????? -> Obtain with getPlaylist()
+
+Upload a Custom Playlist Cover Image
+    PUT https://api.spotify.com/v1/playlists/{playlist_id}/images
+    uploadCustomPlaylistCoverImage ()
+
+
+Add Tracks to a Playlist
+    POST https://api.spotify.com/v1/playlists/{playlist_id}/tracks
+    addTracksToPlaylist ()
+
+
+Remove Tracks from a Playlist
+    DELETE https://api.spotify.com/v1/playlists/{playlist_id}/tracks
+    removeTracksFromPlaylist ()
+
+
+Get a List of Current User's Playlists
+    GET https://api.spotify.com/v1/me/playlists
+    getUserPlaylists ()
+
+
+Change a Playlist's Details
+    PUT https://api.spotify.com/v1/playlists/{playlist_id}
+    changePlaylistDetails ()
+
+
+Reorder a Playlist's Tracks
+    PUT https://api.spotify.com/v1/playlists/{playlist_id}/tracks
+    reorderTracksInPlaylist ()
+
+
+
+
+
+
+
+
+
+Search for an Item
+    GET https://api.spotify.com/v1/search
+    search ()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

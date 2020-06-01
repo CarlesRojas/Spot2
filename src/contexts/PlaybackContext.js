@@ -86,7 +86,7 @@ const PlaybackContextProvider = (props) => {
                     }
                 },
                 (err) => {
-                    if (err.status === 401) window.location.assign("http://localhost:8888/login");
+                    if (err.status === 401) window.location.assign(window.serverLocation);
                     else console.error(err);
 
                     var newPlayback = {

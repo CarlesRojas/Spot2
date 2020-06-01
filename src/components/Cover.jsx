@@ -10,8 +10,8 @@ const Cover = () => {
     const { playing, songID, exists } = playback;
 
     // Default values
-    var songNamePretty = "No Name";
-    var artistNamePretty = "No Artist";
+    var songNamePretty = "";
+    var artistNamePretty = "";
     var albumCover = null;
 
     // Get song name and artist
@@ -39,7 +39,6 @@ const Cover = () => {
         <div className="cover_wrapper">
             <div className="cover_image" onClick={() => handleCoverClick()} style={{ filter: imageFilter, backgroundImage: `url(${albumCover})` }} />
             <div id="cover_titleGradient" />
-            {/* <div id="cover_timeGradient" style={{ clipPath: clipPath, backgroundImage: imageTimeGradient }} /> */}
             <div className="cover_infoWrapper">
                 <p className="cover_song">{songNamePretty}</p>
                 <p className="cover_artist">{artistNamePretty}</p>

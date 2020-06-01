@@ -13,6 +13,7 @@ import "./index.css";
 // Pubsub and soptify api
 window.PubSub = new EventsPubSub();
 window.spotifyAPI = new SpotifyWebApi();
+window.serverLocation = "http://localhost:8888/login";
 
 // Disable right click
 document.oncontextmenu = () => false;

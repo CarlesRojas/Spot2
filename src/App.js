@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
 import { lerp, invlerp } from "./Utils";
+import { PlaybackContext } from "./contexts/PlaybackContext";
 
 import Cover from "./components/Cover";
+import Library from "./components/Library";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;
@@ -18,6 +20,10 @@ const yBig = 0;
 const ySmall = viewHeight - heightSmall;
 
 export default function App() {
+    // Get context
+    const { playback } = useContext(PlaybackContext);
+    const { image } = playback;
+
     // State to hold weather we are dragging vertically or horizontally
     const [draggingVertically, setDraggingVertically] = useState(false);
     const [draggingHorizontally, setDraggingHorizontally] = useState(false);
@@ -158,14 +164,17 @@ export default function App() {
 
     return (
         <>
-            <a.div className="app_library" style={libraryStyle}></a.div>
-
+            <div className="app_backgrounWrapper">
+                <div className="app_background" style={{ backgroundImage: "url(" + image + ")" }} />
+            </div>
+            <a.div className="app_library" style={libraryStyle}>
+                <Library></Library>
+            </a.div>
             <a.div className="app_cover_prev" {...bind()} style={prevStyle}></a.div>
             <a.div className="app_cover_curr" {...bind()} style={currStyle}>
                 <Cover></Cover>
             </a.div>
             <a.div className="app_cover_next" {...bind()} style={nextStyle}></a.div>
-
             <a.div className="app_queue" style={queueStyle}></a.div>
         </>
     );

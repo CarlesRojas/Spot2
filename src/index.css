@@ -93,13 +93,34 @@ button {
 /*      APP                                */
 /* ####################################### */
 
+.app_backgrounWrapper {
+    position: absolute;
+    display: block;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.app_background {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    height: calc(104vh + 8rem);
+    width: calc(104vh + 8rem);
+    margin-top: -4rem;
+    margin-left: calc(50vw - calc(52vh + 2rem));
+    filter: blur(2rem) brightness(10%);
+    background-position: center;
+    background-size: auto 100%;
+}
+
 .app_library {
     z-index: 50;
     position: fixed;
     width: 100vw;
     height: calc(100vh - 25vw);
     left: 0;
-    background-color: rgb(255, 249, 193);
+    /*background-color: rgb(255, 249, 193);*/
 }
 
 .app_cover_prev {
@@ -108,7 +129,7 @@ button {
     width: 100vw;
     top: 0;
     touch-action: none;
-    background-color: rgb(255, 167, 167);
+    /*background-color: rgb(255, 167, 167);*/
 }
 .app_cover_curr {
     z-index: 100;
@@ -123,7 +144,7 @@ button {
     width: 100vw;
     top: 0;
     touch-action: none;
-    background-color: rgb(165, 189, 255);
+    /*background-color: rgb(165, 189, 255);*/
 }
 
 .app_queue {
@@ -132,7 +153,7 @@ button {
     width: 100vw;
     height: calc(100vh - 100vw);
     left: 0;
-    background-color: rgb(255, 198, 252);
+    /*background-color: rgb(255, 198, 252);*/
 }
 
 /* ####################################### */
@@ -171,22 +192,6 @@ button {
     pointer-events: none;
 }
 
-/*
-#cover_timeGradient {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: calc(95% + 2px);
-    height: calc(95% + 2px);
-    opacity: 1;
-    transition-timing-function: linear;
-    pointer-events: none;
-}
-*/
-
 .cover_infoWrapper {
     position: absolute;
     height: calc(25vw - 1rem);
@@ -222,4 +227,65 @@ button {
     color: rgba(255, 255, 255, 0.8);
     overflow: hidden;
     pointer-events: none;
+}
+
+/* ####################################### */
+/*      LIBRARY                            */
+/* ####################################### */
+
+.library_sectionsWrapper {
+    position: relative;
+    display: flex;
+    width: 400%;
+    height: calc(100% - 2.5rem);
+    overflow: hidden;
+    transition: left 0.2s;
+}
+
+.library_section {
+    position: relative;
+    margin: 0;
+    width: 25%;
+    height: 100%;
+    padding: 0;
+}
+
+.library_navBar {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    bottom: 0;
+    width: 100%;
+    pointer-events: none;
+    align-items: center;
+}
+
+/* ####################################### */
+/*      NAV ITEM                           */
+/* ####################################### */
+
+.navItem_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: 0;
+    border: none;
+    height: 2.5rem;
+    padding: 0 2rem;
+    background: transparent;
+    opacity: 0.3;
+    transition: opacity 0.1s;
+    pointer-events: all;
+}
+
+.navItem_button:hover,
+.navItem_buttonSelected,
+.navItem_buttonSelected:hover {
+    opacity: 0.9;
+}
+
+.navItem_icon {
+    height: 1.5rem;
+    pointer-events: none;
+    user-select: none;
 }

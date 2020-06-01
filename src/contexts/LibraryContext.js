@@ -58,7 +58,7 @@ const LibraryContextProvider = (props) => {
                 }
             },
             (err) => {
-                if (err.status === 401) window.location.assign("http://localhost:8888/login");
+                if (err.status === 401) window.location.assign(window.serverLocation);
                 else console.error(err);
             }
         );
@@ -154,7 +154,7 @@ const LibraryContextProvider = (props) => {
                 getArtistsImages(artists, offset + limit);
             },
             (err) => {
-                if (err.status === 401) window.location.assign("http://localhost:8888/login");
+                if (err.status === 401) window.location.assign(window.serverLocation);
                 else console.error(err);
             }
         );
@@ -185,7 +185,7 @@ const LibraryContextProvider = (props) => {
                 }
             },
             (err) => {
-                if (err.status === 401) window.location.assign("http://localhost:8888/login");
+                if (err.status === 401) window.location.assign(window.serverLocation);
                 else console.error(err);
             }
         );
@@ -228,7 +228,7 @@ const LibraryContextProvider = (props) => {
                     else resolve();
                 },
                 (err) => {
-                    if (err.status === 401) window.location.assign("http://localhost:8888/login");
+                    if (err.status === 401) window.location.assign(window.serverLocation);
                     else console.error(err);
                     reject();
                 }
