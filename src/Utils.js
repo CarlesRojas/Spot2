@@ -1,3 +1,5 @@
+import { useRef, useEffect } from "react";
+
 // #######################################
 //      INTERPOLATIONS
 // #######################################
@@ -81,4 +83,35 @@ export const print = (object, color) => {
     if (typeof object === "object") console.log(object);
     else if (color) console.log("%c" + object, "color: " + color);
     else console.log("%c" + object, "color: lime");
+};
+
+// #######################################
+//      EVENT LISTENER HOOK
+// #######################################
+
+export const useEventListener = (eventName, handler, element = window) => {
+    // Create a ref that stores handler
+    const savedHandler = useRef();
+
+    // Update ref.current value if handler changes.
+    useEffect(() => {
+        savedHandler.current = handler;
+    }, [handler]);
+
+    useEffect(() => {
+        // Make sure element supports addEventListener
+        const isSupported = element && element.addEventListener;
+        if (!isSupported) return;
+
+        // Create event listener that calls handler function stored in ref
+        const eventListener = (event) => savedHandler.current(event);
+
+        // Add event listener
+        element.addEventListener(eventName, eventListener);
+
+        // Remove event listener on cleanup
+        return () => {
+            element.removeEventListener(eventName, eventListener);
+        };
+    }, [eventName, element]);
 };

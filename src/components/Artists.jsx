@@ -5,6 +5,7 @@ import { LibraryContext } from "../contexts/LibraryContext";
 import { PlaybackContext } from "../contexts/PlaybackContext";
 import { PopupContext } from "../contexts/PopupContext";
 import ItemAlbumArtist from "./ItemAlbumArtist";
+import { useEventListener } from "../Utils";
 
 // Size of the viewport
 const viewWidth = window.innerWidth;
@@ -136,16 +137,9 @@ const Artists = () => {
         });
     };
 
-    // On sort button press or click
-    useEffect(() => {
-        var currSortButton = sortButtonRef;
-        currSortButton.current.addEventListener("touchstart", () => (longPressTimeout.current = setTimeout(() => handleSortLongPress(), 500)));
-        currSortButton.current.addEventListener("touchend", () => handleSortClick());
-        return () => {
-            currSortButton.current.removeEventListener("touchstart", () => (longPressTimeout.current = setTimeout(() => handleSortLongPress(), 500)));
-            currSortButton.current.removeEventListener("touchend", () => handleSortClick());
-        };
-    }, []);
+    // Add event listener using our hook
+    useEventListener("touchstart", () => (longPressTimeout.current = setTimeout(() => handleSortLongPress(), 500)), sortButtonRef.current);
+    useEventListener("touchend", () => handleSortClick(), sortButtonRef.current);
 
     // Create the component from an element in the array
     const createItem = (elem, skeleton) => {

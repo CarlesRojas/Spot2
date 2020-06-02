@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useContext } from "react";
 
 import SortIcon from "../resources/sort.svg";
 import { LibraryContext } from "../contexts/LibraryContext";
 import { PopupContext } from "../contexts/PopupContext";
 import SongList from "./SongList";
+import { useEventListener } from "../Utils";
 
 const Songs = () => {
     // Get contexts
@@ -71,16 +72,9 @@ const Songs = () => {
         });
     };
 
-    // On sort button press or click
-    useEffect(() => {
-        var currSortButton = sortButtonRef;
-        currSortButton.current.addEventListener("touchstart", () => (longPressTimeout.current = setTimeout(() => handleSortLongPress(), 500)));
-        currSortButton.current.addEventListener("touchend", () => handleSortClick());
-        return () => {
-            currSortButton.current.removeEventListener("touchstart", () => (longPressTimeout.current = setTimeout(() => handleSortLongPress(), 500)));
-            currSortButton.current.removeEventListener("touchend", () => handleSortClick());
-        };
-    }, []);
+    // Add event listener using our hook
+    useEventListener("touchstart", () => (longPressTimeout.current = setTimeout(() => handleSortLongPress(), 500)), sortButtonRef.current);
+    useEventListener("touchend", () => handleSortClick(), sortButtonRef.current);
 
     // Prepare song actions
     var actions = {
