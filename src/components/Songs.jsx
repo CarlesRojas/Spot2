@@ -15,7 +15,7 @@ const Songs = () => {
     const sortButtonRef = useRef();
 
     // Order Settings State
-    const [orderSettings, setorderSettings] = useState({
+    const [orderSettings, setOrderSettings] = useState({
         currentOrder: "dateAdded",
         iconRotation: 0,
         items: [
@@ -26,7 +26,7 @@ const Songs = () => {
 
     // Called when a different sort order is selected from the popup
     const handleSortChange = (newOrder) => {
-        setorderSettings({
+        setOrderSettings({
             currentOrder: newOrder,
             iconRotation: 0,
             items: [
@@ -43,7 +43,7 @@ const Songs = () => {
             clearTimeout(longPressTimeout.current);
             longPressTimeout.current = null;
 
-            setorderSettings((prevOrderSettings) => {
+            setOrderSettings((prevOrderSettings) => {
                 // Show Popup
                 openPopup({
                     type: "sortBy",
@@ -61,7 +61,7 @@ const Songs = () => {
         clearTimeout(longPressTimeout.current);
         longPressTimeout.current = null;
 
-        setorderSettings((prevOrderSettings) => {
+        setOrderSettings((prevOrderSettings) => {
             if (prevOrderSettings.currentOrder === "name") var newOrder = "nameReversed";
             if (prevOrderSettings.currentOrder === "nameReversed") newOrder = "name";
             if (prevOrderSettings.currentOrder === "dateAdded") newOrder = "dateAddedReversed";

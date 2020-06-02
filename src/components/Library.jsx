@@ -8,6 +8,8 @@ import { PlaybackContext } from "../contexts/PlaybackContext";
 
 // Components
 import Songs from "./Songs";
+import Albums from "./Albums";
+import Artists from "./Artists";
 
 // Icons
 import SongIcon from "../resources/song.svg";
@@ -71,10 +73,10 @@ const Library = () => {
     return (
         <>
             <a.div className="library_sectionsWrapper" style={{ x, backgroundImage: imageGradient }}>
-                <div className="library_section">{<Songs isOpen={currentSection === "song"} />}</div>
-                <div className="library_section">{/*<Albums isOpen={currentSection === "album"} />*/}</div>
-                <div className="library_section">{/*<Artists isOpen={currentSection === "artist"} />*/}</div>
-                <div className="library_section">{/*<Playlists isOpen={currentSection === "playlist"} />*/}</div>
+                <div className="library_section">{<Songs />}</div>
+                <div className="library_section">{<Albums />}</div>
+                <div className="library_section">{<Artists />}</div>
+                <div className="library_section">{/*<Playlists  />*/}</div>
             </a.div>
 
             <div className="library_navBar">

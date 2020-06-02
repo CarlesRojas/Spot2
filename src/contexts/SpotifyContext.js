@@ -60,6 +60,7 @@ export default class SpotifyContextProvider extends Component {
             window.location.assign(window.serverLocation + "login");
         } else {
             print("Logged In");
+            window.history.replaceState({}, document.title, "/");
 
             // Refresh the token
             this.refreshSpotifyToken().then(() => {
@@ -88,6 +89,7 @@ export default class SpotifyContextProvider extends Component {
     refreshSpotifyToken = () => {
         const { refreshToken } = this.state;
         var that = this;
+        print("Refreshing Token");
 
         return new Promise(function (resolve, reject) {
             fetch(window.serverLocation + "refresh_token", {
@@ -100,6 +102,7 @@ export default class SpotifyContextProvider extends Component {
                     // Save new info in cookies and set it in the api
                     window.spotifyAPI.setAccessToken(data.access_token);
 
+                    print("New Access Token: " + data.access_token, "white");
                     // Set the state
                     that.setState((prevState) => {
                         return {

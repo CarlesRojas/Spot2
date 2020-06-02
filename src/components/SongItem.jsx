@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
-import { prettifyName } from "../Utils";
+import { prettifyName, print } from "../Utils";
 
 // Icons
 import AlbumIcon from "../resources/albumSmall.svg";
@@ -137,6 +137,12 @@ const SongItem = (props) => {
         { initial: () => [currentX, 0], filterTaps: true, rubberband: true }
     );
 
+    // Handle the click on this item
+    const handleClick = (id, skeleton) => {
+        if (!skeleton) print("SONG SELECTED: " + id, "cyan");
+        //window.PubSub.emit("onSongSelected", { id }); CARLES
+    };
+
     // Compute left buttons
     var leftButtons = actions.left.list.map(({ event, type }, index) => {
         if (type === "album") {
@@ -201,7 +207,7 @@ const SongItem = (props) => {
         <a.div className="songItem_wrapper" {...dragBind()} style={{ x, width: width + "px" }}>
             <button
                 className="songItem_button"
-                onClick={() => this.handleClick(id, skeleton)}
+                onClick={() => handleClick(id, skeleton)}
                 style={{ height: height + "px", width: nameWidth, left: nameLeftOffset + "px" }}
             >
                 <p className={"songItem_name " + (skeleton ? "songItem_skeletonName" : "") + (selected ? " songItem_selectedName" : "")}>

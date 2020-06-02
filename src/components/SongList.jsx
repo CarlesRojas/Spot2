@@ -4,7 +4,6 @@ import SongItem from "./SongItem";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;
-
 const rowHeight = viewHeight / 11;
 
 // Returns a list of song IDs in the order specified: ["album", "name", "nameReversed", "dateAdded", "dateReversed"]
