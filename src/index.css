@@ -6,7 +6,7 @@
     /* Background */
     --background: rgb(30, 30, 30);
     --text: rgb(255, 255, 255);
-    --scrollbar: rgb(150, 150, 150);
+    --scrollbar: rgba(150, 150, 150, 0.2);
     --green: rgb(29, 185, 84);
 }
 
@@ -53,8 +53,8 @@ button {
 
 /* Width */
 ::-webkit-scrollbar {
-    width: 7px;
-    height: 7px;
+    width: 5px;
+    height: 5px;
 }
 
 /* Track */
@@ -66,12 +66,6 @@ button {
 ::-webkit-scrollbar-thumb {
     border-radius: 5rem;
     background: var(--scrollbar);
-    opacity: 0.2;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    opacity: 0.35;
 }
 
 /* ####################################### */
@@ -138,7 +132,6 @@ button {
     width: 100vw;
     top: 0;
     touch-action: none;
-    background-color: rgb(167, 255, 167);
 }
 .app_cover_next {
     z-index: 100;
@@ -180,7 +173,23 @@ button {
     pointer-events: all;
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: 50% 50%;
+    animation: cover_image_animation 100s infinite linear;
+}
+
+.cover_image_animation_paused {
+    animation-play-state: paused;
+}
+
+@keyframes cover_image_animation {
+    0% {
+        background-position: 50% 0%;
+    }
+    50% {
+        background-position: 50% 100%;
+    }
+    100% {
+        background-position: 50% 0%;
+    }
 }
 
 #cover_titleGradient {
@@ -449,4 +458,160 @@ button {
 
 /* ####################################### */
 /*      PLAYLISTS                          */
+/* ####################################### */
+
+/* ####################################### */
+/*      SONG LIST                          */
+/* ####################################### */
+
+.songList_scroll {
+    position: absolute;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 100%;
+    width: 100%;
+}
+
+.songList_list {
+    position: relative;
+    margin: 0 0.75rem;
+    padding: 0;
+    list-style-type: none;
+}
+
+/* ####################################### */
+/*      ALBUM LIST                         */
+/* ####################################### */
+
+/* ####################################### */
+/*      ARTIST LIST                        */
+/* ####################################### */
+
+/* ####################################### */
+/*      PLAYLIST LIST                      */
+/* ####################################### */
+
+/* ####################################### */
+/*      ITEM SONG                          */
+/* ####################################### */
+
+.songItem_wrapper {
+    position: relative;
+    background: none;
+    left: 0;
+}
+
+.songItem_button {
+    position: relative;
+    outline: 0;
+    border: none;
+    width: 100%;
+    padding: 0.8rem;
+    background: none;
+    white-space: nowrap;
+}
+
+.songItem_name {
+    margin: 0;
+    padding: 0.1rem 0;
+    font-size: 1.2rem;
+    text-align: left;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: white;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+}
+
+.songItem_skeletonName {
+    margin: 0;
+    border-radius: 0.5rem;
+    width: 50%;
+    padding: 0.1rem 0;
+    background: rgba(150, 150, 150, 0.1);
+    font-size: 0.9rem;
+    text-align: left;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: transparent;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+}
+
+.songItem_selectedName {
+    color: rgb(29, 185, 84);
+}
+
+.songItem_info {
+    margin: 0;
+    padding: 0.1rem 0;
+    font-size: 0.8rem;
+    text-align: left;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.5);
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+}
+
+.songItem_skeletonInfo {
+    margin: 0.5rem 0 0 0;
+    border-radius: 0.5rem;
+    width: 30%;
+    padding: 0.1rem 0;
+    background: rgba(150, 150, 150, 0.1);
+    font-size: 0.6rem;
+    text-align: left;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: transparent;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+}
+
+.songItem_actionButton {
+    position: absolute;
+    top: 0;
+    outline: 0;
+    border: none;
+    width: 3rem;
+    height: 100%;
+    padding: 0.5rem;
+    background: transparent;
+    opacity: 0.3;
+    pointer-events: all;
+}
+
+.songItem_icon {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+}
+
+.songItem_icon {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ####################################### */
+/*      ITEM ALBUM                         */
+/* ####################################### */
+
+/* ####################################### */
+/*      ITEM ARTIST                        */
+/* ####################################### */
+
+/* ####################################### */
+/*      ITEM PLAYLIST                      */
 /* ####################################### */

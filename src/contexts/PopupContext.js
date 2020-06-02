@@ -16,6 +16,7 @@ const PopupContextProvider = (props) => {
         items: [],
         callback: () => {},
     });
+    const [closeTapTimeout, setCloseTapTimeout] = useState(null);
 
     // Spring hook
     const [currentY, setCurrentY] = useState(-viewHeight);
@@ -35,6 +36,11 @@ const PopupContextProvider = (props) => {
 
     // Function to set the state and open the popup
     const openPopup = (newPopupState) => {
+        setCloseTapTimeout(
+            setTimeout(() => {
+                setCloseTapTimeout(null);
+            }, 500)
+        );
         setState(newPopupState);
         showPopup();
     };
@@ -60,8 +66,10 @@ const PopupContextProvider = (props) => {
         { initial: () => [0, currentY], filterTaps: true, rubberband: true }
     );
 
-    const tapBind = useDrag(({ tap }) => {
-        if (tap) hidePopup();
+    const tapBind = useDrag(({ tap, cancel }) => {
+        // Cancel if it is too soon to close the popup
+        if (closeTapTimeout !== null) cancel();
+        else if (tap) hidePopup();
     });
 
     // Create popup items

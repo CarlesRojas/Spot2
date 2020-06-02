@@ -3,6 +3,8 @@ import { PlaybackContext } from "../contexts/PlaybackContext";
 import { LibraryContext } from "../contexts/LibraryContext";
 import { prettifyName } from "../Utils";
 
+import AlbumEmpty from "../resources/albumEmpty.png";
+
 const Cover = () => {
     // Get the context
     const { playback } = useContext(PlaybackContext);
@@ -12,7 +14,7 @@ const Cover = () => {
     // Default values
     var songNamePretty = "";
     var artistNamePretty = "";
-    var albumCover = null;
+    var albumCover = AlbumEmpty;
 
     // Get song name and artist
     if (exists && songID && library.songs && songID in library.songs) {
@@ -29,15 +31,20 @@ const Cover = () => {
 
     // Called when the cover is clicked by the user
     const handleCoverClick = () => {
-        console.log("CLICK");
+        // CARLES
     };
 
     // Image filter for pause / play
     var imageFilter = playing ? "none" : "grayscale(100%)";
+    var animationPaused = playing ? "" : "paused";
 
     return (
         <div className="cover_wrapper">
-            <div className="cover_image" onClick={() => handleCoverClick()} style={{ filter: imageFilter, backgroundImage: `url(${albumCover})` }} />
+            <div
+                className="cover_image"
+                onClick={() => handleCoverClick()}
+                style={{ filter: imageFilter, backgroundImage: `url(${albumCover})`, animationPlayState: animationPaused }}
+            />
             <div id="cover_titleGradient" />
             <div className="cover_infoWrapper">
                 <p className="cover_song">{songNamePretty}</p>

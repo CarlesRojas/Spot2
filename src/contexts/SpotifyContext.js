@@ -1,10 +1,13 @@
 import React, { Component, createContext } from "react";
 import Script from "react-load-script";
-import { getCookie, setCookie, getHashParams } from "..//Utils";
+import { print, getHashParams } from "..//Utils";
 import { LibraryContext } from "./LibraryContext";
 
 // Spotify Context
 export const SpotifyContext = createContext();
+
+// Refresh token time (Access Token will expire after an hour)
+const refreshTokenTime = 30 * 60 * 1000;
 
 export default class SpotifyContextProvider extends Component {
     // Get the library context
@@ -19,17 +22,19 @@ export default class SpotifyContextProvider extends Component {
         this.state = {
             // Credentials
             accessToken: params.access_token,
-            loggedIn: params.access_token ? true : false,
             refreshToken: params.refresh_token,
-            tokenExpireDateTime: new Date(Date.now() + 25 * 60 * 1000),
+            loggedIn: params.access_token ? true : false,
 
             // Player
             deviceID: null,
             player: null,
+
+            // Refresh token timeout
+            refreshTokenTimeout: null,
         };
 
-        // Obtain token info from cookies
-        this.getTokenInfoFromCookies();
+        // Set the access token in the Spotify API
+        if (params.access_token) window.spotifyAPI.setAccessToken(params.access_token);
 
         // Create spotify Player
         this.createSpotPlayer();
@@ -44,74 +49,29 @@ export default class SpotifyContextProvider extends Component {
         );
     }
 
-    // When the component updates
-    componentDidUpdate() {
-        const { loggedIn } = this.state;
-        // If not logged in, go to spotify login page
-        if (!loggedIn) {
-            window.location.assign(window.serverLocation);
-            console.log("update");
-        }
-    }
-
     // When the compnent mounts for the first time
     componentDidMount() {
-        const { loggedIn, tokenExpireDateTime } = this.state;
+        const { loggedIn } = this.state;
         const { getUserLibrary } = this.context;
 
         // If not logged in, go to spotify login page
         if (!loggedIn) {
-            window.location.assign(window.serverLocation);
-            console.log("not logged");
+            print("Logged Out", "orange");
+            window.location.assign(window.serverLocation + "login");
         } else {
-            // Set up the refresh token behaviour
-            window.refreshTokenInterval = window.setInterval(() => {
-                if (Date.now() > tokenExpireDateTime) {
-                    window.clearInterval(window.refreshTokenInterval);
-                    this.refreshSpotifyToken();
-                }
-            }, 2 * 60 * 1000);
+            print("Logged In");
 
-            // Get the user library
-            getUserLibrary();
-
-            console.log("logged");
+            // Refresh the token
+            this.refreshSpotifyToken().then(() => {
+                // Get the user library
+                getUserLibrary();
+            });
         }
     }
 
     //##############################################
     //       OAUTH SETUP
     //##############################################
-
-    getTokenInfoFromCookies = () => {
-        const { accessToken, refreshToken, tokenExpireDateTime } = this.state;
-
-        // Get tokens and info from the cookie or set it if there was none
-        if (accessToken) {
-            window.spotifyAPI.setAccessToken(accessToken);
-
-            setCookie("spot_accessToken", accessToken, 5);
-            setCookie("spot_refreshToken", refreshToken, 5);
-            setCookie("spot_tokenExpireDateTime", tokenExpireDateTime, 5);
-        } else {
-            var accessTokenCookie = getCookie("spot_accessToken");
-            var refreshTokenCookie = getCookie("spot_refreshToken");
-            var tokenExpireDateTimeCookie = new Date(Date.parse(getCookie("spot_tokenExpireDateTime")));
-
-            if (accessTokenCookie && refreshTokenCookie && tokenExpireDateTimeCookie && tokenExpireDateTimeCookie > Date.now()) {
-                window.spotifyAPI.setAccessToken(accessTokenCookie);
-
-                this.setState((prevState) => {
-                    return {
-                        ...prevState,
-                        accessToken: accessTokenCookie,
-                        refreshToken: refreshTokenCookie,
-                        tokenExpireDateTime: tokenExpireDateTimeCookie,
-                    };
-                });
-            }
-        }
-    };
 
     // Handles the load of the Spotify Web Playback Script-
     handleSpotifyPlaybackScriptLoad = () => {
@@ -127,38 +87,35 @@ export default class SpotifyContextProvider extends Component {
     // Refresh the token
     refreshSpotifyToken = () => {
         const { refreshToken } = this.state;
+        var that = this;
 
-        fetch("http://localhost:8888/refresh_token", {
-            method: "POST",
-            body: JSON.stringify({ refresh_token: refreshToken }),
-            headers: { "Content-Type": "application/json" },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                this.setState(
-                    (prevState) => {
+        return new Promise(function (resolve, reject) {
+            fetch(window.serverLocation + "refresh_token", {
+                method: "POST",
+                body: JSON.stringify({ refresh_token: refreshToken }),
+                headers: { "Content-Type": "application/json" },
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    // Save new info in cookies and set it in the api
+                    window.spotifyAPI.setAccessToken(data.access_token);
+
+                    // Set the state
+                    that.setState((prevState) => {
                         return {
                             ...prevState,
                             accessToken: data.access_token,
-                            tokenExpireDateTime: new Date(Date.now() + 25 * 60 * 1000),
+                            refreshTokenTimeout: setTimeout(() => {
+                                that.refreshSpotifyToken();
+                            }, refreshTokenTime),
                         };
-                    },
-                    () => {
-                        const { accessToken, tokenExpireDateTime } = this.state;
-                        setCookie("spot_accessToken", accessToken, 5);
-                        setCookie("spot_tokenExpireDateTime", tokenExpireDateTime, 5);
-                        window.spotifyAPI.setAccessToken(accessToken);
-
-                        window.refreshTokenInterval = window.setInterval(() => {
-                            if (Date.now() > tokenExpireDateTime) {
-                                window.clearInterval(window.refreshTokenInterval);
-                                this.refreshSpotifyToken();
-                            }
-                        }, 2 * 60 * 1000);
-                    }
-                );
-            })
-            .catch((error) => console.log(error));
+                    }, resolve);
+                })
+                .catch((error) => {
+                    print(error, "red");
+                    reject();
+                });
+        });
     };
 
     //##############################################
@@ -209,7 +166,7 @@ export default class SpotifyContextProvider extends Component {
 
                     // Not Ready
                     player.addListener("not_ready", ({ device_id }) => {
-                        console.log("Device ID has gone offline", device_id);
+                        print("Device ID has gone offline " + device_id, "orange");
                     });
 
                     // Connect to the player!
@@ -232,12 +189,12 @@ export default class SpotifyContextProvider extends Component {
                 const { deviceID } = this.state;
                 // Start playing on Spot
                 window.spotifyAPI.transferMyPlayback([deviceID], { play: true }).then(
-                    (response) => {
-                        console.log("Now Playing on Spot");
+                    () => {
+                        print("Now Playing on Spot");
                         this.props.playbackContext.handlePlaybackChange();
                     },
                     (err) => {
-                        if (err.status === 401) window.location.assign(window.serverLocation);
+                        if (err.status === 401) window.location.assign(window.serverLocation + "login");
                         else if (err.status === 404) this.transferPlayer(deviceID);
                         else console.error(err);
                     }

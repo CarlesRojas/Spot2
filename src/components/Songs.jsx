@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 
 import SortIcon from "../resources/sort.svg";
+import { LibraryContext } from "../contexts/LibraryContext";
 import { PopupContext } from "../contexts/PopupContext";
+import SongList from "./SongList";
 
 const Songs = () => {
-    // Get context
+    // Get contexts
     const { openPopup } = useContext(PopupContext);
+    const { library } = useContext(LibraryContext);
 
     // References
     const longPressTimeout = useRef(null);
@@ -31,7 +34,6 @@ const Songs = () => {
                 { name: "Date Added", callbackName: "dateAdded", selected: newOrder === "dateAdded" || newOrder === "dateAddedReversed" },
             ],
         });
-        //window.PubSub.emit("onSongOrderChange", { order }); CARLES
     };
 
     // Called when the sort icon is clicked
@@ -61,14 +63,12 @@ const Songs = () => {
 
         setorderSettings((prevOrderSettings) => {
             if (prevOrderSettings.currentOrder === "name") var newOrder = "nameReversed";
-            if (prevOrderSettings.currentOrder === "nameReversed") var newOrder = "name";
-            if (prevOrderSettings.currentOrder === "dateAdded") var newOrder = "dateAddedReversed";
-            if (prevOrderSettings.currentOrder === "dateAddedReversed") var newOrder = "dateAdded";
+            if (prevOrderSettings.currentOrder === "nameReversed") newOrder = "name";
+            if (prevOrderSettings.currentOrder === "dateAdded") newOrder = "dateAddedReversed";
+            if (prevOrderSettings.currentOrder === "dateAddedReversed") newOrder = "dateAdded";
 
             return { ...prevOrderSettings, currentOrder: newOrder, iconRotation: prevOrderSettings.iconRotation === 0 ? 180 : 0 };
         });
-
-        //window.PubSub.emit("onSongOrderChange", { order: newOrder }); CARLES
     };
 
     // On sort button press or click
@@ -82,7 +82,6 @@ const Songs = () => {
         };
     }, []);
 
-    /*
     // Prepare song actions
     var actions = {
         left: {
@@ -100,7 +99,6 @@ const Songs = () => {
             list: [{ event: "onSongLikeClicked", type: "like" }],
         },
     };
-    */
 
     return (
         <>
@@ -110,15 +108,7 @@ const Songs = () => {
                 <img className="songs_sortIcon" src={SortIcon} alt="" style={{ transform: "rotate( " + orderSettings.iconRotation + "deg)" }} />
             </div>
             <div className="songs_listWrapper">
-                {/*
-                <SongList
-                    songList={window.info.library.songs}
-                    playbackState={playbackState}
-                    actions={actions}
-                    order={"dateAdded"}
-                    listenToOrderChange={true}
-                />
-                */}
+                <SongList songList={library.songs} actions={actions} order={orderSettings.currentOrder} />
             </div>
             <button className="songs_shuffle">SHUFFLE</button>
         </>

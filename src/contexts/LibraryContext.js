@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useRef } from "react";
+import { print } from "../Utils";
 
 // Library Context
 export const LibraryContext = createContext();
@@ -18,8 +19,8 @@ const LibraryContextProvider = (props) => {
         // If not logged in, go to spotify login page
         if (!mounted.current) mounted.current = true;
         else {
-            console.log("LIBRARY LOADED");
-            console.log(library);
+            print("LIBRARY LOADED");
+            print(library);
             deleteTempLibrary();
         }
     }, [library]);
@@ -58,7 +59,7 @@ const LibraryContextProvider = (props) => {
                 }
             },
             (err) => {
-                if (err.status === 401) window.location.assign(window.serverLocation);
+                if (err.status === 401) window.location.assign(window.serverLocation + "login");
                 else console.error(err);
             }
         );
@@ -154,7 +155,7 @@ const LibraryContextProvider = (props) => {
                 getArtistsImages(artists, offset + limit);
             },
             (err) => {
-                if (err.status === 401) window.location.assign(window.serverLocation);
+                if (err.status === 401) window.location.assign(window.serverLocation + "login");
                 else console.error(err);
             }
         );
@@ -185,7 +186,7 @@ const LibraryContextProvider = (props) => {
                 }
             },
             (err) => {
-                if (err.status === 401) window.location.assign(window.serverLocation);
+                if (err.status === 401) window.location.assign(window.serverLocation + "login");
                 else console.error(err);
             }
         );
@@ -228,7 +229,7 @@ const LibraryContextProvider = (props) => {
                     else resolve();
                 },
                 (err) => {
-                    if (err.status === 401) window.location.assign(window.serverLocation);
+                    if (err.status === 401) window.location.assign(window.serverLocation + "login");
                     else console.error(err);
                     reject();
                 }

@@ -22,3 +22,13 @@ export default class EventsPubSub {
             });
     }
 }
+
+/*
+#######################################
+     EVENTS
+#######################################
+
+    onCloseSongActions:         Called when the song actions should close               ({id})          id: id of the song that sends the signal (only in some cases, null otherwise)
+
+
+*/

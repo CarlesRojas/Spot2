@@ -1,5 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useSpring, a } from "react-spring";
+import Vibrant from "node-vibrant";
+import { print } from "../Utils";
+
+// Contexts
+import { PlaybackContext } from "../contexts/PlaybackContext";
 
 // Components
 import Songs from "./Songs";
@@ -37,8 +42,12 @@ const sections = {
 };
 
 const Library = () => {
-    // Current section state
+    // Get contexts
+    const { playback } = useContext(PlaybackContext);
+
+    // State
     const [currentSection, setCurrentSection] = useState("song");
+    const [imageColor, setImageColor] = useState("rgba(0, 0, 0, 0)");
 
     // Spring hook
     const [{ x }, set] = useSpring(() => ({ x: 0, config: { clamp: true } }));
@@ -49,9 +58,19 @@ const Library = () => {
         setCurrentSection(name);
     };
 
+    useEffect(() => {
+        // Extract the color from the currently playing image
+        if (playback.image) {
+            let v = new Vibrant(playback.image);
+            v.getPalette((err, palette) => (!err ? setImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
+        }
+    }, [playback.image]);
+
+    var imageGradient = `linear-gradient(to bottom, rgba(${imageColor[0]}, ${imageColor[1]}, ${imageColor[2]}, 0.3) 0%, rgba(${imageColor[0]}, ${imageColor[1]}, ${imageColor[2]}, 0) 5rem)`;
+
     return (
         <>
-            <a.div className="library_sectionsWrapper" style={{ x }}>
+            <a.div className="library_sectionsWrapper" style={{ x, backgroundImage: imageGradient }}>
                 <div className="library_section">{<Songs isOpen={currentSection === "song"} />}</div>
                 <div className="library_section">{/*<Albums isOpen={currentSection === "album"} />*/}</div>
                 <div className="library_section">{/*<Artists isOpen={currentSection === "artist"} />*/}</div>

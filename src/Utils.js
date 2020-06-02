@@ -71,3 +71,14 @@ export const prettifyName = (name) => {
     if (index > 0 && index < name.length) name = name.substring(0, index);
     return name.trim();
 };
+
+// #######################################
+//      PRINT
+// #######################################
+
+// Prints colored messages
+export const print = (object, color) => {
+    if (typeof object === "object") console.log(object);
+    else if (color) console.log("%c" + object, "color: " + color);
+    else console.log("%c" + object, "color: lime");
+};
