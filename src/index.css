@@ -8,6 +8,7 @@
     --text: rgb(255, 255, 255);
     --scrollbar: rgba(150, 150, 150, 0.2);
     --green: rgb(29, 185, 84);
+    --skeleton: rgba(150, 150, 150, 0.1);
 }
 
 /* ####################################### */
@@ -107,6 +108,7 @@ button {
     filter: blur(2rem) brightness(10%);
     background-position: center;
     background-size: auto 100%;
+    background-color: var(--background);
 }
 
 .app_library {
@@ -115,7 +117,6 @@ button {
     width: 100vw;
     height: calc(100vh - 25vw);
     left: 0;
-    /*background-color: rgb(255, 249, 193);*/
 }
 
 .app_cover_prev {
@@ -148,7 +149,6 @@ button {
     width: 100vw;
     height: calc(100vh - 100vw);
     left: 0;
-    /*background-color: rgb(255, 198, 252);*/
 }
 
 /* ####################################### */
@@ -223,7 +223,7 @@ button {
     text-shadow: black 0 0 0.25rem;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: white;
+    color: var(--text);
     overflow: hidden;
     pointer-events: none;
 }
@@ -235,7 +235,8 @@ button {
     text-shadow: black 0 0 0.25rem;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text);
+    opacity: 0.8;
     overflow: hidden;
     pointer-events: none;
 }
@@ -250,7 +251,6 @@ button {
     width: 400%;
     height: calc(100% - 2.5rem);
     overflow: hidden;
-    transition: left 0.2s;
 }
 
 .library_section {
@@ -557,6 +557,54 @@ button {
 /*      PLAYLISTS                          */
 /* ####################################### */
 
+.playlists_title {
+    margin: 1rem 0;
+    padding: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    color: var(--text);
+    pointer-events: none;
+}
+
+.playlists_sortButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    outline: 0;
+    border: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 1rem;
+    background: transparent;
+    opacity: 0.3;
+    pointer-events: all;
+}
+
+.playlists_sortIcon {
+    transition: transform 0.2s;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+}
+
+.playlists_scroll {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.playlists_list {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 0.75rem;
+    padding: 0;
+    list-style-type: none;
+}
+
 /* ####################################### */
 /*      SONG LIST                          */
 /* ####################################### */
@@ -616,7 +664,7 @@ button {
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: white;
+    color: var(--text);
     overflow: hidden;
     pointer-events: none;
     user-select: none;
@@ -627,7 +675,7 @@ button {
     border-radius: 0.5rem;
     width: 50%;
     padding: 0.1rem 0;
-    background: rgba(150, 150, 150, 0.1);
+    background: var(--skeleton);
     font-size: 0.9rem;
     text-align: left;
     text-decoration: none;
@@ -640,7 +688,7 @@ button {
 }
 
 .songItem_selectedName {
-    color: rgb(29, 185, 84);
+    color: var(--green);
 }
 
 .songItem_info {
@@ -651,7 +699,8 @@ button {
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text);
+    opacity: 0.5;
     overflow: hidden;
     pointer-events: none;
     user-select: none;
@@ -662,7 +711,7 @@ button {
     border-radius: 0.5rem;
     width: 30%;
     padding: 0.1rem 0;
-    background: rgba(150, 150, 150, 0.1);
+    background: var(--skeleton);
     font-size: 0.6rem;
     text-align: left;
     text-decoration: none;
@@ -729,7 +778,7 @@ button {
 }
 
 .itemAlbumArtist_skeletonCover {
-    background: rgba(150, 150, 150, 0.1);
+    background: var(--skeleton);
     pointer-events: none;
     user-select: none;
 }
@@ -740,7 +789,8 @@ button {
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text);
+    opacity: 0.6;
     overflow: hidden;
     pointer-events: none;
     user-select: none;
@@ -749,7 +799,7 @@ button {
 .itemAlbumArtist_skeletonName {
     margin: 0.5rem 25%;
     border-radius: 0.5rem;
-    background: rgba(150, 150, 150, 0.1);
+    background: var(--skeleton);
     text-align: left;
     text-decoration: none;
     text-overflow: ellipsis;
@@ -761,13 +811,220 @@ button {
 }
 
 .itemAlbumArtist_selectedName {
-    color: rgb(29, 185, 84);
+    color: var(--green);
 }
-
-/* ####################################### */
-/*      ITEM ARTIST                        */
-/* ####################################### */
 
 /* ####################################### */
 /*      ITEM PLAYLIST                      */
 /* ####################################### */
+
+.itemPlaylist_button {
+    position: relative;
+    width: 100%;
+    outline: 0;
+    border: none;
+    padding: 0.5rem;
+    background: none;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
+
+.itemPlaylist_image {
+    border-radius: 0.75rem;
+    pointer-events: none;
+    user-select: none;
+    object-fit: cover;
+}
+
+.itemPlaylist_skeletonImage {
+    border-radius: 0.75rem;
+    background: var(--skeleton);
+    pointer-events: none;
+    user-select: none;
+}
+
+.itemPlaylist_name {
+    margin: 0;
+    padding: 1rem;
+    font-size: 1.2rem;
+    text-align: left;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text);
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+}
+
+.itemPlaylist_skeletonName {
+    margin: 0;
+    border-radius: 0.5rem;
+    width: 50%;
+    margin: 1rem;
+    padding: 0.1rem 0;
+    background: var(--skeleton);
+    font-size: 0.9rem;
+    text-align: left;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: transparent;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+}
+
+.itemPlaylist_selectedName {
+    color: var(--green);
+}
+
+/* ####################################### */
+/*      PROFILE                            */
+/* ####################################### */
+
+.profile_wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: all;
+    overflow: hidden;
+}
+
+.profile_backgrounWrapper {
+    position: absolute;
+    display: block;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.app_background {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    height: calc(104vh + 8rem);
+    width: calc(104vh + 8rem);
+    margin-top: -4rem;
+    margin-left: calc(50vw - calc(52vh + 2rem));
+    filter: blur(2rem) brightness(10%);
+    background-position: center;
+    background-size: auto 100%;
+    background-color: var(--background);
+}
+
+.profile_gradient {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.profile_header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0;
+    align-items: center;
+}
+
+.profile_image {
+    left: 0;
+    right: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    user-select: none;
+    object-fit: cover;
+}
+
+.profile_name {
+    margin: 2.5% 0 0 0;
+    width: 100%;
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text);
+    opacity: 0.75;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+}
+
+.profile_nameSelected {
+    color: var(--green);
+}
+
+.profile_actionButton {
+    position: absolute;
+    margin: auto;
+    outline: 0;
+    border: none;
+    width: 3rem;
+    height: 3rem;
+    padding: 0.5rem;
+    background: transparent;
+    opacity: 0.3;
+    pointer-events: all;
+}
+
+.profile_action_add {
+    left: 4rem;
+}
+
+.profile_action_like {
+    right: 4rem;
+}
+
+.profile_icon {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+}
+
+.profile_songs {
+    position: relative;
+    flex-grow: 1;
+}
+
+.profile_albums {
+    margin: 1rem 0 0 0;
+}
+
+.profile_controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile_shuffle {
+    margin: 1rem auto 0 auto;
+    outline: none;
+    border: none;
+    border-radius: 8.5rem;
+    width: 60%;
+    padding: 0.8rem 0;
+    background-color: var(--green);
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.profile_back {
+    outline: none;
+    border: none;
+    border-radius: 8.5rem;
+    width: 75%;
+    padding: 1rem 0;
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    color: var(--text);
+    opacity: 0.75;
+}

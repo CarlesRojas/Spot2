@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import SpotifyWebApi from "spotify-web-api-js";
 
 import EventsPubSub from "./EventsPubSub";
 import SpotifyContextProvider from "./contexts/SpotifyContext";
@@ -14,7 +13,6 @@ import "./index.css";
 
 // Pubsub and soptify api
 window.PubSub = new EventsPubSub();
-window.spotifyAPI = new SpotifyWebApi();
 window.serverLocation = "http://localhost:8888/";
 
 // Disable right click

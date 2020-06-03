@@ -10,6 +10,7 @@ import { PlaybackContext } from "../contexts/PlaybackContext";
 import Songs from "./Songs";
 import Albums from "./Albums";
 import Artists from "./Artists";
+import Playlists from "./Playlists";
 
 // Icons
 import SongIcon from "../resources/song.svg";
@@ -76,7 +77,7 @@ const Library = () => {
                 <div className="library_section">{<Songs />}</div>
                 <div className="library_section">{<Albums />}</div>
                 <div className="library_section">{<Artists />}</div>
-                <div className="library_section">{/*<Playlists  />*/}</div>
+                <div className="library_section">{<Playlists />}</div>
             </a.div>
 
             <div className="library_navBar">
