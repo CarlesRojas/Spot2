@@ -1,8 +1,8 @@
 import React from "react";
 import AlbumArtistItem from "./AlbumArtistItem";
 
-const HorizontalList = () => {
-    const { elements } = this.props;
+const HorizontalList = (props) => {
+    const { elements } = props;
 
     var elementComponents = elements.map(({ id, height, width, padding, name, image, selected }) => {
         return (

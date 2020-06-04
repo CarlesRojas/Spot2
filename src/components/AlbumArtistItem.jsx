@@ -17,44 +17,8 @@ const AlbumArtistItem = (props) => {
         // Return if it is a skeleton or the id is not in the user albums/artists
         if (skeleton || (type === "artist" && !(id in library.artists)) || (type === "album" && !(id in library.albums))) return;
 
-        // Get the song list
-        var songList = {};
-        Object.keys(type === "artist" ? library.artists[id].songs : library.albums[id].songs)
-            .filter((songID) => songID in library.songs)
-            .forEach((songID) => {
-                return (songList[songID] = library.songs[songID]);
-            });
-
-        if (type === "artist") {
-            // Get the album list for the artist
-            var albumList = {};
-            if (id in library.artists) {
-                Object.keys(library.artists[id].albums)
-                    .filter((albumID) => albumID in library.albums)
-                    .map((albumID) => {
-                        return (albumList[albumID] = library.albums[albumID]);
-                    });
-            }
-
-            // Open the artist profile
-            openProfile({
-                type: "artist",
-                id,
-                image: library.artists[id].image,
-                name: library.artists[id].name,
-                songList,
-            });
-        } else {
-            // Open the album profile
-            openProfile({
-                type: "album",
-                id,
-                image: library.albums[id].image,
-                name: library.albums[id].name,
-                songList,
-                albumList,
-            });
-        }
+        // Open the profile
+        openProfile({ type, id });
     };
 
     // Substract padding from the cover size

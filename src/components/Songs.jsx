@@ -1,10 +1,12 @@
 import React, { useState, useRef, useContext } from "react";
 
-import SortIcon from "../resources/sort.svg";
 import { LibraryContext } from "../contexts/LibraryContext";
 import { PopupContext } from "../contexts/PopupContext";
+
 import SongList from "./SongList";
-import { useEventListener } from "../Utils";
+import { useEventListener, print } from "../Utils";
+
+import SortIcon from "../resources/sort.svg";
 
 const Songs = () => {
     // Get contexts
@@ -72,31 +74,32 @@ const Songs = () => {
         });
     };
 
+    // Handle a click on the shuffle button
+    const handleShuffleClick = () => {
+        // CARLES Shuffle
+        print("Shuffle Songs", "cyan");
+    };
+
     // Add event listener using our hook
     useEventListener("touchstart", () => (longPressTimeout.current = setTimeout(() => handleSortLongPress(), 500)), sortButtonRef.current);
     useEventListener("touchend", () => handleSortClick(), sortButtonRef.current);
 
     // Prepare song actions
     var actions = {
+        // Items in normal order (first one is in the left)
         left: {
             numberOfActionsAlwaysVisible: 0,
-            // Items in normal order (first one is in the left)
-            list: [
-                { event: "onAlbumSelected", type: "album" },
-                { event: "onArtistSelected", type: "artist" },
-                { event: "onAddToClicked", type: "add" },
-            ],
+            list: ["album", "artist", "add"],
         },
+        // Items in reverse order (first one is in the right)
         right: {
             numberOfActionsAlwaysVisible: 0,
-            // Items in reverse order (first one is in the right)
-            list: [{ event: "onSongLikeClicked", type: "like" }],
+            list: [],
         },
     };
 
     return (
         <>
-            {/*<Popup type="sortBy" items={orderPopupElems} callback={handleSortChange} open={popupOpen} closePopup={closePopup}></Popup>*/}
             <p className="songs_title">Liked Songs</p>
             <div className="songs_sortButton" ref={sortButtonRef}>
                 <img className="songs_sortIcon" src={SortIcon} alt="" style={{ transform: "rotate( " + orderSettings.iconRotation + "deg)" }} />
@@ -104,7 +107,9 @@ const Songs = () => {
             <div className="songs_listWrapper">
                 <SongList songList={library.songs} actions={actions} order={orderSettings.currentOrder} />
             </div>
-            <button className="songs_shuffle">SHUFFLE</button>
+            <button className="songs_shuffle" onClick={() => handleShuffleClick()}>
+                SHUFFLE
+            </button>
         </>
     );
 };

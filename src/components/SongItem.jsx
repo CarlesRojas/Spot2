@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
+
+import { LibraryContext } from "../contexts/LibraryContext";
+import { ProfileContext } from "../contexts/ProfileContext";
+
 import { prettifyName, print } from "../Utils";
 
 // Icons
 import AlbumIcon from "../resources/albumSmall.svg";
 import ArtistIcon from "../resources/artistSmall.svg";
-import LikedIcon from "../resources/liked.svg";
 import AddIcon from "../resources/add.svg";
 /*import SortIcon from "../resources/hamburger.svg"; CARLES */
 import RemoveIcon from "../resources/remove.svg";
@@ -20,6 +23,10 @@ const listMargin = 1.5 * 16; // 1.5rem
 
 const SongItem = (props) => {
     const { height, id, name, album, artist, albumID, artistID, selected, skeleton, actions } = props;
+
+    // Get contexts
+    const { openProfile } = useContext(ProfileContext);
+    const { library } = useContext(LibraryContext);
 
     // Information about actions
     const hiddenLeftIcons = actions.left.list.length - actions.left.numberOfActionsAlwaysVisible;
@@ -55,7 +62,7 @@ const SongItem = (props) => {
         return () => {
             window.PubSub.unsub("onCloseSongActions", hideActions);
         };
-    }, []);
+    }, [hideActions]);
 
     // Function to show the name
     const showName = () => {
@@ -140,11 +147,49 @@ const SongItem = (props) => {
     // Handle the click on this item
     const handleClick = (id, skeleton) => {
         if (!skeleton) print("SONG SELECTED: " + id, "cyan");
-        //window.PubSub.emit("onSongSelected", { id }); ROJAS
+        //window.PubSub.emit("onSongSelected", { id }); CARLES
+    };
+
+    // Handle action click
+    const handleActionClick = (importantID, action) => {
+        /*
+            Possible actions:
+                - add: ADD TO PLAYLIST OR QUEUE
+                - remove: REMOVE FROM PLAYLIST OR QUEUE
+                - album: OPEN THE SONGS ALBUM
+                - artist: OPEN THE SONGS ARTIST
+        */
+
+        switch (action) {
+            // Add item to the playlist or queue CARLES
+            case "add":
+                print("ADD", "cyan");
+                break;
+
+            // Remove item from the playlist or queue CARLES
+            case "remove":
+                print("REMOVE", "cyan");
+                break;
+
+            // Return if  the id is not in the user artists -> Otherwise open the artist profile
+            case "artist":
+                if (!(importantID in library.artists)) return;
+                openProfile({ type: "artist", id: importantID });
+                break;
+
+            // Return if  the id is not in the user albums -> Otherwise open the album profile
+            case "album":
+                if (!(importantID in library.albums)) return;
+                openProfile({ type: "album", id: importantID });
+                break;
+
+            default:
+                break;
+        }
     };
 
     // Compute left buttons
-    var leftButtons = actions.left.list.map(({ event, type }, index) => {
+    var leftButtons = actions.left.list.map((type, index) => {
         if (type === "album") {
             var icon = AlbumIcon;
             var importantID = albumID;
@@ -157,15 +202,13 @@ const SongItem = (props) => {
         } else if (type === "remove") {
             icon = RemoveIcon;
             importantID = id;
-        } else if (type === "like") {
-            icon = LikedIcon;
-            importantID = id;
         }
+
         return (
             <button
                 key={index}
                 className="songItem_actionButton"
-                //onClick={() => this.handleActionClick(importantID, event)} CARLES
+                onClick={() => handleActionClick(importantID, type)}
                 style={{ left: index * iconWidth - listMargin / 2 + "px" }}
             >
                 <img className="songItem_icon" src={icon} alt="" />
@@ -173,7 +216,7 @@ const SongItem = (props) => {
         );
     });
 
-    var rightButtons = actions.right.list.map(({ event, type }, index) => {
+    var rightButtons = actions.right.list.map((type, index) => {
         if (type === "album") {
             var icon = AlbumIcon;
             var importantID = albumID;
@@ -186,16 +229,13 @@ const SongItem = (props) => {
         } else if (type === "remove") {
             icon = RemoveIcon;
             importantID = id;
-        } else if (type === "like") {
-            icon = LikedIcon;
-            importantID = id;
         }
 
         return (
             <button
                 key={index}
                 className="songItem_actionButton"
-                // onClick={() => this.handleActionClick(importantID, event)} CARLES
+                onClick={() => handleActionClick(importantID, type)}
                 style={{ right: index * iconWidth + listMargin / 2 + "px" }}
             >
                 <img className="songItem_icon" src={icon} alt="" />
@@ -216,7 +256,7 @@ const SongItem = (props) => {
                 <p className={"songItem_info " + (skeleton ? "songItem_skeletonInfo" : "")}>
                     {skeleton ? "-" : prettifyName(album)}
                     <strong> · </strong>
-                    {prettifyName(artist)}
+                    {skeleton ? "-" : prettifyName(artist)}
                 </p>
             </button>
 

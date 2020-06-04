@@ -960,13 +960,6 @@ button {
     background: transparent;
     opacity: 0.3;
     pointer-events: all;
-}
-
-.profile_action_add {
-    left: 4rem;
-}
-
-.profile_action_like {
     right: 4rem;
 }
 

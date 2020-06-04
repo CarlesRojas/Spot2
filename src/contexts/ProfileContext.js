@@ -4,11 +4,12 @@ import { useDrag } from "react-use-gesture";
 import Vibrant from "node-vibrant";
 
 import { PlaybackContext } from "./PlaybackContext";
+import { LibraryContext } from "../contexts/LibraryContext";
+
 import { prettifyName, print } from "../Utils";
 import SongList from "../components/SongList";
 import HorizontalList from "../components/HorizontalList";
 
-import LikedIcon from "../resources/liked.svg";
 import AddIcon from "../resources/add.svg";
 
 // Popup Context
@@ -30,12 +31,21 @@ var imageHeight = viewWidth / 3;
 
 const ProfileContextProvider = (props) => {
     // Get contexts
+    const { library } = useContext(LibraryContext);
     const { playback } = useContext(PlaybackContext);
     const { playlistID, artistID, albumID } = playback;
 
     // States
     const [closeTapTimeout, setCloseTapTimeout] = useState(null);
-    const [imageColor, setImageColor] = useState("rgba(0, 0, 0, 0)");
+
+    // Playlist image color
+    const [playlistImageColor, setPlaylistImageColor] = useState("rgba(0, 0, 0, 0)");
+
+    // Artist image color
+    const [artistImageColor, setArtistImageColor] = useState("rgba(0, 0, 0, 0)");
+
+    // Album image color
+    const [albumImageColor, setAlbumImageColor] = useState("rgba(0, 0, 0, 0)");
 
     // Playlist State
     const [playlistState, setPlaylistState] = useState({
@@ -115,7 +125,7 @@ const ProfileContextProvider = (props) => {
     };
 
     // Function to set the state and open the profile
-    const openProfile = ({ type, id, image, name, songList, albumList = "" }) => {
+    const openProfile = ({ type, id }) => {
         // Timeout to prevent the tap closing the profile
         setCloseTapTimeout(
             setTimeout(() => {
@@ -123,41 +133,64 @@ const ProfileContextProvider = (props) => {
             }, 500)
         );
 
+        // Get the song list
+        var songList = {};
+
+        Object.keys(type === "playlist" ? library.playlists[id].songs : type === "artist" ? library.artists[id].songs : library.albums[id].songs)
+            .filter((songID) => songID in library.songs)
+            .forEach((songID) => {
+                return (songList[songID] = library.songs[songID]);
+            });
+
         // Set the state for the item
-        if (type === "playlist")
+        if (type === "playlist") {
+            var playlistImage = library.playlists[id].image;
             setPlaylistState({
                 id,
-                name,
-                image,
+                name: library.playlists[id].name,
+                image: playlistImage,
                 songList,
                 borderRadius: "0.5rem",
-                background: image === "https://i.imgur.com/06SzS3d.png" ? null : image,
+                background: playlistImage === "https://i.imgur.com/06SzS3d.png" ? null : playlistImage,
                 selected: id === playlistID,
                 zindex: 510,
             });
-        else if (type === "artist")
+        } else if (type === "artist") {
+            // Get the album list for the artist
+            var albumList = {};
+            if (id in library.artists) {
+                Object.keys(library.artists[id].albums)
+                    .filter((albumID) => albumID in library.albums)
+                    .map((albumID) => {
+                        return (albumList[albumID] = library.albums[albumID]);
+                    });
+            }
+            var artistImage = library.artists[id].image;
+
             setArtistState({
                 id,
-                name,
-                image,
+                name: library.artists[id].name,
+                image: artistImage,
                 songList,
                 albumList,
                 borderRadius: "50%",
-                background: image === "https://i.imgur.com/PgCafqK.png" ? null : image,
+                background: artistImage === "https://i.imgur.com/PgCafqK.png" ? null : artistImage,
                 selected: id === artistID,
                 zindex: 520,
             });
-        else if (type === "album")
+        } else if (type === "album") {
+            var albumImage = library.albums[id].image;
             setAlbumState({
                 id,
-                name,
-                image,
+                name: library.albums[id].name,
+                image: albumImage,
                 songList,
                 borderRadius: "0.5rem",
-                background: image === "https://i.imgur.com/iajaWIN.png" ? null : image,
+                background: albumImage === "https://i.imgur.com/iajaWIN.png" ? null : albumImage,
                 selected: id === albumID,
                 zindex: 530,
             });
+        }
 
         showProfile(type);
     };
@@ -165,12 +198,12 @@ const ProfileContextProvider = (props) => {
     // Playlist Drag Hook
     const dragBindPlaylist = useDrag(
         ({ last, vxvy: [, vy], movement: [, my], cancel }) => {
-            const wrong_direction = my >= 0;
-            if (wrong_direction) cancel();
+            const cancelDrag = my >= 0 || !yArtist.idle || !yAlbum.idle;
+            if (cancelDrag) cancel();
 
-            if (last && (my < -75 || vy < -0.5)) hideProfile("playlist");
+            if (last && (my < -viewHeight * 0.4 || vy < -0.5)) hideProfile("playlist");
             else if (last) showProfile("playlist");
-            else if (!wrong_direction) setYPlaylist({ yPlaylist: my, immediate: false, config: config.stiff });
+            else if (!cancelDrag) setYPlaylist({ yPlaylist: my, immediate: false, config: config.stiff });
         },
         { initial: () => [0, currentPlaylistY], filterTaps: true, rubberband: true }
     );
@@ -178,12 +211,12 @@ const ProfileContextProvider = (props) => {
     // Artist Drag Hook
     const dragBindArtist = useDrag(
         ({ last, vxvy: [, vy], movement: [, my], cancel }) => {
-            const wrong_direction = my >= 0;
-            if (wrong_direction) cancel();
+            const cancelDrag = my >= 0 || !yAlbum.idle;
+            if (cancelDrag) cancel();
 
-            if (last && (my < -75 || vy < -0.5)) hideProfile("artist");
+            if (last && (my < -viewHeight * 0.4 || vy < -0.5)) hideProfile("artist");
             else if (last) showProfile("artist");
-            else if (!wrong_direction) setYArtist({ yArtist: my, immediate: false, config: config.stiff });
+            else if (!cancelDrag) setYArtist({ yArtist: my, immediate: false, config: config.stiff });
         },
         { initial: () => [0, currentArtistY], filterTaps: true, rubberband: true }
     );
@@ -191,27 +224,27 @@ const ProfileContextProvider = (props) => {
     // Album Drag Hook
     const dragBindAlbum = useDrag(
         ({ last, vxvy: [, vy], movement: [, my], cancel }) => {
-            const wrong_direction = my >= 0;
-            if (wrong_direction) cancel();
+            const cancelDrag = my >= 0;
+            if (cancelDrag) cancel();
 
-            if (last && (my < -75 || vy < -0.5)) hideProfile("album");
+            if (last && (my < -viewHeight * 0.4 || vy < -0.5)) hideProfile("album");
             else if (last) showProfile("album");
-            else if (!wrong_direction) setYAlbum({ yAlbum: my, immediate: false, config: config.stiff });
+            else if (!cancelDrag) setYAlbum({ yAlbum: my, immediate: false, config: config.stiff });
         },
         { initial: () => [0, currentAlbumY], filterTaps: true, rubberband: true }
     );
 
     // Playlist Tap Hook
     const tapBindPlaylist = useDrag(({ tap, cancel }) => {
-        // Cancel if it is too soon to close the popup
-        if (closeTapTimeout !== null) cancel();
+        // Cancel if it is too soon to close the popup or the artists or albums are open
+        if (closeTapTimeout !== null || !yArtist.idle || !yAlbum.idle) cancel();
         else if (tap) hideProfile("playlist");
     });
 
     // Artist Tap Hook
     const tapBindArtist = useDrag(({ tap, cancel }) => {
-        // Cancel if it is too soon to close the popup
-        if (closeTapTimeout !== null) cancel();
+        // Cancel if it is too soon to close the popup or the albums are open
+        if (closeTapTimeout !== null || !yAlbum.idle) cancel();
         else if (tap) hideProfile("artist");
     });
 
@@ -222,20 +255,44 @@ const ProfileContextProvider = (props) => {
         else if (tap) hideProfile("album");
     });
 
+    // Get the color for the current playlist
     useEffect(() => {
         // Extract the color from the currently playing image
-        if (playback.image) {
-            let v = new Vibrant(playback.image);
-            v.getPalette((err, palette) => (!err ? setImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
+        if (playlistState.image) {
+            let v = new Vibrant(playlistState.image);
+            v.getPalette((err, palette) => (!err ? setPlaylistImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
         }
-    }, [playback.image]);
+    }, [playlistState.image]);
+
+    // Get the color for the current artist
+    useEffect(() => {
+        // Extract the color from the currently playing image
+        if (artistState.image) {
+            let v = new Vibrant(artistState.image);
+            v.getPalette((err, palette) => (!err ? setArtistImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
+        }
+    }, [artistState.image]);
+
+    // Get the color for the current album
+    useEffect(() => {
+        // Extract the color from the currently playing image
+        if (albumState.image) {
+            let v = new Vibrant(albumState.image);
+            v.getPalette((err, palette) => (!err ? setAlbumImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
+        }
+    }, [albumState.image]);
 
     // Handle a click on the shuffle button
     const handleShuffleClick = (type) => {
         // CARLES Shuffle
-        if (type === "playlist") print("Shuffle Playlist");
-        else if (type === "artist") print("Shuffle Artist");
-        else if (type === "album") print("Shuffle Album");
+        if (type === "playlist") print("Shuffle Playlist", "cyan");
+        else if (type === "artist") print("Shuffle Artist", "cyan");
+        else if (type === "album") print("Shuffle Album", "cyan");
+    };
+
+    // Handle action click
+    const handleAddButtonClick = () => {
+        print("ADD", "cyan"); // CARLES
     };
 
     // Playlist song list
@@ -267,7 +324,14 @@ const ProfileContextProvider = (props) => {
     // Album song list
     var albumSongListObject = <SongList songList={albumState.songList} actions={albumActions} order="album" />;
 
-    var imageGradient = `linear-gradient(to bottom, rgba(${imageColor[0]}, ${imageColor[1]}, ${imageColor[2]}, 0.3) 0%, rgba(${imageColor[0]}, ${imageColor[1]}, ${imageColor[2]}, 0) 5rem)`;
+    // Playlist image gradient
+    var playlistImageGradient = `linear-gradient(to bottom, rgba(${playlistImageColor[0]}, ${playlistImageColor[1]}, ${playlistImageColor[2]}, 0.3) 0%, rgba(${playlistImageColor[0]}, ${playlistImageColor[1]}, ${playlistImageColor[2]}, 0) 5rem)`;
+
+    // Artist image gradient
+    var artistImageGradient = `linear-gradient(to bottom, rgba(${artistImageColor[0]}, ${artistImageColor[1]}, ${artistImageColor[2]}, 0.3) 0%, rgba(${artistImageColor[0]}, ${artistImageColor[1]}, ${artistImageColor[2]}, 0) 5rem)`;
+
+    // Album image gradient
+    var albumImageGradient = `linear-gradient(to bottom, rgba(${albumImageColor[0]}, ${albumImageColor[1]}, ${albumImageColor[2]}, 0.3) 0%, rgba(${albumImageColor[0]}, ${albumImageColor[1]}, ${albumImageColor[2]}, 0) 5rem)`;
 
     return (
         <ProfileContext.Provider value={{ openProfile }}>
@@ -276,7 +340,7 @@ const ProfileContextProvider = (props) => {
                     <div className="profile_background" style={{ backgroundImage: "url(" + playlistState.image + ")" }} />
                 </div>
 
-                <div className="profile_gradient" style={{ backgroundImage: imageGradient, zIndex: playlistState.zindex - 4 }} />
+                <div className="profile_gradient" style={{ backgroundImage: playlistImageGradient, zIndex: playlistState.zindex - 4 }} />
                 <div className="profile_header" style={{ zIndex: playlistState.zindex }}>
                     <img
                         className="profile_image"
@@ -288,16 +352,8 @@ const ProfileContextProvider = (props) => {
                     <p className={"profile_name" + (playlistState.selected ? " profile_nameSelected" : "")}>{prettifyName(playlistState.name)}</p>
 
                     <button
-                        className="profile_actionButton profile_action_like"
-                        /*onClick={() => handleActionClick("onProfileLikeClicked")} CARLES */
-                        style={{ top: "calc(" + imageHeight / 2 + "px - 1.5rem)" }}
-                    >
-                        <img className="profile_icon" src={LikedIcon} alt="" />
-                    </button>
-
-                    <button
-                        className="profile_actionButton profile_action_add"
-                        /*onClick={() => handleActionClick("onAddToClicked")} CARLES */
+                        className="profile_actionButton"
+                        onClick={() => handleAddButtonClick("add")}
                         style={{ top: "calc(" + imageHeight / 2 + "px - 1.5rem)" }}
                     >
                         <img className="profile_icon" src={AddIcon} alt="" />
@@ -310,7 +366,9 @@ const ProfileContextProvider = (props) => {
                     <button className="profile_shuffle" onClick={() => handleShuffleClick("playlist")}>
                         SHUFFLE
                     </button>
-                    <button className="profile_back" /*onClick={() => handleBackClick() CARLES }*/>Back</button>
+                    <button className="profile_back" {...tapBindPlaylist()}>
+                        Back
+                    </button>
                 </div>
             </a.div>
             <a.div className="profile_wrapper" style={{ y: yArtist }}>
@@ -318,7 +376,7 @@ const ProfileContextProvider = (props) => {
                     <div className="profile_background" style={{ backgroundImage: "url(" + artistState.image + ")" }} />
                 </div>
 
-                <div className="profile_gradient" style={{ backgroundImage: imageGradient, zIndex: artistState.zindex - 4 }} />
+                <div className="profile_gradient" style={{ backgroundImage: artistImageGradient, zIndex: artistState.zindex - 4 }} />
                 <div className="profile_header" style={{ zIndex: artistState.zindex }}>
                     <img
                         className="profile_image"
@@ -330,16 +388,8 @@ const ProfileContextProvider = (props) => {
                     <p className={"profile_name" + (artistState.selected ? " profile_nameSelected" : "")}>{prettifyName(artistState.name)}</p>
 
                     <button
-                        className="profile_actionButton profile_action_like"
-                        /*onClick={() => handleActionClick("onProfileLikeClicked")} CARLES */
-                        style={{ top: "calc(" + imageHeight / 2 + "px - 1.5rem)" }}
-                    >
-                        <img className="profile_icon" src={LikedIcon} alt="" />
-                    </button>
-
-                    <button
-                        className="profile_actionButton profile_action_add"
-                        /*onClick={() => handleActionClick("onAddToClicked")} CARLES */
+                        className="profile_actionButton"
+                        onClick={() => handleAddButtonClick("add")}
                         style={{ top: "calc(" + imageHeight / 2 + "px - 1.5rem)" }}
                     >
                         <img className="profile_icon" src={AddIcon} alt="" />
@@ -353,7 +403,9 @@ const ProfileContextProvider = (props) => {
                     <button className="profile_shuffle" onClick={() => handleShuffleClick("artist")}>
                         SHUFFLE
                     </button>
-                    <button className="profile_back" /*onClick={() => handleBackClick() CARLES }*/>Back</button>
+                    <button className="profile_back" {...tapBindArtist()}>
+                        Back
+                    </button>
                 </div>
             </a.div>
             <a.div className="profile_wrapper" style={{ y: yAlbum }}>
@@ -361,7 +413,7 @@ const ProfileContextProvider = (props) => {
                     <div className="profile_background" style={{ backgroundImage: "url(" + albumState.image + ")" }} />
                 </div>
 
-                <div className="profile_gradient" style={{ backgroundImage: imageGradient, zIndex: albumState.zindex - 4 }} />
+                <div className="profile_gradient" style={{ backgroundImage: albumImageGradient, zIndex: albumState.zindex - 4 }} />
                 <div className="profile_header" style={{ zIndex: albumState.zindex }}>
                     <img
                         className="profile_image"
@@ -373,16 +425,8 @@ const ProfileContextProvider = (props) => {
                     <p className={"profile_name" + (albumState.selected ? " profile_nameSelected" : "")}>{prettifyName(albumState.name)}</p>
 
                     <button
-                        className="profile_actionButton profile_action_like"
-                        /*onClick={() => handleActionClick("onProfileLikeClicked")} CARLES */
-                        style={{ top: "calc(" + imageHeight / 2 + "px - 1.5rem)" }}
-                    >
-                        <img className="profile_icon" src={LikedIcon} alt="" />
-                    </button>
-
-                    <button
-                        className="profile_actionButton profile_action_add"
-                        /*onClick={() => handleActionClick("onAddToClicked")} CARLES */
+                        className="profile_actionButton"
+                        onClick={() => handleAddButtonClick("add")}
                         style={{ top: "calc(" + imageHeight / 2 + "px - 1.5rem)" }}
                     >
                         <img className="profile_icon" src={AddIcon} alt="" />
@@ -395,7 +439,9 @@ const ProfileContextProvider = (props) => {
                     <button className="profile_shuffle" onClick={() => handleShuffleClick("album")}>
                         SHUFFLE
                     </button>
-                    <button className="profile_back" /*onClick={() => handleBackClick() CARLES }*/>Back</button>
+                    <button className="profile_back" {...tapBindAlbum()}>
+                        Back
+                    </button>
                 </div>
             </a.div>
             {props.children}
@@ -406,48 +452,40 @@ const ProfileContextProvider = (props) => {
 export default ProfileContextProvider;
 
 const playlistActions = {
+    // Items in normal order (first one is in the left)
     left: {
         numberOfActionsAlwaysVisible: 0,
-        // Items in normal order (first one is in the left)
-        list: [
-            { event: "onAlbumSelected", type: "album" },
-            { event: "onArtistSelected", type: "artist" },
-            { event: "onAddToClicked", type: "add" },
-        ],
+        list: ["album", "artist", "add"],
     },
+    // Items in reverse order (first one is in the right)
     right: {
         numberOfActionsAlwaysVisible: 0, // CARLES IT WAS 1
-        // Items in reverse order (first one is in the right)
-        list: [
-            { event: "onSongLikeClicked", type: "like" },
-            { event: "onRemoveClicked", type: "remove" },
-            /*{ event: "", type: "sort" }, CARLES*/
-        ],
+        list: ["remove" /*"sort" CARLES*/],
     },
 };
 
 const albumActions = {
+    // Items in normal order (first one is in the left)
     left: {
         numberOfActionsAlwaysVisible: 0,
-        // Items in normal order (first one is in the left)
-        list: [{ event: "onAddToClicked", type: "add" }],
+        list: ["add"],
     },
+    // Items in reverse order (first one is in the right)
     right: {
         numberOfActionsAlwaysVisible: 0,
-        // Items in reverse order (first one is in the right)
-        list: [{ event: "onSongLikeClicked", type: "like" }],
+        list: [],
     },
 };
 
 const artistActions = {
+    // Items in normal order (first one is in the left)
     left: {
         numberOfActionsAlwaysVisible: 0,
-        // Items in normal order (first one is in the left)
-        list: [{ event: "onAddToClicked", type: "add" }],
+        list: ["add"],
     },
+    // Items in reverse order (first one is in the right)
     right: {
         numberOfActionsAlwaysVisible: 0,
-        // Items in reverse order (first one is in the right)
-        list: [{ event: "onSongLikeClicked", type: "like" }],
+        list: [],
     },
 };
