@@ -1,6 +1,6 @@
 import React, { Component, createContext } from "react";
 import Script from "react-load-script";
-import { print, getHashParams, refreshSpotifyAccessToken } from "..//Utils";
+import { setCookie, getCookie, print, getHashParams, setSpotifyAccessToken } from "..//Utils";
 import { LibraryContext } from "./LibraryContext";
 
 // Spotify Context
@@ -19,11 +19,17 @@ export default class SpotifyContextProvider extends Component {
         // Get hash parameters (for oauth autentication)
         const params = getHashParams();
 
+        // Save refresh token in the cookies
+        if (params.refresh_token) setCookie("spot_refreshToken", params.refresh_token, 10);
+
+        // Get refresh token from cookies
+        var savedRefreshToken = getCookie("spot_refreshToken");
+
         this.state = {
             // Credentials
             accessToken: params.access_token,
-            refreshToken: params.refresh_token,
-            loggedIn: params.access_token ? true : false,
+            refreshToken: savedRefreshToken,
+            loggedIn: savedRefreshToken ? true : false,
 
             // Player
             deviceID: null,
@@ -34,7 +40,7 @@ export default class SpotifyContextProvider extends Component {
         };
 
         // Set the access token in the Spotify API
-        if (params.access_token) refreshSpotifyAccessToken(params.access_token);
+        if (params.access_token) setSpotifyAccessToken(params.access_token);
 
         // Create spotify Player
         this.createSpotPlayer();
@@ -101,7 +107,7 @@ export default class SpotifyContextProvider extends Component {
                 .then((data) => {
                     // Save new info in cookies and set it in the api
 
-                    refreshSpotifyAccessToken(data.access_token);
+                    setSpotifyAccessToken(data.access_token);
 
                     print("New Access Token: " + data.access_token, "white");
                     // Set the state

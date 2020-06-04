@@ -5,7 +5,7 @@ import SpotifyWebApi from "spotify-web-api-js";
 //      INTERPOLATIONS
 // #######################################
 
-export const refreshSpotifyAccessToken = (accessToken) => {
+export const setSpotifyAccessToken = (accessToken) => {
     window.spotifyAPI = new SpotifyWebApi();
     window.spotifyAPI.setAccessToken(accessToken);
 };
