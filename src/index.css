@@ -625,18 +625,6 @@ button {
 }
 
 /* ####################################### */
-/*      ALBUM LIST                         */
-/* ####################################### */
-
-/* ####################################### */
-/*      ARTIST LIST                        */
-/* ####################################### */
-
-/* ####################################### */
-/*      PLAYLIST LIST                      */
-/* ####################################### */
-
-/* ####################################### */
 /*      ITEM SONG                          */
 /* ####################################### */
 
@@ -754,12 +742,12 @@ button {
 /*      ITEM ALBUM ARTIST                  */
 /* ####################################### */
 
-.itemAlbumArtist_wrapper {
+.albumArtistItem_wrapper {
     position: relative;
     background: none;
 }
 
-.itemAlbumArtist_button {
+.albumArtistItem_button {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -771,19 +759,19 @@ button {
     align-items: center;
 }
 
-.itemAlbumArtist_cover {
+.albumArtistItem_cover {
     pointer-events: none;
     user-select: none;
     object-fit: cover;
 }
 
-.itemAlbumArtist_skeletonCover {
+.albumArtistItem_skeletonCover {
     background: var(--skeleton);
     pointer-events: none;
     user-select: none;
 }
 
-.itemAlbumArtist_name {
+.albumArtistItem_name {
     text-align: left;
     text-align: center;
     text-decoration: none;
@@ -796,7 +784,7 @@ button {
     user-select: none;
 }
 
-.itemAlbumArtist_skeletonName {
+.albumArtistItem_skeletonName {
     margin: 0.5rem 25%;
     border-radius: 0.5rem;
     background: var(--skeleton);
@@ -810,7 +798,7 @@ button {
     user-select: none;
 }
 
-.itemAlbumArtist_selectedName {
+.albumArtistItem_selectedName {
     color: var(--green);
 }
 
@@ -885,13 +873,15 @@ button {
 /* ####################################### */
 
 .profile_wrapper {
-    position: relative;
+    position: fixed;
     display: flex;
     flex-direction: column;
     width: 100vw;
     height: 100vh;
     pointer-events: all;
     overflow: hidden;
+    top: 0;
+    z-index: 500;
 }
 
 .profile_backgrounWrapper {
@@ -902,7 +892,7 @@ button {
     overflow: hidden;
 }
 
-.app_background {
+.profile_background {
     position: relative;
     display: block;
     overflow: hidden;
@@ -1003,12 +993,12 @@ button {
 }
 
 .profile_shuffle {
-    margin: 1rem auto 0 auto;
+    margin: 0.5rem auto;
     outline: none;
     border: none;
     border-radius: 8.5rem;
     width: 60%;
-    padding: 0.8rem 0;
+    padding: 0.5rem 0;
     background-color: var(--green);
     font-size: 1rem;
     font-weight: bold;
@@ -1027,4 +1017,20 @@ button {
     text-align: center;
     color: var(--text);
     opacity: 0.75;
+}
+
+/* ####################################### */
+/*      HORIZONTAL LIST                    */
+/* ####################################### */
+
+.horizontalList_wrapper {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    margin: 0 0.75rem;
+    height: 100%;
+}
+
+.horizontalList_scroll {
+    display: flex;
+    flex-direction: row;
 }

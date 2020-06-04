@@ -31,7 +31,7 @@ const Cover = () => {
 
     // Called when the cover is clicked by the user
     const handleCoverClick = () => {
-        // CARLES
+        // CARLES PAUSE PLAY
     };
 
     // Image filter for pause / play

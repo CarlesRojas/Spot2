@@ -8,7 +8,7 @@ import AlbumIcon from "../resources/albumSmall.svg";
 import ArtistIcon from "../resources/artistSmall.svg";
 import LikedIcon from "../resources/liked.svg";
 import AddIcon from "../resources/add.svg";
-import SortIcon from "../resources/hamburger.svg";
+/*import SortIcon from "../resources/hamburger.svg"; CARLES */
 import RemoveIcon from "../resources/remove.svg";
 
 // Size of the viewport
@@ -140,7 +140,7 @@ const SongItem = (props) => {
     // Handle the click on this item
     const handleClick = (id, skeleton) => {
         if (!skeleton) print("SONG SELECTED: " + id, "cyan");
-        //window.PubSub.emit("onSongSelected", { id }); CARLES
+        //window.PubSub.emit("onSongSelected", { id }); ROJAS
     };
 
     // Compute left buttons

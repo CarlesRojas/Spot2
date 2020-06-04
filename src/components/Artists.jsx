@@ -4,7 +4,7 @@ import SortIcon from "../resources/sort.svg";
 import { LibraryContext } from "../contexts/LibraryContext";
 import { PlaybackContext } from "../contexts/PlaybackContext";
 import { PopupContext } from "../contexts/PopupContext";
-import ItemAlbumArtist from "./ItemAlbumArtist";
+import AlbumArtistItem from "./AlbumArtistItem";
 import { useEventListener } from "../Utils";
 
 // Size of the viewport
@@ -146,7 +146,7 @@ const Artists = () => {
         const { id, name, image } = elem;
 
         return (
-            <ItemAlbumArtist
+            <AlbumArtistItem
                 key={id}
                 height={rowHeight}
                 width={artistWidth}
@@ -176,7 +176,7 @@ const Artists = () => {
 
     // Add all items that will be shown
     while (index < endIndex) {
-        if (index < list.length) {
+        if (index < list.length && library.artists && list[index] in library.artists) {
             var { artistID, name, image } = library.artists[list[index]];
             renderedItems.push(createItem({ id: artistID, name: name, image: image }, false));
         } else if (list.length <= 0) {

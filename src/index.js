@@ -2,10 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import EventsPubSub from "./EventsPubSub";
+import PlaybackContextProvider, { PlaybackContext } from "./contexts/PlaybackContext";
 import SpotifyContextProvider from "./contexts/SpotifyContext";
 import LibraryContextProvider from "./contexts/LibraryContext";
-import PlaybackContextProvider, { PlaybackContext } from "./contexts/PlaybackContext";
 import PopupContextProvider from "./contexts/PopupContext";
+import ProfileContextProvider from "./contexts/ProfileContext";
 
 import App from "./App";
 
@@ -26,9 +27,11 @@ ReactDOM.render(
                 {(playbackContext) => {
                     return (
                         <SpotifyContextProvider playbackContext={playbackContext}>
-                            <PopupContextProvider>
-                                <App />
-                            </PopupContextProvider>
+                            <ProfileContextProvider>
+                                <PopupContextProvider>
+                                    <App />
+                                </PopupContextProvider>
+                            </ProfileContextProvider>
                         </SpotifyContextProvider>
                     );
                 }}

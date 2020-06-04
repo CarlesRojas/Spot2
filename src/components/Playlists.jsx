@@ -151,7 +151,7 @@ const Playlist = () => {
 
     // Add all items that will be shown
     while (index < endIndex) {
-        if (index < list.length) {
+        if (index < list.length && library.playlists && list[index] in library.playlists) {
             var { playlistID, name, image } = library.playlists[list[index]];
             renderedItems.push(createItem({ id: playlistID, name: name, image: image }, false));
         } else if (list.length <= 0) {

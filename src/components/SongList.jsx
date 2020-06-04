@@ -72,7 +72,7 @@ const SongList = (props) => {
         setScrollTop(event.target.scrollTop);
     };
 
-    /* CARLES
+    /* CARLES DELETE SONG
     // Handle a song being deleted
     const handleDeleteSong = (id) => {
         var list = [...this.state.listOrder];
@@ -99,7 +99,7 @@ const SongList = (props) => {
                 selected={id === playback["songID"]}
                 skeleton={skeleton}
                 actions={actions}
-                /*onDelete={() => this.handleDeleteSong(id)} CARLES*/
+                /*onDelete={() => this.handleDeleteSong(id)} CARLES DELETE SONG*/
             />
         );
     };
@@ -118,7 +118,7 @@ const SongList = (props) => {
 
     // Add all items that will be shown
     while (index < endIndex) {
-        if (index < list.length) {
+        if (index < list.length && songList && list[index] in songList) {
             var { songID, name, albumID, artistID, albumName, artistName } = songList[list[index]];
             renderedItems.push(createItem({ id: songID, name, album: albumName, artist: artistName, albumID, artistID }, false));
         } else {
