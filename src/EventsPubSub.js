@@ -29,6 +29,7 @@ export default class EventsPubSub {
 #######################################
 
     onCloseSongActions:         Called when the song actions should close               ({id})          id: id of the song that sends the signal (only in some cases, null otherwise)
-
+    onSpotifyReady:             Called when the spotify api loads                       ()
+    onPlaybackChange:           Called when the playback changes                        ()
 
 */

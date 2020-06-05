@@ -1,7 +1,8 @@
 import React, { Component, createContext } from "react";
 import Script from "react-load-script";
 import { setCookie, getCookie, print, getHashParams, setSpotifyAccessToken } from "../Utils";
-import { LibraryContext } from "./LibraryContext";
+
+import { PlaybackContext } from "./PlaybackContext";
 
 // Spotify Context
 export const SpotifyContext = createContext();
@@ -11,7 +12,7 @@ const refreshTokenTime = 30 * 60 * 1000;
 
 export default class SpotifyContextProvider extends Component {
     // Get the library context
-    static contextType = LibraryContext;
+    static contextType = PlaybackContext;
 
     constructor(props) {
         super(props);
@@ -44,36 +45,6 @@ export default class SpotifyContextProvider extends Component {
 
         // Create spotify Player
         this.createSpotPlayer();
-    }
-
-    render() {
-        return (
-            <>
-                <Script url="https://sdk.scdn.co/spotify-player.js" onLoad={this.handleSpotifyPlaybackScriptLoad} />
-                <SpotifyContext.Provider value={{ ...this.state }}>{this.props.children}</SpotifyContext.Provider>
-            </>
-        );
-    }
-
-    // When the compnent mounts for the first time
-    componentDidMount() {
-        const { loggedIn } = this.state;
-        const { getUserLibrary } = this.context;
-
-        // If not logged in, go to spotify login page
-        if (!loggedIn) {
-            print("Logged Out", "orange");
-            window.location.assign(window.serverLocation + "login");
-        } else {
-            print("Logged In");
-            window.history.replaceState({}, document.title, "/");
-
-            // Refresh the token
-            this.refreshSpotifyToken().then(() => {
-                // Get the user library
-                getUserLibrary();
-            });
-        }
     }
 
     //##############################################
@@ -128,10 +99,6 @@ export default class SpotifyContextProvider extends Component {
         });
     };
 
-    //##############################################
-    //       SPOTIFY API
-    //##############################################
-
     createSpotPlayer = () => {
         // Connects to Spotify Playback & creates a new Player
         window.onSpotifyWebPlaybackSDKReady = () => {
@@ -166,7 +133,7 @@ export default class SpotifyContextProvider extends Component {
 
                     // Playback status updates
                     player.addListener("player_state_changed", (state) => {
-                        this.props.playbackContext.handlePlaybackChange();
+                        window.PubSub.emit("onPlaybackChange");
                     });
 
                     // Ready
@@ -201,7 +168,7 @@ export default class SpotifyContextProvider extends Component {
                 window.spotifyAPI.transferMyPlayback([deviceID], { play: true }).then(
                     () => {
                         print("Now Playing on Spot");
-                        this.props.playbackContext.handlePlaybackChange();
+                        window.PubSub.emit("onPlaybackChange");
                     },
                     (err) => {
                         if (err.status === 401) window.location.assign(window.serverLocation + "login");
@@ -212,4 +179,58 @@ export default class SpotifyContextProvider extends Component {
             }
         );
     };
+
+    //##############################################
+    //       SPOTIFY API
+    //##############################################
+
+    // Play Song
+    play = (uri, position = 0) => {};
+
+    // Pause Song
+    pause = () => {};
+
+    // Previous Song
+    prev = () => {};
+
+    // Next Song
+    next = () => {};
+
+    // Rewind to any point in the Song
+    rewind = (milliseconds) => {};
+
+    // Set the repeat value: "none" "repeat" "repeatOne"
+    setRepeat = (repeatType) => {};
+
+    // Set the shuffle value: "none" "shuffle"
+    setShuffle = (shuffleType) => {};
+
+    render() {
+        return (
+            <>
+                <Script url="https://sdk.scdn.co/spotify-player.js" onLoad={this.handleSpotifyPlaybackScriptLoad} />
+                <SpotifyContext.Provider value={{ ...this.state }}>{this.props.children}</SpotifyContext.Provider>
+            </>
+        );
+    }
+
+    // When the compnent mounts for the first time
+    componentDidMount() {
+        const { loggedIn } = this.state;
+
+        // If not logged in, go to spotify login page
+        if (!loggedIn) {
+            print("Logged Out", "orange");
+            window.location.assign(window.serverLocation + "login");
+        } else {
+            print("Logged In");
+            window.history.replaceState({}, document.title, "/");
+
+            // Refresh the token
+            this.refreshSpotifyToken().then(() => {
+                // Signal that spotify is ready -> Load library
+                window.PubSub.emit("onSpotifyReady");
+            });
+        }
+    }
 }

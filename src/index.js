@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import EventsPubSub from "./EventsPubSub";
-import PlaybackContextProvider, { PlaybackContext } from "./contexts/PlaybackContext";
+import PlaybackContextProvider from "./contexts/PlaybackContext";
 import SpotifyContextProvider from "./contexts/SpotifyContext";
 import LibraryContextProvider from "./contexts/LibraryContext";
 import PopupContextProvider from "./contexts/PopupContext";
@@ -22,24 +22,18 @@ document.oncontextmenu = () => false;
 
 // Render app
 ReactDOM.render(
-    <LibraryContextProvider>
+    <SpotifyContextProvider>
         <PlaybackContextProvider>
-            <PlaybackContext.Consumer>
-                {(playbackContext) => {
-                    return (
-                        <SpotifyContextProvider playbackContext={playbackContext}>
-                            <QueueContextProvider>
-                                <ProfileContextProvider>
-                                    <PopupContextProvider>
-                                        <App />
-                                    </PopupContextProvider>
-                                </ProfileContextProvider>
-                            </QueueContextProvider>
-                        </SpotifyContextProvider>
-                    );
-                }}
-            </PlaybackContext.Consumer>
+            <LibraryContextProvider>
+                <QueueContextProvider>
+                    <ProfileContextProvider>
+                        <PopupContextProvider>
+                            <App />
+                        </PopupContextProvider>
+                    </ProfileContextProvider>
+                </QueueContextProvider>
+            </LibraryContextProvider>
         </PlaybackContextProvider>
-    </LibraryContextProvider>,
+    </SpotifyContextProvider>,
     document.getElementById("root")
 );

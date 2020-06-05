@@ -25,6 +25,7 @@ const ProgressStateReducer = (progressState, action) => {
 };
 
 const PlaybackContextProvider = (props) => {
+    // Playback state
     const [playback, setPlayback] = useState({
         playing: false,
         repeat: false,
@@ -156,7 +157,13 @@ const PlaybackContextProvider = (props) => {
         }
     };
 
-    //
+    // Efect to subscribe to events
+    useEffect(() => {
+        window.PubSub.sub("onPlaybackChange", handlePlaybackChange);
+        return () => {
+            window.PubSub.unsub("onPlaybackChange", handlePlaybackChange);
+        };
+    }, []);
 
     return <PlaybackContext.Provider value={{ playback, handlePlaybackChange, progressState }}>{props.children}</PlaybackContext.Provider>;
 };
