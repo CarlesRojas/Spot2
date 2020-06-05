@@ -3,12 +3,18 @@
 /* ####################################### */
 
 :root {
-    /* Background */
+    /* Colors */
     --background: rgb(9, 9, 9);
     --text: rgb(255, 255, 255);
     --scrollbar: rgba(150, 150, 150, 0.2);
     --green: rgb(29, 185, 84);
     --skeleton: rgba(150, 150, 150, 0.1);
+
+    /* Colors */
+    --text-main-opacity: 0.7;
+    --text-low-opacity: 0.4;
+    --icons-main-opacity: 0.9;
+    --icons-low-opacity: 0.3;
 }
 
 /* ####################################### */
@@ -108,7 +114,7 @@ button {
     width: calc(100vh + 8rem);
     margin-top: -4rem;
     margin-left: calc(50vw - calc(50vh + 4rem));
-    filter: blur(0.8rem) brightness(15%);
+    filter: blur(0.75rem) brightness(16%);
     background-position: center;
     background-size: auto 100%;
     background-color: var(--background);
@@ -208,7 +214,6 @@ button {
     margin: 0.5rem;
     border-radius: 1rem;
     background-image: linear-gradient(to top, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 50%);
-    opacity: 1;
     pointer-events: none;
 }
 
@@ -245,7 +250,7 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text);
-    opacity: 0.8;
+    opacity: var(--text-main-opacity);
     overflow: hidden;
     pointer-events: none;
 }
@@ -295,7 +300,7 @@ button {
     height: 2.5rem;
     padding: 0.5rem 2rem 0 2rem;
     background: transparent;
-    opacity: 0.2;
+    opacity: var(--icons-low-opacity);
     transition: opacity 0.1s;
     pointer-events: all;
 }
@@ -303,7 +308,7 @@ button {
 .navItem_button:hover,
 .navItem_buttonSelected,
 .navItem_buttonSelected:hover {
-    opacity: 0.9;
+    opacity: var(--icons-main-opacity);
 }
 
 .navItem_icon {
@@ -356,7 +361,7 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text);
-    opacity: 0.6;
+    opacity: var(--text-main-opacity);
     overflow: hidden;
     pointer-events: none;
     user-select: none;
@@ -385,7 +390,7 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text);
-    opacity: 0.75;
+    opacity: var(--text-main-opacity);
     overflow: hidden;
 }
 
@@ -412,7 +417,7 @@ button {
     font-weight: bold;
     text-align: center;
     color: var(--text);
-    opacity: 0.6;
+    opacity: var(--text-main-opacity);
     pointer-events: none;
 }
 
@@ -426,7 +431,7 @@ button {
     height: 1.75rem;
     padding: 1rem;
     background: transparent;
-    opacity: 0.3;
+    opacity: var(--icons-low-opacity);
     pointer-events: all;
 }
 
@@ -469,7 +474,7 @@ button {
     font-weight: bold;
     text-align: center;
     color: var(--text);
-    opacity: 0.6;
+    opacity: var(--text-main-opacity);
     pointer-events: none;
 }
 
@@ -483,7 +488,7 @@ button {
     height: 1.75rem;
     padding: 1rem;
     background: transparent;
-    opacity: 0.3;
+    opacity: var(--icons-low-opacity);
     pointer-events: all;
 }
 
@@ -522,7 +527,7 @@ button {
     font-weight: bold;
     text-align: center;
     color: var(--text);
-    opacity: 0.6;
+    opacity: var(--text-main-opacity);
     pointer-events: none;
 }
 
@@ -536,7 +541,7 @@ button {
     height: 1.75rem;
     padding: 1rem;
     background: transparent;
-    opacity: 0.3;
+    opacity: var(--icons-low-opacity);
     pointer-events: all;
 }
 
@@ -575,7 +580,7 @@ button {
     font-weight: bold;
     text-align: center;
     color: var(--text);
-    opacity: 0.6;
+    opacity: var(--text-main-opacity);
     pointer-events: none;
 }
 
@@ -589,7 +594,7 @@ button {
     height: 1.75rem;
     padding: 1rem;
     background: transparent;
-    opacity: 0.3;
+    opacity: var(--icons-low-opacity);
     pointer-events: all;
 }
 
@@ -665,6 +670,7 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text);
+    opacity: var(--text-main-opacity);
     overflow: hidden;
     pointer-events: none;
     user-select: none;
@@ -700,7 +706,7 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text);
-    opacity: 0.5;
+    opacity: var(--text-low-opacity);
     overflow: hidden;
     pointer-events: none;
     user-select: none;
@@ -732,7 +738,7 @@ button {
     height: 100%;
     padding: 0.5rem;
     background: transparent;
-    opacity: 0.3;
+    opacity: var(--icons-low-opacity);
     pointer-events: all;
 }
 
@@ -790,7 +796,7 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text);
-    opacity: 0.6;
+    opacity: var(--text-main-opacity);
     overflow: hidden;
     pointer-events: none;
     user-select: none;
@@ -853,6 +859,7 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text);
+    opacity: var(--text-main-opacity);
     overflow: hidden;
     pointer-events: none;
     user-select: none;
@@ -951,7 +958,7 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text);
-    opacity: 0.75;
+    opacity: var(--text-main-opacity);
     overflow: hidden;
     pointer-events: none;
     user-select: none;
@@ -970,7 +977,7 @@ button {
     height: 3rem;
     padding: 0.5rem;
     background: transparent;
-    opacity: 0.3;
+    opacity: var(--icons-low-opacity);
     pointer-events: all;
     right: 4rem;
 }
@@ -1022,7 +1029,7 @@ button {
     font-weight: bold;
     text-align: center;
     color: var(--text);
-    opacity: 0.75;
+    opacity: var(--text-main-opacity);
 }
 
 /* ####################################### */

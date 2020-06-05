@@ -169,27 +169,40 @@ export default function App() {
     const [targetImageTop, setTargetImageTop] = useState(AlbumEmpty);
     const [targetImageBot, setTargetImageBot] = useState(AlbumEmpty);
     const [topImageIsTransparent, setTopImageIsTransparent] = useState(false);
+    const [showLoadImageTimeout, setShowLoadImageTimeout] = useState(null);
     const [showTopAgainTimeout, setShowTopAgainTimeout] = useState(null);
 
     useEffect(() => {
-        console.log(image);
-        console.log("");
         // Return if the image is empty
         if (image) {
-            if (showTopAgainTimeout) clearTimeout(showTopAgainTimeout);
+            // The top is hidden and does not have the new image yet -> Apply the changes directly & play transition
+            if (showTopAgainTimeout) {
+                clearTimeout(showTopAgainTimeout);
 
-            // The first timeout
-            setShowTopAgainTimeout(
+                // Set the image to the top layer also and show it
+                setTargetImageTop(targetImageBot);
+                setTopImageIsTransparent(false);
+            }
+
+            // The previous change has not taken effect yet -> cancel it and play the transition for the new image
+            if (showLoadImageTimeout) clearTimeout(showTopAgainTimeout);
+
+            // Wait for the image to be loaded
+            setShowLoadImageTimeout(
                 setTimeout(() => {
+                    // Set the image to the bottom layer and start the opacity transition in the top layer
                     setTargetImageBot(image);
                     setTopImageIsTransparent(true);
+
+                    // Wait for the transition to finish
                     setShowTopAgainTimeout(
                         setTimeout(() => {
+                            // Set the image to the top layer also and show it
                             setTargetImageTop(image);
                             setTopImageIsTransparent(false);
-                        }, 500)
+                        }, 350)
                     );
-                }, 500)
+                }, 350)
             );
         }
     }, [image]);
