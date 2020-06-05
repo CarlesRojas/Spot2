@@ -7,6 +7,7 @@ import SongList from "./SongList";
 import { useEventListener, print } from "../Utils";
 
 import SortIcon from "../resources/sort.svg";
+import SpotifyColor from "../resources/SpotifyColor.svg";
 
 const Songs = () => {
     // Get contexts
@@ -104,7 +105,7 @@ const Songs = () => {
             <div className="songs_listWrapper">
                 <SongList songList={library.songs} actions={actions} order={orderSettings.currentOrder} />
             </div>
-            <button className="songs_shuffle" onClick={() => handleShuffleClick()}>
+            <button className="songs_shuffle" onClick={() => handleShuffleClick()} style={{ backgroundImage: `url(${SpotifyColor})` }}>
                 SHUFFLE
             </button>
         </>

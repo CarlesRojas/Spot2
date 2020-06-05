@@ -198,7 +198,7 @@ export default class SpotifyContextProvider extends Component {
             () => {
                 const { deviceID } = this.state;
                 // Start playing on Spot
-                window.spotifyAPI.transferMyPlayback([deviceID], { play: true }).then(
+                window.spotifyAPI.transferMyPlayback([deviceID], { play: false }).then(
                     () => {
                         print("Now Playing on Spot");
                         this.props.playbackContext.handlePlaybackChange();

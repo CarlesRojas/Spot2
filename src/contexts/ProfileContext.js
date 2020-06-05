@@ -10,7 +10,12 @@ import { prettifyName, print } from "../Utils";
 import SongList from "../components/SongList";
 import HorizontalList from "../components/HorizontalList";
 
+// Icons
 import AddIcon from "../resources/add.svg";
+import ArtistEmpty from "../resources/ArtistEmpty.svg";
+import AlbumEmpty from "../resources/AlbumEmpty.svg";
+import PlaylistEmpty from "../resources/PlaylistEmpty.svg";
+import SpotifyColor from "../resources/SpotifyColor.svg";
 
 // Popup Context
 export const ProfileContext = createContext();
@@ -51,7 +56,7 @@ const ProfileContextProvider = (props) => {
     const [playlistState, setPlaylistState] = useState({
         id: "",
         name: "",
-        image: "https://i.imgur.com/06SzS3d.png",
+        image: PlaylistEmpty,
         songList: "",
         borderRadius: "0.5rem",
         background: null,
@@ -63,7 +68,7 @@ const ProfileContextProvider = (props) => {
     const [artistState, setArtistState] = useState({
         id: "",
         name: "",
-        image: "https://i.imgur.com/PgCafqK.png",
+        image: ArtistEmpty,
         songList: "",
         albumList: "",
         borderRadius: "50%",
@@ -76,7 +81,7 @@ const ProfileContextProvider = (props) => {
     const [albumState, setAlbumState] = useState({
         id: "",
         name: "",
-        image: "https://i.imgur.com/iajaWIN.png",
+        image: AlbumEmpty,
         songList: "",
         borderRadius: "0.5rem",
         background: null,
@@ -151,7 +156,7 @@ const ProfileContextProvider = (props) => {
                 image: playlistImage,
                 songList,
                 borderRadius: "0.5rem",
-                background: playlistImage === "https://i.imgur.com/06SzS3d.png" ? null : playlistImage,
+                background: playlistImage === PlaylistEmpty ? null : playlistImage,
                 selected: id === playlistID,
                 zindex: 510,
             });
@@ -174,7 +179,7 @@ const ProfileContextProvider = (props) => {
                 songList,
                 albumList,
                 borderRadius: "50%",
-                background: artistImage === "https://i.imgur.com/PgCafqK.png" ? null : artistImage,
+                background: artistImage === ArtistEmpty ? null : artistImage,
                 selected: id === artistID,
                 zindex: 520,
             });
@@ -186,7 +191,7 @@ const ProfileContextProvider = (props) => {
                 image: albumImage,
                 songList,
                 borderRadius: "0.5rem",
-                background: albumImage === "https://i.imgur.com/iajaWIN.png" ? null : albumImage,
+                background: albumImage === AlbumEmpty ? null : albumImage,
                 selected: id === albumID,
                 zindex: 530,
             });
@@ -258,28 +263,25 @@ const ProfileContextProvider = (props) => {
     // Get the color for the current playlist
     useEffect(() => {
         // Extract the color from the currently playing image
-        if (playlistState.image) {
-            let v = new Vibrant(playlistState.image);
-            v.getPalette((err, palette) => (!err ? setPlaylistImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
-        }
+        var targetImage = playlistState.image ? playlistState.image : PlaylistEmpty;
+        let v = new Vibrant(targetImage);
+        v.getPalette((err, palette) => (!err ? setPlaylistImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
     }, [playlistState.image]);
 
     // Get the color for the current artist
     useEffect(() => {
         // Extract the color from the currently playing image
-        if (artistState.image) {
-            let v = new Vibrant(artistState.image);
-            v.getPalette((err, palette) => (!err ? setArtistImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
-        }
+        var targetImage = artistState.image ? artistState.image : PlaylistEmpty;
+        let v = new Vibrant(targetImage);
+        v.getPalette((err, palette) => (!err ? setArtistImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
     }, [artistState.image]);
 
     // Get the color for the current album
     useEffect(() => {
         // Extract the color from the currently playing image
-        if (albumState.image) {
-            let v = new Vibrant(albumState.image);
-            v.getPalette((err, palette) => (!err ? setAlbumImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
-        }
+        var targetImage = albumState.image ? albumState.image : PlaylistEmpty;
+        let v = new Vibrant(targetImage);
+        v.getPalette((err, palette) => (!err ? setAlbumImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
     }, [albumState.image]);
 
     // Handle a click on the shuffle button
@@ -325,13 +327,13 @@ const ProfileContextProvider = (props) => {
     var albumSongListObject = <SongList songList={albumState.songList} actions={albumActions} order="album" />;
 
     // Playlist image gradient
-    var playlistImageGradient = `linear-gradient(to bottom, rgba(${playlistImageColor[0]}, ${playlistImageColor[1]}, ${playlistImageColor[2]}, 0.3) 0%, rgba(${playlistImageColor[0]}, ${playlistImageColor[1]}, ${playlistImageColor[2]}, 0) 5rem)`;
+    var playlistImageGradient = `linear-gradient(to bottom, rgba(${playlistImageColor[0]}, ${playlistImageColor[1]}, ${playlistImageColor[2]}, 0.2) 0%, rgba(${playlistImageColor[0]}, ${playlistImageColor[1]}, ${playlistImageColor[2]}, 0) 5rem)`;
 
     // Artist image gradient
-    var artistImageGradient = `linear-gradient(to bottom, rgba(${artistImageColor[0]}, ${artistImageColor[1]}, ${artistImageColor[2]}, 0.3) 0%, rgba(${artistImageColor[0]}, ${artistImageColor[1]}, ${artistImageColor[2]}, 0) 5rem)`;
+    var artistImageGradient = `linear-gradient(to bottom, rgba(${artistImageColor[0]}, ${artistImageColor[1]}, ${artistImageColor[2]}, 0.2) 0%, rgba(${artistImageColor[0]}, ${artistImageColor[1]}, ${artistImageColor[2]}, 0) 5rem)`;
 
     // Album image gradient
-    var albumImageGradient = `linear-gradient(to bottom, rgba(${albumImageColor[0]}, ${albumImageColor[1]}, ${albumImageColor[2]}, 0.3) 0%, rgba(${albumImageColor[0]}, ${albumImageColor[1]}, ${albumImageColor[2]}, 0) 5rem)`;
+    var albumImageGradient = `linear-gradient(to bottom, rgba(${albumImageColor[0]}, ${albumImageColor[1]}, ${albumImageColor[2]}, 0.2) 0%, rgba(${albumImageColor[0]}, ${albumImageColor[1]}, ${albumImageColor[2]}, 0) 5rem)`;
 
     return (
         <ProfileContext.Provider value={{ openProfile }}>
@@ -363,7 +365,11 @@ const ProfileContextProvider = (props) => {
                     {playlistSongListObject}
                 </div>
                 <div className="profile_controls" {...dragBindPlaylist()} style={{ zIndex: playlistState.zindex }}>
-                    <button className="profile_shuffle" onClick={() => handleShuffleClick("playlist")}>
+                    <button
+                        className="profile_shuffle"
+                        onClick={() => handleShuffleClick("playlist")}
+                        style={{ backgroundImage: `url(${SpotifyColor})` }}
+                    >
                         SHUFFLE
                     </button>
                     <button className="profile_back" {...tapBindPlaylist()}>
@@ -400,7 +406,11 @@ const ProfileContextProvider = (props) => {
                 </div>
                 {artistAlbumListObject}
                 <div className="profile_controls" {...dragBindArtist()} style={{ zIndex: artistState.zindex }}>
-                    <button className="profile_shuffle" onClick={() => handleShuffleClick("artist")}>
+                    <button
+                        className="profile_shuffle"
+                        onClick={() => handleShuffleClick("artist")}
+                        style={{ backgroundImage: `url(${SpotifyColor})` }}
+                    >
                         SHUFFLE
                     </button>
                     <button className="profile_back" {...tapBindArtist()}>
@@ -436,7 +446,11 @@ const ProfileContextProvider = (props) => {
                     {albumSongListObject}
                 </div>
                 <div className="profile_controls" {...dragBindAlbum()} style={{ zIndex: albumState.zindex }}>
-                    <button className="profile_shuffle" onClick={() => handleShuffleClick("album")}>
+                    <button
+                        className="profile_shuffle"
+                        onClick={() => handleShuffleClick("album")}
+                        style={{ backgroundImage: `url(${SpotifyColor})` }}
+                    >
                         SHUFFLE
                     </button>
                     <button className="profile_back" {...tapBindAlbum()}>

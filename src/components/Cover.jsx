@@ -3,7 +3,8 @@ import { PlaybackContext } from "../contexts/PlaybackContext";
 import { LibraryContext } from "../contexts/LibraryContext";
 import { prettifyName } from "../Utils";
 
-import AlbumEmpty from "../resources/albumEmpty.png";
+// Icons
+import AlbumEmpty from "../resources/AlbumEmpty.svg";
 
 const Cover = () => {
     // Get the context
@@ -35,7 +36,7 @@ const Cover = () => {
     };
 
     // Image filter for pause / play
-    var imageFilter = playing ? "none" : "grayscale(100%)";
+    var imageFilter = playing || albumCover === AlbumEmpty ? "none" : "grayscale(100%)";
     var animationPaused = playing ? "" : "paused";
 
     return (

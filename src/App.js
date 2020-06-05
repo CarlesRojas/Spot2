@@ -1,11 +1,14 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
-import { lerp, invlerp } from "./Utils";
+import { lerp, invlerp, print } from "./Utils";
 import { PlaybackContext } from "./contexts/PlaybackContext";
 
 import Cover from "./components/Cover";
 import Library from "./components/Library";
+
+// Icons
+import AlbumEmpty from "./resources/AlbumEmpty.png";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;
@@ -162,10 +165,43 @@ export default function App() {
         opacity: xy.to((x, y) => lerp(1, 0, invlerp(yBig, ySmall, y))),
     };
 
+    // Change the target image
+    const [targetImageTop, setTargetImageTop] = useState(AlbumEmpty);
+    const [targetImageBot, setTargetImageBot] = useState(AlbumEmpty);
+    const [topImageIsTransparent, setTopImageIsTransparent] = useState(false);
+    const [showTopAgainTimeout, setShowTopAgainTimeout] = useState(null);
+
+    useEffect(() => {
+        console.log(image);
+        console.log("");
+        // Return if the image is empty
+        if (image) {
+            if (showTopAgainTimeout) clearTimeout(showTopAgainTimeout);
+
+            // The first timeout
+            setShowTopAgainTimeout(
+                setTimeout(() => {
+                    setTargetImageBot(image);
+                    setTopImageIsTransparent(true);
+                    setShowTopAgainTimeout(
+                        setTimeout(() => {
+                            setTargetImageTop(image);
+                            setTopImageIsTransparent(false);
+                        }, 500)
+                    );
+                }, 500)
+            );
+        }
+    }, [image]);
+
     return (
         <>
             <div className="app_backgrounWrapper">
-                <div className="app_background" style={{ backgroundImage: "url(" + image + ")" }} />
+                <div className="app_background" style={{ backgroundImage: "url(" + targetImageBot + ")" }} />
+                <div
+                    className={"app_background" + (topImageIsTransparent ? " app_backgroundTransparent" : "")}
+                    style={{ backgroundImage: "url(" + targetImageTop + ")" }}
+                />
             </div>
             <a.div className="app_library" style={libraryStyle}>
                 {" "}

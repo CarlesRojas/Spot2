@@ -1,6 +1,11 @@
 import React, { createContext, useState, useEffect, useRef } from "react";
 import { print } from "../Utils";
 
+// Icons
+import ArtistEmpty from "../resources/ArtistEmpty.svg";
+import AlbumEmpty from "../resources/AlbumEmpty.svg";
+import PlaylistEmpty from "../resources/PlaylistEmpty.svg";
+
 // Library Context
 export const LibraryContext = createContext();
 
@@ -85,7 +90,7 @@ const LibraryContextProvider = (props) => {
             songInfo["artistID"] = artistID;
             songInfo["artistName"] = song.artists.length ? song.artists[0].name : "";
             songInfo["trackNumber"] = song.track_number;
-            songInfo["image"] = song.album.images.length ? song.album.images[0].url : "https://i.imgur.com/iajaWIN.png";
+            songInfo["image"] = song.album.images.length ? song.album.images[0].url : AlbumEmpty;
             window.library.songs[songID] = songInfo;
         }
 
@@ -102,7 +107,7 @@ const LibraryContextProvider = (props) => {
             albumInfo["albumID"] = albumID;
             albumInfo["dateAdded"] = dateAdded;
             albumInfo["name"] = song.album.name;
-            albumInfo["image"] = song.album.images.length ? song.album.images[0].url : "https://i.imgur.com/iajaWIN.png";
+            albumInfo["image"] = song.album.images.length ? song.album.images[0].url : AlbumEmpty;
             albumInfo["artistID"] = artistID;
             albumInfo["songs"] = {};
             albumInfo["songs"][songID] = null;
@@ -148,7 +153,7 @@ const LibraryContextProvider = (props) => {
                 for (let i = 0; i < response.artists.length; i++) {
                     var artistID = response.artists[i].id;
                     if (artistID in window.library.artists) {
-                        var url = response.artists[i]["images"].length ? response.artists[i]["images"][0].url : "https://i.imgur.com/PgCafqK.png";
+                        var url = response.artists[i]["images"].length ? response.artists[i]["images"][0].url : ArtistEmpty;
                         window.library.artists[artistID]["image"] = url;
                     }
                 }
@@ -203,7 +208,7 @@ const LibraryContextProvider = (props) => {
             playlistInfo["playlistID"] = playlistID;
             playlistInfo["dateAdded"] = dateAdded;
             playlistInfo["name"] = playlist.name;
-            playlistInfo["image"] = playlist.images.length ? playlist.images[0].url : "https://i.imgur.com/06SzS3d.png";
+            playlistInfo["image"] = playlist.images.length ? playlist.images[0].url : PlaylistEmpty;
             playlistInfo["songs"] = {};
             window.library.playlists[playlistID] = playlistInfo;
         }

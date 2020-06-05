@@ -17,6 +17,7 @@ import SongIcon from "../resources/song.svg";
 import AlbumIcon from "../resources/album.svg";
 import ArtistIcon from "../resources/artist.svg";
 import PlaylistIcon from "../resources/playlist.svg";
+import AlbumEmpty from "../resources/AlbumEmpty.png";
 
 // Size of the viewport
 const viewWidth = window.innerWidth;
@@ -63,13 +64,12 @@ const Library = () => {
 
     useEffect(() => {
         // Extract the color from the currently playing image
-        if (playback.image) {
-            let v = new Vibrant(playback.image);
-            v.getPalette((err, palette) => (!err ? setImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
-        }
+        var targetImage = playback.image ? playback.image : AlbumEmpty;
+        let v = new Vibrant(targetImage);
+        v.getPalette((err, palette) => (!err ? setImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
     }, [playback.image]);
 
-    var imageGradient = `linear-gradient(to bottom, rgba(${imageColor[0]}, ${imageColor[1]}, ${imageColor[2]}, 0.3) 0%, rgba(${imageColor[0]}, ${imageColor[1]}, ${imageColor[2]}, 0) 5rem)`;
+    var imageGradient = `linear-gradient(to bottom, rgba(${imageColor[0]}, ${imageColor[1]}, ${imageColor[2]}, 0.2) 0%, rgba(${imageColor[0]}, ${imageColor[1]}, ${imageColor[2]}, 0) 5rem)`;
 
     return (
         <>

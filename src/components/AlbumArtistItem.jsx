@@ -5,6 +5,10 @@ import { LibraryContext } from "../contexts/LibraryContext";
 
 import { prettifyName } from "../Utils";
 
+// Icons
+import ArtistEmpty from "../resources/ArtistEmpty.svg";
+import AlbumEmpty from "../resources/AlbumEmpty.svg";
+
 const AlbumArtistItem = (props) => {
     const { id, height, width, padding, name, image, selected, skeleton, type, noName } = props;
 
@@ -26,10 +30,10 @@ const AlbumArtistItem = (props) => {
 
     // Get type variables
     if (type === "album") {
-        var mockImage = "https://i.imgur.com/iajaWIN.png";
+        var mockImage = AlbumEmpty;
         var borderRadius = "0.5rem";
     } else {
-        mockImage = "https://i.imgur.com/PgCafqK.png";
+        mockImage = ArtistEmpty;
         borderRadius = "50%";
     }
 

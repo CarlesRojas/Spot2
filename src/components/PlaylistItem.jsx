@@ -5,6 +5,9 @@ import { LibraryContext } from "../contexts/LibraryContext";
 
 import { prettifyName } from "../Utils";
 
+// Icons
+import PlaylistEmpty from "../resources/PlaylistEmpty.svg";
+
 const PlaylistItem = (props) => {
     const { id, height, name, image, selected, skeleton } = props;
 
@@ -22,7 +25,7 @@ const PlaylistItem = (props) => {
     };
 
     const coverSize = "calc(" + height + "px - 1rem)";
-    const mockImage = "https://i.imgur.com/06SzS3d.png";
+    const mockImage = PlaylistEmpty;
 
     // Skeleton image
     if (skeleton) var cover = <div className="itemPlaylist_skeletonImage" style={{ height: coverSize, width: coverSize }} />;

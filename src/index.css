@@ -4,7 +4,7 @@
 
 :root {
     /* Background */
-    --background: rgb(30, 30, 30);
+    --background: rgb(9, 9, 9);
     --text: rgb(255, 255, 255);
     --scrollbar: rgba(150, 150, 150, 0.2);
     --green: rgb(29, 185, 84);
@@ -95,20 +95,29 @@ button {
     height: 100%;
     width: 100%;
     overflow: hidden;
+    background-color: rgb(255, 181, 181);
 }
 
 .app_background {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     display: block;
     overflow: hidden;
-    height: calc(104vh + 8rem);
-    width: calc(104vh + 8rem);
+    height: calc(100vh + 8rem);
+    width: calc(100vh + 8rem);
     margin-top: -4rem;
-    margin-left: calc(50vw - calc(52vh + 2rem));
-    filter: blur(2rem) brightness(10%);
+    margin-left: calc(50vw - calc(50vh + 4rem));
+    filter: blur(0.8rem) brightness(15%);
     background-position: center;
     background-size: auto 100%;
     background-color: var(--background);
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.app_backgroundTransparent {
+    opacity: 0;
 }
 
 .app_library {
@@ -198,7 +207,7 @@ button {
     width: calc(100% - 1rem);
     margin: 0.5rem;
     border-radius: 1rem;
-    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 50%);
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 50%);
     opacity: 1;
     pointer-events: none;
 }
@@ -284,9 +293,9 @@ button {
     outline: 0;
     border: none;
     height: 2.5rem;
-    padding: 0 2rem;
+    padding: 0.5rem 2rem 0 2rem;
     background: transparent;
-    opacity: 0.3;
+    opacity: 0.2;
     transition: opacity 0.1s;
     pointer-events: all;
 }
@@ -347,7 +356,7 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text);
-    opacity: 0.75;
+    opacity: 0.6;
     overflow: hidden;
     pointer-events: none;
     user-select: none;
@@ -403,7 +412,7 @@ button {
     font-weight: bold;
     text-align: center;
     color: var(--text);
-    opacity: 0.5;
+    opacity: 0.6;
     pointer-events: none;
 }
 
@@ -442,7 +451,8 @@ button {
     border-radius: 8.5rem;
     width: 60%;
     padding: 0.5rem 0;
-    background-color: var(--green);
+    background-repeat: no-repeat;
+    background-size: cover;
     font-size: 1rem;
     font-weight: bold;
     text-align: center;
@@ -459,7 +469,7 @@ button {
     font-weight: bold;
     text-align: center;
     color: var(--text);
-    opacity: 0.5;
+    opacity: 0.6;
     pointer-events: none;
 }
 
@@ -512,6 +522,7 @@ button {
     font-weight: bold;
     text-align: center;
     color: var(--text);
+    opacity: 0.6;
     pointer-events: none;
 }
 
@@ -564,6 +575,7 @@ button {
     font-weight: bold;
     text-align: center;
     color: var(--text);
+    opacity: 0.6;
     pointer-events: none;
 }
 
@@ -992,7 +1004,8 @@ button {
     border-radius: 8.5rem;
     width: 60%;
     padding: 0.5rem 0;
-    background-color: var(--green);
+    background-repeat: no-repeat;
+    background-size: cover;
     font-size: 1rem;
     font-weight: bold;
     text-align: center;
