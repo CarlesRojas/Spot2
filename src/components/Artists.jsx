@@ -109,15 +109,12 @@ const Artists = () => {
             clearTimeout(longPressTimeout.current);
             longPressTimeout.current = null;
 
-            setOrderSettings((prevOrderSettings) => {
-                // Show Popup
-                openPopup({
-                    type: "sortBy",
-                    name: "SORT BY",
-                    items: prevOrderSettings.items,
-                    callback: handleSortChange,
-                });
-                return prevOrderSettings;
+            // Show Popup
+            openPopup({
+                type: "sortBy",
+                name: "SORT BY",
+                items: orderSettings.items,
+                callback: handleSortChange,
             });
         }
     };

@@ -50,19 +50,20 @@ const SongItem = (props) => {
     const [draggingVertically, setDraggingVertically] = useState(false);
     const [{ x }, set] = useSpring(() => ({ x: normalX, config: { clamp: true } }));
 
-    // Funcion to hide the actions
-    const hideActions = (ignoreID) => {
-        if (ignoreID && ignoreID === id) return;
-        showName();
-    };
-
     // Efect to subscribe to events
     useEffect(() => {
+        // Funcion to hide the actions
+        const hideActions = (ignoreID) => {
+            if (ignoreID && ignoreID === id) return;
+            setCurrentX(normalX);
+            setPosition("normal");
+            set({ x: normalX });
+        };
         window.PubSub.sub("onCloseSongActions", hideActions);
         return () => {
             window.PubSub.unsub("onCloseSongActions", hideActions);
         };
-    }, [hideActions]);
+    }, [id, normalX, set]);
 
     // Function to show the name
     const showName = () => {
