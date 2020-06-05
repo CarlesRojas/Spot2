@@ -7,6 +7,7 @@ import SpotifyContextProvider from "./contexts/SpotifyContext";
 import LibraryContextProvider from "./contexts/LibraryContext";
 import PopupContextProvider from "./contexts/PopupContext";
 import ProfileContextProvider from "./contexts/ProfileContext";
+import QueueContextProvider from "./contexts/QueueContext";
 
 import App from "./App";
 
@@ -27,11 +28,13 @@ ReactDOM.render(
                 {(playbackContext) => {
                     return (
                         <SpotifyContextProvider playbackContext={playbackContext}>
-                            <ProfileContextProvider>
-                                <PopupContextProvider>
-                                    <App />
-                                </PopupContextProvider>
-                            </ProfileContextProvider>
+                            <QueueContextProvider>
+                                <ProfileContextProvider>
+                                    <PopupContextProvider>
+                                        <App />
+                                    </PopupContextProvider>
+                                </ProfileContextProvider>
+                            </QueueContextProvider>
                         </SpotifyContextProvider>
                     );
                 }}

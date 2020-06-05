@@ -1,6 +1,6 @@
 import React, { Component, createContext } from "react";
 import Script from "react-load-script";
-import { setCookie, getCookie, print, getHashParams, setSpotifyAccessToken } from "..//Utils";
+import { setCookie, getCookie, print, getHashParams, setSpotifyAccessToken } from "../Utils";
 import { LibraryContext } from "./LibraryContext";
 
 // Spotify Context
@@ -198,7 +198,7 @@ export default class SpotifyContextProvider extends Component {
             () => {
                 const { deviceID } = this.state;
                 // Start playing on Spot
-                window.spotifyAPI.transferMyPlayback([deviceID], { play: false }).then(
+                window.spotifyAPI.transferMyPlayback([deviceID], { play: true }).then(
                     () => {
                         print("Now Playing on Spot");
                         this.props.playbackContext.handlePlaybackChange();

@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useReducer } from "react";
+import { print } from "../Utils";
 
 // Playback Context
 export const PlaybackContext = createContext();
@@ -83,6 +84,9 @@ const PlaybackContextProvider = (props) => {
 
                         // Set the progress state
                         updateProgressState({ type: "set", newProgressState });
+
+                        // Set the media controls outide the browser
+                        setMediaSession(response);
                     }
                 },
                 (err) => {
@@ -113,6 +117,46 @@ const PlaybackContextProvider = (props) => {
             );
         }, 200);
     };
+
+    // Sets the media controls outside the app Android
+    const setMediaSession = (response) => {
+        // CARLES DEBUG
+
+        // Get images
+        if ("item" in response && "album" in response.item && "images" in response.item.album && response.item.album.images.length > 0)
+            var artwork = response.item.album.images.map(({ height, width, url }) => {
+                return {
+                    src: url,
+                    type: "image/png",
+                    sizes: `${width}x${height}`,
+                };
+            });
+        else artwork = null;
+
+        if ("mediaSession" in navigator) {
+            navigator.mediaSession.metadata = new window.MediaMetadata({
+                title: response.item.name,
+                artist: response.item.artists.length > 0 ? response.item.artists[0].name : null,
+                album: response.item.album.name,
+                artwork,
+            });
+
+            navigator.mediaSession.setActionHandler("play", function () {
+                print("Play", "cyan");
+            });
+            navigator.mediaSession.setActionHandler("pause", function () {
+                print("Pause", "cyan");
+            });
+            navigator.mediaSession.setActionHandler("previoustrack", function () {
+                print("Prev", "cyan");
+            });
+            navigator.mediaSession.setActionHandler("nexttrack", function () {
+                print("Next", "cyan");
+            });
+        }
+    };
+
+    //
 
     return <PlaybackContext.Provider value={{ playback, handlePlaybackChange, progressState }}>{props.children}</PlaybackContext.Provider>;
 };

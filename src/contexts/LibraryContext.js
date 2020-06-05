@@ -17,8 +17,10 @@ const LibraryContextProvider = (props) => {
         playlists: {},
     });
 
-    // Component did update
+    // Queue reference
+    const [queue, setQueue] = useState("");
 
+    // Component did update
     const mounted = useRef();
     useEffect(() => {
         // If not logged in, go to spotify login page
@@ -212,6 +214,9 @@ const LibraryContextProvider = (props) => {
             playlistInfo["songs"] = {};
             window.library.playlists[playlistID] = playlistInfo;
         }
+
+        // Set as the queue
+        if (playlist.name === "Spot Queue") setQueue(playlistID);
     };
 
     // Get the songs in each playlist

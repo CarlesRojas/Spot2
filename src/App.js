@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
-import { lerp, invlerp, print } from "./Utils";
+import { lerp, invlerp } from "./Utils";
 import { PlaybackContext } from "./contexts/PlaybackContext";
 
 import Cover from "./components/Cover";
