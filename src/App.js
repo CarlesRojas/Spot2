@@ -1,8 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
-import { lerp, invlerp } from "./Utils";
+import { lerp, invlerp, print } from "./Utils";
+
+import { QueueContext } from "./contexts/QueueContext";
 import { PlaybackContext } from "./contexts/PlaybackContext";
+import { LibraryContext } from "./contexts/LibraryContext";
 
 import Cover from "./components/Cover";
 import Library from "./components/Library";
@@ -24,7 +27,9 @@ const ySmall = viewHeight - heightSmall;
 
 export default function App() {
     // Get context
+    const { queueSongList } = useContext(QueueContext);
     const { playback } = useContext(PlaybackContext);
+    const { library } = useContext(LibraryContext);
     const { image } = playback;
 
     // State to hold weather we are dragging vertically or horizontally
@@ -75,6 +80,16 @@ export default function App() {
         // Move the one on the right to the left
         let indexOfMax = leftPositions.indexOf(Math.max(...leftPositions));
         setLeftPositions(leftPositions.map((x, i) => (i === indexOfMax ? x - viewWidth * 3 : x)));
+        setCoversState((prevValue) => {
+            switch (prevValue) {
+                case "prev":
+                    return "next";
+                case "curr":
+                    return "prev";
+                case "next":
+                    return "curr";
+            }
+        });
     };
 
     // Function to cancel the Next opening
@@ -91,6 +106,16 @@ export default function App() {
         // Move the one on the left to the right
         let indexOfMin = leftPositions.indexOf(Math.min(...leftPositions));
         setLeftPositions(leftPositions.map((x, i) => (i === indexOfMin ? x + viewWidth * 3 : x)));
+        setCoversState((prevValue) => {
+            switch (prevValue) {
+                case "prev":
+                    return "curr";
+                case "curr":
+                    return "next";
+                case "next":
+                    return "prev";
+            }
+        });
     };
 
     // Drag Hook
@@ -207,6 +232,70 @@ export default function App() {
         }
     }, [image]);
 
+    // State of the covers "prev" "curr" "next" (the name of the state specifies witch cover is in the center)
+    const [coversState, setCoversState] = useState("curr");
+    const [coversStateValues, setCoversStateValues] = useState({ prev: "prev", curr: "curr", next: "next" });
+    const [coverSongID, setCoverSongID] = useState({ prev: "", curr: "", next: "" });
+
+    // Change the state of the covers
+    useEffect(() => {
+        switch (coversState) {
+            case "prev":
+                setCoversStateValues({ prev: "next", curr: "prev", next: "curr" });
+                break;
+            case "curr":
+                setCoversStateValues({ prev: "prev", curr: "curr", next: "next" });
+                break;
+            case "next":
+                setCoversStateValues({ prev: "curr", curr: "next", next: "prev" });
+                break;
+        }
+    }, [coversState]);
+
+    // Set the covers when the current song changes
+    useEffect(() => {
+        const { songID, exists, repeat } = playback;
+
+        // Return if the playback does not exist
+        if (!exists) return;
+
+        print("PLAYBACK", "red");
+
+        // Get the index of the current, previous and next songs
+        var currentIndex = queueSongList.indexOf(songID);
+        var prevIndex = currentIndex > 0 ? currentIndex - 1 : repeat ? queueSongList.length - 1 : "";
+        var nextIndex = currentIndex < queueSongList.length - 1 ? currentIndex + 1 : repeat ? 0 : "";
+
+        if ("songs" in library && queueSongList[prevIndex] in library.songs) {
+            //print("");
+            //print("Prev: " + library.songs[queueSongList[prevIndex]].name);
+            //print("Curr: " + library.songs[queueSongList[currentIndex]].name);
+            //print("Next: " + library.songs[queueSongList[nextIndex]].name);
+            //print("");
+        }
+
+        switch (coversState) {
+            case "prev":
+                setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
+                break;
+            case "curr":
+                setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
+                break;
+            case "next":
+                setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
+                break;
+        }
+
+        // Check if we need to go to next or previous
+        if (songID === coverSongID[coversStateValues["next"]]) {
+            print("GO NEXT   PlaybackNewSong: " + songID + " NextSong:" + coverSongID[coversStateValues["next"]]);
+            showNext();
+        } else if (songID === coverSongID[coversStateValues["prev"]]) {
+            print("GO NEXT   PlaybackNewSong: " + songID + " NextSong:" + coverSongID[coversStateValues["prev"]]);
+            showPrev();
+        }
+    }, [queueSongList, playback]);
+
     return (
         <>
             <div className="app_backgrounWrapper">
@@ -217,14 +306,17 @@ export default function App() {
                 />
             </div>
             <a.div className="app_library" style={libraryStyle}>
-                {" "}
-                <Library></Library>{" "}
+                <Library></Library>
             </a.div>
-            <a.div className="app_cover_prev" {...bind()} style={prevStyle}></a.div>
+            <a.div className="app_cover_prev" {...bind()} style={prevStyle}>
+                <Cover coverSongID={coverSongID.prev}></Cover>
+            </a.div>
             <a.div className="app_cover_curr" {...bind()} style={currStyle}>
-                <Cover></Cover>
+                <Cover coverSongID={coverSongID.curr}></Cover>
             </a.div>
-            <a.div className="app_cover_next" {...bind()} style={nextStyle}></a.div>
+            <a.div className="app_cover_next" {...bind()} style={nextStyle}>
+                <Cover coverSongID={coverSongID.next}></Cover>
+            </a.div>
             <a.div className="app_queue" style={queueStyle}></a.div>
         </>
     );

@@ -140,7 +140,6 @@ button {
     width: 100vw;
     top: 0;
     touch-action: none;
-    background-color: rgb(255, 167, 167);
 }
 .app_cover_curr {
     z-index: 100;
@@ -155,7 +154,6 @@ button {
     width: 100vw;
     top: 0;
     touch-action: none;
-    background-color: rgb(165, 189, 255);
 }
 
 .app_queue {

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useReducer } from "react";
+import React, { createContext, useState, useEffect, useReducer, useRef } from "react";
 import { print } from "../Utils";
 
 // Playback Context
@@ -39,6 +39,20 @@ const PlaybackContextProvider = (props) => {
         image: null,
     });
 
+    // Snapshot of the last playback known
+    const lastKnownPlayback = useRef({
+        playing: false,
+        repeat: false,
+        repeatOne: false,
+        shuffle: false,
+        songID: null,
+        albumID: null,
+        artistID: null,
+        playlistID: null,
+        exists: false,
+        image: null,
+    });
+
     const [progressState, updateProgressState] = useReducer(ProgressStateReducer, { playing: false, duration: 0, progress: 0, percentage: 0 });
 
     // Set an interval to update the song progress
@@ -51,6 +65,22 @@ const PlaybackContextProvider = (props) => {
         // Clean interval on component unmount
         return () => clearInterval(progressInterval);
     }, []);
+
+    // Check if the playback has changed
+    const playbackHasChanged = (newPlayback) => {
+        return (
+            lastKnownPlayback.current.playing !== newPlayback.playing ||
+            lastKnownPlayback.current.repeat !== newPlayback.repeat ||
+            lastKnownPlayback.current.repeatOne !== newPlayback.repeatOne ||
+            lastKnownPlayback.current.shuffle !== newPlayback.shuffle ||
+            lastKnownPlayback.current.songID !== newPlayback.songID ||
+            lastKnownPlayback.current.albumID !== newPlayback.albumID ||
+            lastKnownPlayback.current.artistID !== newPlayback.artistID ||
+            lastKnownPlayback.current.playlistID !== newPlayback.playlistID ||
+            lastKnownPlayback.current.exists !== newPlayback.exists ||
+            lastKnownPlayback.current.image !== newPlayback.image
+        );
+    };
 
     // Obtains the current playback state for the user
     const handlePlaybackChange = () => {
@@ -81,7 +111,10 @@ const PlaybackContextProvider = (props) => {
                         };
 
                         // Set the playback
-                        setPlayback(newPlayback);
+                        if (playbackHasChanged(newPlayback)) {
+                            lastKnownPlayback.current = newPlayback;
+                            setPlayback(newPlayback);
+                        }
 
                         // Set the progress state
                         updateProgressState({ type: "set", newProgressState });
@@ -110,6 +143,7 @@ const PlaybackContextProvider = (props) => {
                     var newProgressState = { playing: false, duration: 0, progress: 0, percentage: 0 };
 
                     // Set the playback
+                    lastKnownPlayback.current = newPlayback;
                     setPlayback(newPlayback);
 
                     // Set the progress state

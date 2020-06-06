@@ -9,12 +9,15 @@ import { PlaybackContext } from "../contexts/PlaybackContext";
 // Icons
 import AlbumEmpty from "../resources/AlbumEmpty.svg";
 
-const Cover = () => {
+const Cover = (props) => {
     // Get the context
     const { play, pause } = useContext(SpotifyContext);
     const { playback } = useContext(PlaybackContext);
     const { library } = useContext(LibraryContext);
-    const { playing, songID, exists } = playback;
+    const { playing, exists } = playback;
+
+    // Get info from props
+    const { coverSongID } = props;
 
     // Default values
     var songNamePretty = "";
@@ -22,8 +25,8 @@ const Cover = () => {
     var albumCover = AlbumEmpty;
 
     // Get song name and artist
-    if (exists && songID && library.songs && songID in library.songs) {
-        const { name, artistID, image } = library.songs[songID];
+    if (exists && coverSongID && library.songs && coverSongID in library.songs) {
+        const { name, artistID, image } = library.songs[coverSongID];
         const artistName = artistID in library.artists ? library.artists[artistID].name : "";
 
         // Treated information
@@ -31,7 +34,7 @@ const Cover = () => {
         artistNamePretty = prettifyName(artistName);
         albumCover = image;
     } else {
-        // CARLES api call to spotify to get the info for this songID
+        // CARLES api call to spotify to get the info for this coverSongID
     }
 
     // Called when the cover is clicked by the user

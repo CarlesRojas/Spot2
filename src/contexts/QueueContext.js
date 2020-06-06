@@ -138,6 +138,7 @@ const QueueContextProvider = (props) => {
     return (
         <QueueContext.Provider
             value={{
+                queueSongList,
                 addSongsToQueue,
                 removeSongFromQueue,
                 playSongInContext,
