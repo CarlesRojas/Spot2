@@ -62,7 +62,7 @@ const Playlist = () => {
     // Update order when the library or the order changes
     useEffect(() => {
         setListOrder(getListOrder(library.playlists, orderSettings.currentOrder));
-    }, [library.playlists, orderSettings.currentOrder]);
+    }, [library, orderSettings.currentOrder]);
 
     // Handle when the list is scrolled
     const handleScroll = (event) => {

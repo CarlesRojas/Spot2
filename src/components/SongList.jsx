@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
+
+import { QueueContext } from "../contexts/QueueContext";
 import { PlaybackContext } from "../contexts/PlaybackContext";
+
 import SongItem from "./SongItem";
+import { print } from "../Utils";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;
@@ -52,6 +56,7 @@ const getListOrder = (list, order) => {
 
 const SongList = (props) => {
     // Get context
+    const { playSongInContext } = useContext(QueueContext);
     const { playback } = useContext(PlaybackContext);
 
     // Get props
@@ -82,6 +87,15 @@ const SongList = (props) => {
     };
     */
 
+    // Handle the click on this item
+    const onSongClicked = (id, skeleton) => {
+        if (skeleton) return;
+        print("SONG SELECTED: " + id, "cyan");
+        console.log(listOrder);
+
+        playSongInContext(listOrder, "contextTest", "songs", listOrder.indexOf(id)); // CARLES add contextID
+    };
+
     // Create the component from an element in the array
     const createItem = (elem, skeleton) => {
         const { id, name, album, artist, albumID, artistID } = elem;
@@ -99,6 +113,7 @@ const SongList = (props) => {
                 selected={id === playback["songID"]}
                 skeleton={skeleton}
                 actions={actions}
+                onSongClicked={onSongClicked}
                 /*onDelete={() => this.handleDeleteSong(id)} CARLES DELETE SONG*/
             />
         );

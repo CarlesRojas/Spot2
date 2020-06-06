@@ -75,7 +75,7 @@ const Songs = () => {
     // Handle a click on the shuffle button
     const handleShuffleClick = () => {
         // CARLES Shuffle
-        print("Shuffle Songs", "cyan");
+        console.log("Shuffle Songs", "cyan");
     };
 
     // Add event listener using our hook

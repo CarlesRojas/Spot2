@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
 
-import { SpotifyContext } from "../contexts/SpotifyContext";
 import { LibraryContext } from "../contexts/LibraryContext";
 import { ProfileContext } from "../contexts/ProfileContext";
 
@@ -23,10 +22,9 @@ const scrollBarWidth = 5; // 5px
 const listMargin = 1.5 * 16; // 1.5rem
 
 const SongItem = (props) => {
-    const { height, id, name, album, artist, albumID, artistID, selected, skeleton, actions } = props;
+    const { height, id, name, album, artist, albumID, artistID, selected, skeleton, actions, onSongClicked } = props;
 
     // Get contexts
-    const { play, pause } = useContext(SpotifyContext);
     const { openProfile } = useContext(ProfileContext);
     const { library } = useContext(LibraryContext);
 
@@ -147,12 +145,6 @@ const SongItem = (props) => {
         { initial: () => [currentX, 0], filterTaps: true, rubberband: true }
     );
 
-    // Handle the click on this item
-    const handleClick = (id, skeleton) => {
-        if (!skeleton) print("SONG SELECTED: " + id, "cyan");
-        //window.PubSub.emit("onSongSelected", { id }); CARLES
-    };
-
     // Handle action click
     const handleActionClick = (importantID, action) => {
         /*
@@ -166,12 +158,12 @@ const SongItem = (props) => {
         switch (action) {
             // Add item to the playlist or queue CARLES
             case "add":
-                print("ADD", "cyan");
+                console.log("ADD", "cyan");
                 break;
 
             // Remove item from the playlist or queue CARLES
             case "remove":
-                print("REMOVE", "cyan");
+                console.log("REMOVE", "cyan");
                 break;
 
             // Return if  the id is not in the user artists -> Otherwise open the artist profile
@@ -250,7 +242,7 @@ const SongItem = (props) => {
         <a.div className="songItem_wrapper" {...dragBind()} style={{ x, width: width + "px" }}>
             <button
                 className="songItem_button"
-                onClick={() => handleClick(id, skeleton)}
+                onClick={() => onSongClicked(id, skeleton)}
                 style={{ height: height + "px", width: nameWidth, left: nameLeftOffset + "px" }}
             >
                 <p className={"songItem_name " + (skeleton ? "songItem_skeletonName" : "") + (selected ? " songItem_selectedName" : "")}>

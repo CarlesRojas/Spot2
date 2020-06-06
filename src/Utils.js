@@ -52,6 +52,16 @@ export const getCookie = (name) => {
     return "";
 };
 
+// Set a variable in local storage
+export const setLocalStorage = (name, value) => {
+    window.localStorage.setItem(name, value);
+};
+
+// Get a variable in local storage
+export const getLocalStorage = (name) => {
+    return window.localStorage.getItem(name);
+};
+
 // #######################################
 //      HASH PARAMS
 // #######################################
@@ -99,6 +109,7 @@ export const print = (object, color) => {
 //      EVENT LISTENER HOOK
 // #######################################
 
+// Use event listeners as a hook
 export const useEventListener = (eventName, handler, element = window) => {
     // Create a ref that stores handler
     const savedHandler = useRef();
@@ -124,4 +135,20 @@ export const useEventListener = (eventName, handler, element = window) => {
             element.removeEventListener(eventName, eventListener);
         };
     }, [eventName, element]);
+};
+
+// #######################################
+//      CHECK IF 2 ARRAYS ARE IDENTICAL
+// #######################################
+
+// Return if 2 arrays have the same elements in the same order
+export const areArraysIdentical = (a, b) => {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+
+    for (var i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
 };

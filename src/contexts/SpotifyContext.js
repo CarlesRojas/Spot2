@@ -1,8 +1,9 @@
 import React, { Component, createContext } from "react";
 import Script from "react-load-script";
 import { setCookie, getCookie, print, getHashParams, setSpotifyAccessToken } from "../Utils";
+import { getQueueImageInBase64 } from "../resources/SpotQueueImage";
 
-import { PlaybackContext } from "./PlaybackContext";
+import { LibraryContext } from "./LibraryContext";
 
 // Spotify Context
 export const SpotifyContext = createContext();
@@ -12,7 +13,7 @@ const refreshTokenTime = 30 * 60 * 1000;
 
 export default class SpotifyContextProvider extends Component {
     // Get the library context
-    static contextType = PlaybackContext;
+    static contextType = LibraryContext;
 
     constructor(props) {
         super(props);
@@ -38,6 +39,7 @@ export default class SpotifyContextProvider extends Component {
 
             // Refresh token timeout
             refreshTokenTimeout: null,
+            userID: null,
         };
 
         // Set the access token in the Spotify API
@@ -184,13 +186,34 @@ export default class SpotifyContextProvider extends Component {
     //       SPOTIFY API
     //##############################################
 
+    // Get user id
+    getUserID = () => {
+        return new Promise((resolve, reject) => {
+            window.spotifyAPI.getMe({}).then(
+                (response) => {
+                    this.setState((prevState) => {
+                        return {
+                            ...prevState,
+                            userID: response.id,
+                        };
+                    }, resolve(response.id));
+                },
+                (err) => {
+                    if (err.status === 401) window.location.assign(window.serverLocation + "login");
+                    else console.error(err);
+                    reject();
+                }
+            );
+        });
+    };
+
     // Play Song
     play = (contextID = null, type = null, position = 0) => {
         var playOptions = {};
         if (contextID)
             playOptions = {
-                contextURI: `spotify:${type}:${contextID}`,
-                offset: position,
+                context_uri: `spotify:${type}:${contextID}`,
+                offset: { position },
             };
 
         return new Promise((resolve, reject) => {
@@ -223,7 +246,7 @@ export default class SpotifyContextProvider extends Component {
         });
     };
 
-    // Previous Song
+    // Previous Song CARLES
     prev = () => {};
 
     // Next Song
@@ -239,14 +262,67 @@ export default class SpotifyContextProvider extends Component {
     setShuffle = (shuffleType) => {};
 
     // Create a playlist
-    createPlaylist = () => {};
+    createPlaylist = (playlistName) => {
+        const { userID } = this.state;
+
+        // Create playlsit
+        return new Promise((resolve, reject) => {
+            window.spotifyAPI.createPlaylist(userID, { name: playlistName, public: false, description: "A playlist used by Spot as a queue" }).then(
+                (response) => {
+                    // Set the image
+                    window.spotifyAPI.uploadCustomPlaylistCoverImage(response.id, getQueueImageInBase64()).then(
+                        () => {
+                            this.context.addNewPlaylistToLibrary(response).then((id) => resolve(id));
+                        },
+                        (err) => {
+                            if (err.status === 401) window.location.assign(window.serverLocation + "login");
+                            else console.error(err);
+                            reject();
+                        }
+                    );
+                },
+                (err) => {
+                    if (err.status === 401) window.location.assign(window.serverLocation + "login");
+                    else console.error(err);
+                    reject();
+                }
+            );
+        });
+    };
 
     // Remove songs from a playlist
-    removeSongsFromPlaylist = (playlistID, songIDs) => {};
+    removeSongsFromPlaylist = (playlistID, songIDs) => {
+        return new Promise(async (resolve) => {
+            const trackURIs = songIDs.map((id) => `spotify:track:${id}`);
+
+            var latestSnapshotID = null;
+            for (let i = 0; i < trackURIs.length; i += 100) {
+                const currentTrackURIs = trackURIs.slice(i, i + 100 < trackURIs.length ? i + 100 : trackURIs.length);
+                latestSnapshotID = await window.spotifyAPI.removeTracksFromPlaylist(playlistID, currentTrackURIs);
+            }
+
+            this.context.onPlaylistSongsChange(playlistID, latestSnapshotID).then(resolve);
+        });
+    };
 
     // Add songs to a playlist
-    addSongsToPlaylist = (playlistID, songIDs) => {};
+    addSongsToPlaylist = (playlistID, songIDs, targetPosition = null) => {
+        const options = targetPosition ? { position: targetPosition } : {};
 
+        return new Promise(async (resolve) => {
+            const trackURIs = songIDs.map((id) => `spotify:track:${id}`);
+
+            var latestSnapshotID = null;
+            for (let i = 0; i < trackURIs.length; i += 100) {
+                const currentTrackURIs = trackURIs.slice(i, i + 100 < trackURIs.length ? i + 100 : trackURIs.length);
+                latestSnapshotID = await window.spotifyAPI.addTracksToPlaylist(playlistID, currentTrackURIs, options);
+            }
+
+            this.context.onPlaylistSongsChange(playlistID, latestSnapshotID).then(resolve);
+        });
+    };
+
+    // Renders this component
     render() {
         return (
             <>
@@ -256,6 +332,9 @@ export default class SpotifyContextProvider extends Component {
                         ...this.state,
                         play: this.play,
                         pause: this.pause,
+                        createPlaylist: this.createPlaylist,
+                        addSongsToPlaylist: this.addSongsToPlaylist,
+                        removeSongsFromPlaylist: this.removeSongsFromPlaylist,
                     }}
                 >
                     {this.props.children}
@@ -278,8 +357,11 @@ export default class SpotifyContextProvider extends Component {
 
             // Refresh the token
             this.refreshSpotifyToken().then(() => {
-                // Signal that spotify is ready -> Load library
-                window.PubSub.emit("onSpotifyReady");
+                // Get the library
+                this.context.getUserLibrary();
+
+                // Get the user id
+                this.getUserID();
             });
         }
     }

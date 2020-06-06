@@ -17,23 +17,11 @@ const LibraryContextProvider = (props) => {
         playlists: {},
     });
 
-    // Efect to subscribe to events
-    useEffect(() => {
-        window.PubSub.sub("onSpotifyReady", getUserLibrary);
-        return () => {
-            window.PubSub.unsub("onSpotifyReady", getUserLibrary);
-        };
-    }, []);
-
     // Component did update
     const mounted = useRef();
     useEffect(() => {
         if (!mounted.current) mounted.current = true;
-        else {
-            print("LIBRARY LOADED");
-            print(library);
-            deleteTempLibrary();
-        }
+        else deleteTempLibrary();
     }, [library]);
 
     // #######################################
@@ -180,14 +168,14 @@ const LibraryContextProvider = (props) => {
             (response) => {
                 const { items, next } = response;
 
-                for (let i = 0; i < items.length; i++) parseAndSavePlaylists(items[i], i);
+                for (let i = 0; i < items.length; i++) parseAndSavePlaylists(items[i], i, window.library);
 
                 if (next) getUserPlaylists((offset += limit));
                 else {
                     // Get the songs in each playlist
                     var playlists = Object.keys(window.library.playlists);
                     let promises = [];
-                    for (var i = 0; i < playlists.length; ++i) promises.push(getPlaylistSongs(playlists[i], 0));
+                    for (var i = 0; i < playlists.length; ++i) promises.push(getPlaylistSongs(playlists[i], 0, window.library));
 
                     // Wait until all the playlist songs are fetched
                     Promise.all(promises).then(() => {
@@ -204,24 +192,25 @@ const LibraryContextProvider = (props) => {
     };
 
     // Parse and save playlists to the library
-    const parseAndSavePlaylists = (playlist, order) => {
+    const parseAndSavePlaylists = (playlist, order, targetLibraryObject) => {
         var playlistID = playlist.id;
         var dateAdded = order;
 
         // Add playlist
-        if (!(playlistID in window.library.playlists)) {
+        if (!(playlistID in targetLibraryObject.playlists)) {
             var playlistInfo = {};
             playlistInfo["playlistID"] = playlistID;
             playlistInfo["dateAdded"] = dateAdded;
+            playlistInfo["snapshotID"] = playlist.snapshot_id;
             playlistInfo["name"] = playlist.name;
             playlistInfo["image"] = playlist.images.length ? playlist.images[0].url : PlaylistEmpty;
             playlistInfo["songs"] = {};
-            window.library.playlists[playlistID] = playlistInfo;
+            targetLibraryObject.playlists[playlistID] = playlistInfo;
         }
     };
 
     // Get the songs in each playlist
-    const getPlaylistSongs = (playlist, offset) => {
+    const getPlaylistSongs = (playlist, offset, targetLibraryObject) => {
         return new Promise((resolve, reject) => {
             var limit = 100;
             window.spotifyAPI.getPlaylistTracks(playlist, { fields: "items(track(id))", offset: offset, limit: limit }).then(
@@ -231,12 +220,12 @@ const LibraryContextProvider = (props) => {
                     for (var i = 0; i < items.length; ++i) {
                         if (!items[i].track) continue;
                         var songID = items[i].track.id;
-                        if (songID in window.library.songs && playlist in window.library.playlists) {
-                            window.library.playlists[playlist].songs[songID] = null;
+                        if (songID in targetLibraryObject.songs && playlist in targetLibraryObject.playlists) {
+                            targetLibraryObject.playlists[playlist].songs[songID] = null;
                         }
                     }
 
-                    if (next) getPlaylistSongs(playlist, (offset += limit));
+                    if (next) getPlaylistSongs(playlist, (offset += limit), window.library);
                     else resolve();
                 },
                 (err) => {
@@ -255,7 +244,50 @@ const LibraryContextProvider = (props) => {
         }
     };
 
-    return <LibraryContext.Provider value={{ library, getUserLibrary }}>{props.children}</LibraryContext.Provider>;
+    // Add new playlist to library
+    const addNewPlaylistToLibrary = (playlist) => {
+        return new Promise((resolve) => {
+            var playlistID = playlist.id;
+            var dateAdded = -1;
+
+            if (!(playlistID in library.playlists)) {
+                var libraryCopy = { ...library };
+
+                parseAndSavePlaylists(playlist, dateAdded, libraryCopy);
+                setLibrary(libraryCopy);
+            }
+            resolve(playlistID);
+        });
+    };
+
+    // Add or remove songs from a playlist
+    const onPlaylistSongsChange = (playlistID, latestSnapshotID) => {
+        return new Promise((resolve) => {
+            if (playlistID in library.playlists) {
+                var libraryCopy = { ...library };
+                libraryCopy.playlists[playlistID].songs = {};
+
+                getPlaylistSongs(playlistID, 0, libraryCopy);
+                if (latestSnapshotID) libraryCopy.playlists[playlistID].snapshotID = latestSnapshotID;
+
+                setLibrary(libraryCopy);
+            }
+            resolve();
+        });
+    };
+
+    return (
+        <LibraryContext.Provider
+            value={{
+                library,
+                getUserLibrary,
+                addNewPlaylistToLibrary,
+                onPlaylistSongsChange,
+            }}
+        >
+            {props.children}
+        </LibraryContext.Provider>
+    );
 };
 
 export default LibraryContextProvider;

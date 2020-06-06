@@ -22,9 +22,9 @@ document.oncontextmenu = () => false;
 
 // Render app
 ReactDOM.render(
-    <SpotifyContextProvider>
+    <LibraryContextProvider>
         <PlaybackContextProvider>
-            <LibraryContextProvider>
+            <SpotifyContextProvider>
                 <QueueContextProvider>
                     <ProfileContextProvider>
                         <PopupContextProvider>
@@ -32,8 +32,8 @@ ReactDOM.render(
                         </PopupContextProvider>
                     </ProfileContextProvider>
                 </QueueContextProvider>
-            </LibraryContextProvider>
+            </SpotifyContextProvider>
         </PlaybackContextProvider>
-    </SpotifyContextProvider>,
+    </LibraryContextProvider>,
     document.getElementById("root")
 );
