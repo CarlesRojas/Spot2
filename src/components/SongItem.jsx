@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
 
+import { SpotifyContext } from "../contexts/SpotifyContext";
 import { LibraryContext } from "../contexts/LibraryContext";
 import { ProfileContext } from "../contexts/ProfileContext";
 
@@ -25,6 +26,7 @@ const SongItem = (props) => {
     const { height, id, name, album, artist, albumID, artistID, selected, skeleton, actions } = props;
 
     // Get contexts
+    const { play, pause } = useContext(SpotifyContext);
     const { openProfile } = useContext(ProfileContext);
     const { library } = useContext(LibraryContext);
 

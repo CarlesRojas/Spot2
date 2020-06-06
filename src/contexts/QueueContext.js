@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 
+import { SpotifyContext } from "../contexts/SpotifyContext";
 import { LibraryContext } from "../contexts/LibraryContext";
 
 // Queue Context
@@ -7,6 +8,7 @@ export const QueueContext = createContext();
 
 const QueueContextProvider = (props) => {
     // Get contexts
+    const { play } = useContext(SpotifyContext);
     const { library } = useContext(LibraryContext);
 
     // Queue ID
@@ -16,7 +18,7 @@ const QueueContextProvider = (props) => {
             for (let i = 0; i < library.playlists.length; i++) {
                 const { name, playlistID } = library.playlist[i];
                 if (name === "Spot Queue") {
-                    setQueue(playlistID);
+                    setQueueID(playlistID);
                     break;
                 }
             }
@@ -43,6 +45,8 @@ const QueueContextProvider = (props) => {
 
     // Replaces the current queue with a new one with the songs
     const replaceQueue = (songIDs, contextID, contextType) => {
+        if (!queueID) {
+        }
         setQueueContextType(contextType);
         setQueueContextID(contextID);
     };

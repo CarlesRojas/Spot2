@@ -1,13 +1,17 @@
 import React, { useContext } from "react";
-import { PlaybackContext } from "../contexts/PlaybackContext";
-import { LibraryContext } from "../contexts/LibraryContext";
+
 import { prettifyName } from "../Utils";
+
+import { SpotifyContext } from "../contexts/SpotifyContext";
+import { LibraryContext } from "../contexts/LibraryContext";
+import { PlaybackContext } from "../contexts/PlaybackContext";
 
 // Icons
 import AlbumEmpty from "../resources/AlbumEmpty.svg";
 
 const Cover = () => {
     // Get the context
+    const { play, pause } = useContext(SpotifyContext);
     const { playback } = useContext(PlaybackContext);
     const { library } = useContext(LibraryContext);
     const { playing, songID, exists } = playback;
@@ -32,7 +36,8 @@ const Cover = () => {
 
     // Called when the cover is clicked by the user
     const handleCoverClick = () => {
-        // CARLES PAUSE PLAY
+        if (playback.playing) pause();
+        else play();
     };
 
     // Image filter for pause / play

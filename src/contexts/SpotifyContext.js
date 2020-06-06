@@ -185,10 +185,43 @@ export default class SpotifyContextProvider extends Component {
     //##############################################
 
     // Play Song
-    play = (uri, position = 0) => {};
+    play = (contextID = null, type = null, position = 0) => {
+        var playOptions = {};
+        if (contextID)
+            playOptions = {
+                contextURI: `spotify:${type}:${contextID}`,
+                offset: position,
+            };
+
+        return new Promise((resolve, reject) => {
+            window.spotifyAPI.play(playOptions).then(
+                () => {
+                    resolve();
+                },
+                (err) => {
+                    if (err.status === 401) window.location.assign(window.serverLocation + "login");
+                    else console.error(err);
+                    reject();
+                }
+            );
+        });
+    };
 
     // Pause Song
-    pause = () => {};
+    pause = () => {
+        return new Promise((resolve, reject) => {
+            window.spotifyAPI.pause().then(
+                () => {
+                    resolve();
+                },
+                (err) => {
+                    if (err.status === 401) window.location.assign(window.serverLocation + "login");
+                    else console.error(err);
+                    reject();
+                }
+            );
+        });
+    };
 
     // Previous Song
     prev = () => {};
@@ -205,11 +238,28 @@ export default class SpotifyContextProvider extends Component {
     // Set the shuffle value: "none" "shuffle"
     setShuffle = (shuffleType) => {};
 
+    // Create a playlist
+    createPlaylist = () => {};
+
+    // Remove songs from a playlist
+    removeSongsFromPlaylist = (playlistID, songIDs) => {};
+
+    // Add songs to a playlist
+    addSongsToPlaylist = (playlistID, songIDs) => {};
+
     render() {
         return (
             <>
                 <Script url="https://sdk.scdn.co/spotify-player.js" onLoad={this.handleSpotifyPlaybackScriptLoad} />
-                <SpotifyContext.Provider value={{ ...this.state }}>{this.props.children}</SpotifyContext.Provider>
+                <SpotifyContext.Provider
+                    value={{
+                        ...this.state,
+                        play: this.play,
+                        pause: this.pause,
+                    }}
+                >
+                    {this.props.children}
+                </SpotifyContext.Provider>
             </>
         );
     }
