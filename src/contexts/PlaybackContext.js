@@ -1,5 +1,7 @@
-import React, { createContext, useState, useEffect, useReducer, useRef } from "react";
+import React, { createContext, useState, useEffect, useReducer, useRef, useContext } from "react";
 import { print } from "../Utils";
+
+import { LibraryContext } from "./LibraryContext";
 
 // Playback Context
 export const PlaybackContext = createContext();
@@ -25,6 +27,9 @@ const ProgressStateReducer = (progressState, action) => {
 };
 
 const PlaybackContextProvider = (props) => {
+    // Get Context
+    const { library } = useContext(LibraryContext);
+
     // Playback state
     const [playback, setPlayback] = useState({
         playing: false,
@@ -46,6 +51,10 @@ const PlaybackContextProvider = (props) => {
         exists: false,
         image: null,
     });
+
+    // Context from where it's playing
+    const playbackContextURI = useRef("");
+    const queueURI = useRef(null);
 
     // State for the song progress control
     const [progressState, updateProgressState] = useReducer(ProgressStateReducer, { playing: false, duration: 0, progress: 0, percentage: 0 });
@@ -84,6 +93,7 @@ const PlaybackContextProvider = (props) => {
                 (response) => {
                     if (response) {
                         // CARLES if the context_uri is not Spot Queue, play the first song in liked songs
+                        playbackContextURI.current = response.context.uri;
 
                         var newPlayback = {
                             playing: response.is_playing,
@@ -179,6 +189,13 @@ const PlaybackContextProvider = (props) => {
             });
         }
     };
+
+    // Get the Spot Queue uri
+    useEffect(() => {
+        if (!queueURI.current && library && "playlists" in library)
+            for (let [key, { name, playlistID }] of Object.entries(library.playlists))
+                if (name === "Spot Queue") queueURI.current = "spotify:playlist:" + playlistID;
+    }, [library]);
 
     // Efect to subscribe to events
     useEffect(() => {
