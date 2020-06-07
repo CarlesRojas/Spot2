@@ -60,7 +60,7 @@ const Artists = () => {
     // Get contexts
     const { openPopup } = useContext(PopupContext);
     const { library } = useContext(LibraryContext);
-    const { playback, playbackContext } = useContext(PlaybackContext);
+    const { playbackContext } = useContext(PlaybackContext);
 
     // References
     const longPressTimeout = useRef(null);

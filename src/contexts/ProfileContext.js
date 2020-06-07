@@ -3,7 +3,6 @@ import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
 import Vibrant from "node-vibrant";
 
-import { PlaybackContext } from "./PlaybackContext";
 import { LibraryContext } from "../contexts/LibraryContext";
 
 import { prettifyName, print } from "../Utils";
@@ -37,7 +36,6 @@ var imageHeight = viewWidth / 3;
 const ProfileContextProvider = (props) => {
     // Get contexts
     const { library } = useContext(LibraryContext);
-    const { playback } = useContext(PlaybackContext);
 
     // States
     const [closeTapTimeout, setCloseTapTimeout] = useState(null);
