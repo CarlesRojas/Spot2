@@ -39,7 +39,7 @@ const Playlist = () => {
     // Get contexts
     const { openPopup } = useContext(PopupContext);
     const { library } = useContext(LibraryContext);
-    const { playback } = useContext(PlaybackContext);
+    const { playback, playbackContext } = useContext(PlaybackContext);
 
     // References
     const longPressTimeout = useRef(null);
@@ -128,7 +128,7 @@ const Playlist = () => {
                 height={rowHeight}
                 name={name}
                 image={image}
-                selected={id === playback["playlistID"]}
+                selected={playbackContext.playlist && id === playbackContext.id}
                 skeleton={skeleton}
             />
         );

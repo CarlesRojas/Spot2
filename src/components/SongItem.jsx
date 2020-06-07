@@ -5,7 +5,7 @@ import { useDrag } from "react-use-gesture";
 import { LibraryContext } from "../contexts/LibraryContext";
 import { ProfileContext } from "../contexts/ProfileContext";
 
-import { prettifyName } from "../Utils";
+import { prettifyName, print } from "../Utils";
 
 // Icons
 import AlbumIcon from "../resources/albumSmall.svg";
@@ -158,12 +158,12 @@ const SongItem = (props) => {
         switch (action) {
             // Add item to the playlist or queue CARLES
             case "add":
-                console.log("ADD", "cyan");
+                print("ADD", "cyan");
                 break;
 
             // Remove item from the playlist or queue CARLES
             case "remove":
-                console.log("REMOVE", "cyan");
+                print("REMOVE", "cyan");
                 break;
 
             // Return if  the id is not in the user artists -> Otherwise open the artist profile

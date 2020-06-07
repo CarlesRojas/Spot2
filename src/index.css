@@ -394,6 +394,7 @@ button {
 
 .popup_buttonSelected {
     z-index: 1002;
+    font-weight: bold;
     color: var(--green);
 }
 
@@ -692,6 +693,7 @@ button {
 }
 
 .songItem_selectedName {
+    font-weight: bold;
     color: var(--green);
 }
 
@@ -815,6 +817,7 @@ button {
 }
 
 .albumArtistItem_selectedName {
+    font-weight: bold;
     color: var(--green);
 }
 
@@ -882,6 +885,7 @@ button {
 }
 
 .itemPlaylist_selectedName {
+    font-weight: bold;
     color: var(--green);
 }
 
@@ -960,10 +964,6 @@ button {
     overflow: hidden;
     pointer-events: none;
     user-select: none;
-}
-
-.profile_nameSelected {
-    color: var(--green);
 }
 
 .profile_actionButton {

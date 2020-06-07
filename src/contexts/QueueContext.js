@@ -87,7 +87,6 @@ const QueueContextProvider = (props) => {
         // If there is no queue yet
         if (!queueID) {
             setWorking(true);
-            console.log("NO QUEUE");
 
             // Create the Queue playlist
             createPlaylist("Spot Queue").then((queueID) => {
@@ -109,8 +108,6 @@ const QueueContextProvider = (props) => {
 
         // If the queue exists and the new songs and context are the same as the old
         if (contextID === queueContextID && contextType === queueContextType && areArraysIdentical(queueSongList, songIDs)) {
-            console.log("SAME AS PREVIOUS QUEUE");
-
             play(queueID, "playlist", position);
             return;
         }
@@ -118,7 +115,6 @@ const QueueContextProvider = (props) => {
         // If the context, the type or the list of songs are diferent
         setWorking(true);
 
-        console.log("NEW QUEUE");
         // Empty the queue
         removeSongsFromPlaylist(queueID, queueSongList).then(() => {
             // Set state

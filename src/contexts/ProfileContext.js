@@ -38,7 +38,6 @@ const ProfileContextProvider = (props) => {
     // Get contexts
     const { library } = useContext(LibraryContext);
     const { playback } = useContext(PlaybackContext);
-    const { playlistID, artistID, albumID } = playback;
 
     // States
     const [closeTapTimeout, setCloseTapTimeout] = useState(null);
@@ -60,7 +59,6 @@ const ProfileContextProvider = (props) => {
         songList: "",
         borderRadius: "0.5rem",
         background: null,
-        selected: false,
         zindex: 510,
     });
 
@@ -73,7 +71,6 @@ const ProfileContextProvider = (props) => {
         albumList: "",
         borderRadius: "50%",
         background: null,
-        selected: false,
         zindex: 520,
     });
 
@@ -85,7 +82,6 @@ const ProfileContextProvider = (props) => {
         songList: "",
         borderRadius: "0.5rem",
         background: null,
-        selected: false,
         zindex: 530,
     });
 
@@ -157,7 +153,6 @@ const ProfileContextProvider = (props) => {
                 songList,
                 borderRadius: "0.5rem",
                 background: playlistImage === PlaylistEmpty ? null : playlistImage,
-                selected: id === playlistID,
                 zindex: 510,
             });
         } else if (type === "artist") {
@@ -180,7 +175,6 @@ const ProfileContextProvider = (props) => {
                 albumList,
                 borderRadius: "50%",
                 background: artistImage === ArtistEmpty ? null : artistImage,
-                selected: id === artistID,
                 zindex: 520,
             });
         } else if (type === "album") {
@@ -192,7 +186,6 @@ const ProfileContextProvider = (props) => {
                 songList,
                 borderRadius: "0.5rem",
                 background: albumImage === AlbumEmpty ? null : albumImage,
-                selected: id === albumID,
                 zindex: 530,
             });
         }
@@ -299,10 +292,14 @@ const ProfileContextProvider = (props) => {
 
     // Playlist song list
     /*<SongListSortable songList={playlistState.songList} playbackState={playbackState} actions={playlistActions} order={"dateAdded"} listenToOrderChange={false} /> CARLES*/
-    var playlistSongListObject = <SongList songList={playlistState.songList} actions={playlistActions} order={"dateAdded"} />;
+    var playlistSongListObject = (
+        <SongList songList={playlistState.songList} actions={playlistActions} order={"dateAdded"} listID={playlistState.id} listType={"playlist"} />
+    );
 
     // Artist song list
-    var artistSongListObject = <SongList songList={artistState.songList} actions={artistActions} order="album" />;
+    var artistSongListObject = (
+        <SongList songList={artistState.songList} actions={artistActions} order="album" listID={artistState.id} listType={"artist"} />
+    );
 
     // Artist album list
     var albumObjects = Object.values(artistState.albumList).map((albumInfo) => {
@@ -313,7 +310,6 @@ const ProfileContextProvider = (props) => {
             padding: albumsPadding,
             name: albumInfo.name,
             image: albumInfo.image,
-            selected: albumInfo.albumID === albumID,
         };
     });
 
@@ -324,7 +320,9 @@ const ProfileContextProvider = (props) => {
     ) : null;
 
     // Album song list
-    var albumSongListObject = <SongList songList={albumState.songList} actions={albumActions} order="album" />;
+    var albumSongListObject = (
+        <SongList songList={albumState.songList} actions={albumActions} order="album" listID={albumState.id} listType={"album"} />
+    );
 
     // Playlist image gradient
     var playlistImageGradient = `linear-gradient(to bottom, rgba(${playlistImageColor[0]}, ${playlistImageColor[1]}, ${playlistImageColor[2]}, 0.2) 0%, rgba(${playlistImageColor[0]}, ${playlistImageColor[1]}, ${playlistImageColor[2]}, 0) 5rem)`;
@@ -351,7 +349,7 @@ const ProfileContextProvider = (props) => {
                         style={{ borderRadius: playlistState.borderRadius, height: imageHeight, width: imageHeight }}
                     />
 
-                    <p className={"profile_name" + (playlistState.selected ? " profile_nameSelected" : "")}>{prettifyName(playlistState.name)}</p>
+                    <p className="profile_name">{prettifyName(playlistState.name)}</p>
 
                     <button
                         className="profile_actionButton"
@@ -391,7 +389,7 @@ const ProfileContextProvider = (props) => {
                         style={{ borderRadius: artistState.borderRadius, height: imageHeight, width: imageHeight }}
                     />
 
-                    <p className={"profile_name" + (artistState.selected ? " profile_nameSelected" : "")}>{prettifyName(artistState.name)}</p>
+                    <p className="profile_name">{prettifyName(artistState.name)}</p>
 
                     <button
                         className="profile_actionButton"
@@ -432,7 +430,7 @@ const ProfileContextProvider = (props) => {
                         style={{ borderRadius: albumState.borderRadius, height: imageHeight, width: imageHeight }}
                     />
 
-                    <p className={"profile_name" + (albumState.selected ? " profile_nameSelected" : "")}>{prettifyName(albumState.name)}</p>
+                    <p className="profile_name">{prettifyName(albumState.name)}</p>
 
                     <button
                         className="profile_actionButton"

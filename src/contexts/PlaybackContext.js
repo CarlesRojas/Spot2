@@ -32,9 +32,6 @@ const PlaybackContextProvider = (props) => {
         repeatOne: false,
         shuffle: false,
         songID: null,
-        albumID: null,
-        artistID: null,
-        playlistID: null,
         exists: false,
         image: null,
     });
@@ -46,14 +43,15 @@ const PlaybackContextProvider = (props) => {
         repeatOne: false,
         shuffle: false,
         songID: null,
-        albumID: null,
-        artistID: null,
-        playlistID: null,
         exists: false,
         image: null,
     });
 
+    // State for the song progress control
     const [progressState, updateProgressState] = useReducer(ProgressStateReducer, { playing: false, duration: 0, progress: 0, percentage: 0 });
+
+    // State for keeping track of the currently played context
+    const [playbackContext, setPlaybackContext] = useState({ id: "", likedSongs: false, playlist: false, artist: false, album: false });
 
     // Set an interval to update the song progress
     useEffect(() => {
@@ -74,9 +72,6 @@ const PlaybackContextProvider = (props) => {
             lastKnownPlayback.current.repeatOne !== newPlayback.repeatOne ||
             lastKnownPlayback.current.shuffle !== newPlayback.shuffle ||
             lastKnownPlayback.current.songID !== newPlayback.songID ||
-            lastKnownPlayback.current.albumID !== newPlayback.albumID ||
-            lastKnownPlayback.current.artistID !== newPlayback.artistID ||
-            lastKnownPlayback.current.playlistID !== newPlayback.playlistID ||
             lastKnownPlayback.current.exists !== newPlayback.exists ||
             lastKnownPlayback.current.image !== newPlayback.image
         );
@@ -88,7 +83,7 @@ const PlaybackContextProvider = (props) => {
             window.spotifyAPI.getMyCurrentPlaybackState().then(
                 (response) => {
                     if (response) {
-                        const artistID = response.item.artists.length ? response.item.artists[0] : null;
+                        // CARLES if the context_uri is not Spot Queue, play the first song in liked songs
 
                         var newPlayback = {
                             playing: response.is_playing,
@@ -96,9 +91,6 @@ const PlaybackContextProvider = (props) => {
                             repeatOne: false,
                             shuffle: response.shuffle_state,
                             songID: response.item.id,
-                            albumID: playback.albumID === response.item.album.id ? playback.albumID : null,
-                            artistID: playback.artistID === artistID ? playback.artistID : null,
-                            playlistID: null, // CARLES <- Update for playlists
                             exists: true,
                             image: response.item.album.images.length > 0 ? response.item.album.images[0].url : null,
                         };
@@ -133,9 +125,6 @@ const PlaybackContextProvider = (props) => {
                         repeatOne: false,
                         shuffle: false,
                         songID: null,
-                        albumID: null,
-                        artistID: null,
-                        playlistID: null,
                         exists: false,
                         image: null,
                     };
@@ -197,9 +186,14 @@ const PlaybackContextProvider = (props) => {
         return () => {
             window.PubSub.unsub("onPlaybackChange", handlePlaybackChange);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    return <PlaybackContext.Provider value={{ playback, handlePlaybackChange, progressState }}>{props.children}</PlaybackContext.Provider>;
+    return (
+        <PlaybackContext.Provider value={{ playback, handlePlaybackChange, progressState, playbackContext, setPlaybackContext }}>
+            {props.children}
+        </PlaybackContext.Provider>
+    );
 };
 
 export default PlaybackContextProvider;

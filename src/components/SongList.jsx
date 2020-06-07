@@ -4,7 +4,6 @@ import { QueueContext } from "../contexts/QueueContext";
 import { PlaybackContext } from "../contexts/PlaybackContext";
 
 import SongItem from "./SongItem";
-import { print } from "../Utils";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;
@@ -57,10 +56,10 @@ const getListOrder = (list, order) => {
 const SongList = (props) => {
     // Get context
     const { playSongInContext } = useContext(QueueContext);
-    const { playback } = useContext(PlaybackContext);
+    const { playback, setPlaybackContext } = useContext(PlaybackContext);
 
     // Get props
-    const { songList, actions, order } = props;
+    const { songList, actions, order, listID, listType } = props;
 
     // State
     const [scrollTop, setScrollTop] = useState(0);
@@ -90,10 +89,14 @@ const SongList = (props) => {
     // Handle the click on this item
     const onSongClicked = (id, skeleton) => {
         if (skeleton) return;
-        print("SONG SELECTED: " + id, "cyan");
-        console.log(listOrder);
-
-        playSongInContext(listOrder, "contextTest", "songs", listOrder.indexOf(id)); // CARLES add contextID
+        setPlaybackContext({
+            id: listID,
+            likedSongs: listType === "likedSongs",
+            playlist: listType === "playlist",
+            artist: listType === "artist",
+            album: listType === "album",
+        });
+        playSongInContext(listOrder, listID, "songs", listOrder.indexOf(id));
     };
 
     // Create the component from an element in the array

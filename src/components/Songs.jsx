@@ -4,7 +4,7 @@ import { LibraryContext } from "../contexts/LibraryContext";
 import { PopupContext } from "../contexts/PopupContext";
 
 import SongList from "./SongList";
-import { useEventListener } from "../Utils";
+import { useEventListener, print } from "../Utils";
 
 import SortIcon from "../resources/sort.svg";
 import SpotifyColor from "../resources/SpotifyColor.svg";
@@ -75,7 +75,7 @@ const Songs = () => {
     // Handle a click on the shuffle button
     const handleShuffleClick = () => {
         // CARLES Shuffle
-        console.log("Shuffle Songs", "cyan");
+        print("Shuffle Songs", "cyan");
     };
 
     // Add event listener using our hook
@@ -103,7 +103,13 @@ const Songs = () => {
                 <img className="songs_sortIcon" src={SortIcon} alt="" style={{ transform: "rotate( " + orderSettings.iconRotation + "deg)" }} />
             </div>
             <div className="songs_listWrapper">
-                <SongList songList={library.songs} actions={actions} order={orderSettings.currentOrder} />
+                <SongList
+                    songList={library.songs}
+                    actions={actions}
+                    order={orderSettings.currentOrder}
+                    listID={"likedSongs"}
+                    listType={"likedSongs"}
+                />
             </div>
             <button className="songs_shuffle" onClick={() => handleShuffleClick()} style={{ backgroundImage: `url(${SpotifyColor})` }}>
                 SHUFFLE

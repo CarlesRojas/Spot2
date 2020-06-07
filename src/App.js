@@ -237,6 +237,8 @@ export default function App() {
                 }, 350)
             );
         }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [image]);
 
     // State of the covers "prev" "curr" "next" (the name of the state specifies witch cover is in the center)
@@ -315,6 +317,8 @@ export default function App() {
             else if (coversState === "next")
                 setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
         }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [queueSongList, playback]);
 
     return (

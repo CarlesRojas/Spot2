@@ -60,7 +60,7 @@ const Artists = () => {
     // Get contexts
     const { openPopup } = useContext(PopupContext);
     const { library } = useContext(LibraryContext);
-    const { playback } = useContext(PlaybackContext);
+    const { playback, playbackContext } = useContext(PlaybackContext);
 
     // References
     const longPressTimeout = useRef(null);
@@ -151,7 +151,7 @@ const Artists = () => {
                 id={id}
                 name={name}
                 image={image}
-                selected={id === playback["artistID"]}
+                selected={playbackContext.artist && id === playbackContext.id}
                 skeleton={skeleton}
                 type={"artist"}
                 noName={false}
