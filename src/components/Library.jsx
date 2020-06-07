@@ -12,12 +12,14 @@ import Songs from "./Songs";
 import Albums from "./Albums";
 import Artists from "./Artists";
 import Playlists from "./Playlists";
+import Queue from "./Queue";
 
 // Icons
 import SongIcon from "../resources/song.svg";
 import AlbumIcon from "../resources/album.svg";
 import ArtistIcon from "../resources/artist.svg";
 import PlaylistIcon from "../resources/playlist.svg";
+import QueueIcon from "../resources/queue.svg";
 import AlbumEmpty from "../resources/AlbumEmpty.png";
 
 // Size of the viewport
@@ -44,6 +46,11 @@ const sections = {
         icon: PlaylistIcon,
         x: -viewWidth * 3,
     },
+    queue: {
+        name: "queue",
+        icon: QueueIcon,
+        x: -viewWidth * 4,
+    },
 };
 
 const Library = () => {
@@ -68,9 +75,10 @@ const Library = () => {
 
     // Show the next section
     const showNextSection = () => {
-        if (currentSection === "playlist") return;
+        if (currentSection === "queue") return;
 
-        const nextSection = currentSection === "song" ? "album" : currentSection === "album" ? "artist" : "playlist";
+        const nextSection =
+            currentSection === "song" ? "album" : currentSection === "album" ? "artist" : currentSection === "artist" ? "playlist" : "queue";
         set({ x: sections[nextSection].x });
         setCurrentX(sections[nextSection].x);
         setCurrentSection(nextSection);
@@ -80,7 +88,8 @@ const Library = () => {
     const showPrevSection = () => {
         if (currentSection === "song") return;
 
-        const prevSection = currentSection === "playlist" ? "artist" : currentSection === "artist" ? "album" : "song";
+        const prevSection =
+            currentSection === "queue" ? "playlist" : currentSection === "playlist" ? "artist" : currentSection === "artist" ? "album" : "song";
         set({ x: sections[prevSection].x });
         setCurrentX(sections[prevSection].x);
         setCurrentSection(prevSection);
@@ -90,7 +99,7 @@ const Library = () => {
     const dragBind = useDrag(
         ({ last, vxvy: [vx], movement: [mx], cancel }) => {
             window.PubSub.emit("onCloseSongActions");
-            const wrong_direction = (currentSection === "song" && vx > 0) || (currentSection === "playlist" && vx < 0);
+            const wrong_direction = (currentSection === "song" && vx > 0) || (currentSection === "queue" && vx < 0);
             if (wrong_direction) cancel();
 
             // If user releases after the threshold we open, othersie close it
@@ -119,6 +128,7 @@ const Library = () => {
                 <div className="library_section">{<Albums />}</div>
                 <div className="library_section">{<Artists />}</div>
                 <div className="library_section">{<Playlists />}</div>
+                <div className="library_section">{<Queue />}</div>
             </a.div>
 
             <div className="library_navBar" {...dragBind()}>

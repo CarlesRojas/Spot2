@@ -134,21 +134,7 @@ button {
     left: 0;
 }
 
-.app_cover_prev {
-    z-index: 100;
-    position: fixed;
-    width: 100vw;
-    top: 0;
-    touch-action: none;
-}
-.app_cover_curr {
-    z-index: 100;
-    position: fixed;
-    width: 100vw;
-    top: 0;
-    touch-action: none;
-}
-.app_cover_next {
+.app_cover {
     z-index: 100;
     position: fixed;
     width: 100vw;
@@ -156,7 +142,7 @@ button {
     touch-action: none;
 }
 
-.app_queue {
+.app_lyrics {
     z-index: 50;
     position: fixed;
     width: 100vw;
@@ -260,7 +246,7 @@ button {
 .library_sectionsWrapper {
     position: relative;
     display: flex;
-    width: 400%;
+    width: 500%;
     height: calc(100% - 2.5rem);
     overflow: hidden;
 }
@@ -268,7 +254,7 @@ button {
 .library_section {
     position: relative;
     margin: 0;
-    width: 25%;
+    width: 20%;
     height: 100%;
     padding: 0;
     display: flex;
@@ -296,7 +282,7 @@ button {
     outline: 0;
     border: none;
     height: 2.5rem;
-    padding: 0.5rem 2rem 0 2rem;
+    padding: 0.5rem 1.5rem 0 1.5rem;
     background: transparent;
     opacity: var(--icons-low-opacity);
     transition: opacity 0.1s;

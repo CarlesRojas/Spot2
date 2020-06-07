@@ -58,13 +58,13 @@ export default function App() {
         setCurrentY(ySmall);
     };
 
-    // Function to cancel the Queue opening
-    const cancelShowQueue = () => {
+    // Function to cancel the Lyrics opening
+    const cancelShowLyrics = () => {
         set({ xy: [currentX, ySmall] });
     };
 
-    // Function to open the Queue
-    const showQueue = () => {
+    // Function to open the Lyrics
+    const showLyrics = () => {
         set({ xy: [currentX, yBig] });
         setCurrentY(yBig);
     };
@@ -143,7 +143,7 @@ export default function App() {
                 // If user releases after the threshold we open, othersie close it
                 if (last) {
                     if (vy >= 0) my > yBig + heightBig * 0.5 || vy > 0.5 ? showLibrary() : cancelShowLibrary();
-                    else my < ySmall - heightSmall || vy < -0.5 ? showQueue() : cancelShowQueue();
+                    else my < ySmall - heightSmall || vy < -0.5 ? showLyrics() : cancelShowLyrics();
                 }
                 // If user keeps dragging -> move panel following the position
                 else if (!wrong_direction) set({ xy: [currentX, my], immediate: false, config: config.stiff });
@@ -192,7 +192,7 @@ export default function App() {
     };
 
     // Style for the Library
-    const queueStyle = {
+    const lyricsStyle = {
         top: xy.to((x, y) => lerp(heightBig, viewHeight, invlerp(yBig, ySmall, y))),
         display: xy.to((x, y) => (y >= ySmall ? "none" : "block")),
         opacity: xy.to((x, y) => lerp(1, 0, invlerp(yBig, ySmall, y))),
@@ -334,16 +334,16 @@ export default function App() {
             <a.div className="app_library" style={libraryStyle}>
                 <Library></Library>
             </a.div>
-            <a.div className="app_cover_prev" {...bind()} style={prevStyle}>
+            <a.div className="app_cover" {...bind()} style={prevStyle}>
                 <Cover coverSongID={coverSongID.prev}></Cover>
             </a.div>
-            <a.div className="app_cover_curr" {...bind()} style={currStyle}>
+            <a.div className="app_cover" {...bind()} style={currStyle}>
                 <Cover coverSongID={coverSongID.curr}></Cover>
             </a.div>
-            <a.div className="app_cover_next" {...bind()} style={nextStyle}>
+            <a.div className="app_cover" {...bind()} style={nextStyle}>
                 <Cover coverSongID={coverSongID.next}></Cover>
             </a.div>
-            <a.div className="app_queue" style={queueStyle}></a.div>
+            <a.div className="app_lyrics" style={lyricsStyle}></a.div>
         </>
     );
 }
