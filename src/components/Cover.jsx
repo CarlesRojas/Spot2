@@ -5,6 +5,7 @@ import { prettifyName } from "../Utils";
 import { SpotifyContext } from "../contexts/SpotifyContext";
 import { LibraryContext } from "../contexts/LibraryContext";
 import { PlaybackContext } from "../contexts/PlaybackContext";
+import { ProfileContext } from "../contexts/ProfileContext";
 
 // Icons
 import AlbumEmpty from "../resources/AlbumEmpty.svg";
@@ -13,6 +14,7 @@ const Cover = (props) => {
     // Get the context
     const { play, pause } = useContext(SpotifyContext);
     const { playback } = useContext(PlaybackContext);
+    const { areProfilesClosed } = useContext(ProfileContext);
     const { library } = useContext(LibraryContext);
     const { playing, exists } = playback;
 
@@ -39,8 +41,13 @@ const Cover = (props) => {
 
     // Called when the cover is clicked by the user
     const handleCoverClick = () => {
+        // Return if any profile is open
+        if (!areProfilesClosed()) return;
+
         if (playback.playing) pause();
         else play();
+
+        window.PubSub.emit("onCloseSongActions");
     };
 
     // Image filter for pause / play

@@ -60,6 +60,7 @@ const Library = () => {
     const showSection = (name) => {
         set({ x: sections[name].x });
         setCurrentSection(name);
+        window.PubSub.emit("onCloseSongActions");
     };
 
     useEffect(() => {

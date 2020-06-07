@@ -46,6 +46,7 @@ const Songs = () => {
         if (longPressTimeout.current) {
             clearTimeout(longPressTimeout.current);
             longPressTimeout.current = null;
+            window.PubSub.emit("onCloseSongActions");
 
             // Show Popup
             openPopup({
@@ -61,6 +62,7 @@ const Songs = () => {
     const handleSortLongPress = () => {
         clearTimeout(longPressTimeout.current);
         longPressTimeout.current = null;
+        window.PubSub.emit("onCloseSongActions");
 
         setOrderSettings((prevOrderSettings) => {
             if (prevOrderSettings.currentOrder === "name") var newOrder = "nameReversed";
@@ -76,6 +78,7 @@ const Songs = () => {
     const handleShuffleClick = () => {
         // CARLES Shuffle
         print("Shuffle Songs", "cyan");
+        window.PubSub.emit("onCloseSongActions");
     };
 
     // Add event listener using our hook

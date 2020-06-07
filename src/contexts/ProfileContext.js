@@ -193,7 +193,8 @@ const ProfileContextProvider = (props) => {
 
     // Playlist Drag Hook
     const dragBindPlaylist = useDrag(
-        ({ last, vxvy: [, vy], movement: [, my], cancel }) => {
+        ({ first, last, vxvy: [, vy], movement: [, my], cancel }) => {
+            if (first) window.PubSub.emit("onCloseSongActions");
             const cancelDrag = my >= 0 || !yArtist.idle || !yAlbum.idle;
             if (cancelDrag) cancel();
 
@@ -206,7 +207,8 @@ const ProfileContextProvider = (props) => {
 
     // Artist Drag Hook
     const dragBindArtist = useDrag(
-        ({ last, vxvy: [, vy], movement: [, my], cancel }) => {
+        ({ first, last, vxvy: [, vy], movement: [, my], cancel }) => {
+            if (first) window.PubSub.emit("onCloseSongActions");
             const cancelDrag = my >= 0 || !yAlbum.idle;
             if (cancelDrag) cancel();
 
@@ -219,7 +221,8 @@ const ProfileContextProvider = (props) => {
 
     // Album Drag Hook
     const dragBindAlbum = useDrag(
-        ({ last, vxvy: [, vy], movement: [, my], cancel }) => {
+        ({ first, last, vxvy: [, vy], movement: [, my], cancel }) => {
+            if (first) window.PubSub.emit("onCloseSongActions");
             const cancelDrag = my >= 0;
             if (cancelDrag) cancel();
 
@@ -281,11 +284,27 @@ const ProfileContextProvider = (props) => {
         if (type === "playlist") print("Shuffle Playlist", "cyan");
         else if (type === "artist") print("Shuffle Artist", "cyan");
         else if (type === "album") print("Shuffle Album", "cyan");
+
+        window.PubSub.emit("onCloseSongActions");
     };
 
     // Handle action click
     const handleAddButtonClick = () => {
         print("ADD", "cyan"); // CARLES
+
+        window.PubSub.emit("onCloseSongActions");
+    };
+
+    // Returns true if all teh profiles are closed
+    const areProfilesClosed = () => {
+        return (
+            yPlaylist.idle &&
+            yArtist.idle &&
+            yAlbum.idle &&
+            currentPlaylistY === -viewHeight &&
+            currentArtistY === -viewHeight &&
+            currentAlbumY === -viewHeight
+        );
     };
 
     // Playlist song list
@@ -332,7 +351,7 @@ const ProfileContextProvider = (props) => {
     var albumImageGradient = `linear-gradient(to bottom, rgba(${albumImageColor[0]}, ${albumImageColor[1]}, ${albumImageColor[2]}, 0.2) 0%, rgba(${albumImageColor[0]}, ${albumImageColor[1]}, ${albumImageColor[2]}, 0) 5rem)`;
 
     return (
-        <ProfileContext.Provider value={{ openProfile }}>
+        <ProfileContext.Provider value={{ openProfile, areProfilesClosed }}>
             <a.div className="profile_wrapper" style={{ y: yPlaylist }}>
                 <div className="profile_backgrounWrapper">
                     <div className="profile_background" style={{ backgroundImage: "url(" + playlistState.image + ")" }} />

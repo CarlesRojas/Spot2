@@ -132,6 +132,7 @@ export default function App() {
                 var verticalMovement = Math.abs(vy) >= Math.abs(vx);
                 setDraggingVertically(verticalMovement);
                 setDraggingHorizontally(!verticalMovement);
+                window.PubSub.emit("onCloseSongActions");
             }
 
             // Dragging Vertically

@@ -23,6 +23,8 @@ const AlbumArtistItem = (props) => {
 
         // Open the profile
         openProfile({ type, id });
+
+        window.PubSub.emit("onCloseSongActions");
     };
 
     // Substract padding from the cover size

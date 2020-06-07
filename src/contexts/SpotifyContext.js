@@ -241,7 +241,7 @@ export default class SpotifyContextProvider extends Component {
         });
     };
 
-    // Previous Song CARLES
+    // Previous Song
     prev = () => {
         return new Promise((resolve, reject) => {
             window.spotifyAPI.skipToPrevious().then(resolve, (err) => {

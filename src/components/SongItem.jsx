@@ -59,11 +59,14 @@ const SongItem = (props) => {
             setPosition("normal");
             set({ x: normalX });
         };
-        window.PubSub.sub("onCloseSongActions", hideActions);
+
+        // Only subscribe if the actions are open
+        if (position !== "normal") window.PubSub.sub("onCloseSongActions", hideActions);
+
         return () => {
             window.PubSub.unsub("onCloseSongActions", hideActions);
         };
-    }, [id, normalX, set]);
+    }, [id, normalX, set, position]);
 
     // Function to show the name
     const showName = () => {
@@ -154,6 +157,8 @@ const SongItem = (props) => {
                 - album: OPEN THE SONGS ALBUM
                 - artist: OPEN THE SONGS ARTIST
         */
+
+        window.PubSub.emit("onCloseSongActions");
 
         switch (action) {
             // Add item to the playlist or queue CARLES
