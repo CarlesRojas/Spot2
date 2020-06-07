@@ -303,9 +303,7 @@ button {
     pointer-events: all;
 }
 
-.navItem_button:hover,
-.navItem_buttonSelected,
-.navItem_buttonSelected:hover {
+.navItem_buttonSelected {
     opacity: var(--icons-main-opacity);
 }
 

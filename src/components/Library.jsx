@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useSpring, a } from "react-spring";
+import { useSpring, a, config } from "react-spring";
+import { useDrag } from "react-use-gesture";
 import Vibrant from "node-vibrant";
 import { print } from "../Utils";
 
@@ -54,17 +55,56 @@ const Library = () => {
     const [imageColor, setImageColor] = useState("rgba(0, 0, 0, 0)");
 
     // Spring hook
+    const [currentX, setCurrentX] = useState(0);
     const [{ x }, set] = useSpring(() => ({ x: 0, config: { clamp: true } }));
 
     // Function to open the Library
     const showSection = (name) => {
         set({ x: sections[name].x });
+        setCurrentX(sections[name].x);
         setCurrentSection(name);
         window.PubSub.emit("onCloseSongActions");
     };
 
+    // Show the next section
+    const showNextSection = () => {
+        if (currentSection === "playlist") return;
+
+        const nextSection = currentSection === "song" ? "album" : currentSection === "album" ? "artist" : "playlist";
+        set({ x: sections[nextSection].x });
+        setCurrentX(sections[nextSection].x);
+        setCurrentSection(nextSection);
+    };
+
+    // Show the previous section
+    const showPrevSection = () => {
+        if (currentSection === "song") return;
+
+        const prevSection = currentSection === "playlist" ? "artist" : currentSection === "artist" ? "album" : "song";
+        set({ x: sections[prevSection].x });
+        setCurrentX(sections[prevSection].x);
+        setCurrentSection(prevSection);
+    };
+
+    // Drag Hook
+    const dragBind = useDrag(
+        ({ last, vxvy: [vx], movement: [mx], cancel }) => {
+            window.PubSub.emit("onCloseSongActions");
+            const wrong_direction = (currentSection === "song" && vx > 0) || (currentSection === "playlist" && vx < 0);
+            if (wrong_direction) cancel();
+
+            // If user releases after the threshold we open, othersie close it
+            if (last && vx < -0.5) showNextSection();
+            else if (last && vx > 0.5) showPrevSection();
+            else if (last) showSection(currentSection);
+            // If user keeps dragging -> move panel following the position
+            else if (!wrong_direction) set({ x: mx, immediate: false, config: config.stiff });
+        },
+        { initial: () => [currentX, 0], filterTaps: true, rubberband: true }
+    );
+
+    // Extract the color from the currently playing image
     useEffect(() => {
-        // Extract the color from the currently playing image
         var targetImage = playback.image ? playback.image : AlbumEmpty;
         let v = new Vibrant(targetImage);
         v.getPalette((err, palette) => (!err ? setImageColor(palette.Vibrant.getRgb()) : print(err, "red")));
@@ -81,15 +121,9 @@ const Library = () => {
                 <div className="library_section">{<Playlists />}</div>
             </a.div>
 
-            <div className="library_navBar">
-                {Object.values(sections).map((section) => (
-                    <NavItem
-                        key={section.name}
-                        name={section.name}
-                        icon={section.icon}
-                        selected={section.name === currentSection}
-                        changeSection={showSection}
-                    />
+            <div className="library_navBar" {...dragBind()}>
+                {Object.values(sections).map(({ name, icon }) => (
+                    <NavItem key={name} name={name} icon={icon} selected={name === currentSection} changeSection={showSection} />
                 ))}
             </div>
         </>
