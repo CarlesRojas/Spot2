@@ -5,7 +5,7 @@ import { LibraryContext } from "../contexts/LibraryContext";
 import { PlaybackContext } from "../contexts/PlaybackContext";
 import { PopupContext } from "../contexts/PopupContext";
 import AlbumArtistItem from "./AlbumArtistItem";
-import { useEventListener } from "../Utils";
+import { useEventListener, setLocalStorage, getLocalStorage } from "../Utils";
 
 // Size of the viewport
 const viewWidth = window.innerWidth;
@@ -68,12 +68,13 @@ const Albums = () => {
     const sortButtonRef = useRef();
 
     // Order Settings State
+    const cookieOrder = getLocalStorage("spot_albumOrder");
     const [orderSettings, setOrderSettings] = useState({
-        currentOrder: "dateAdded",
-        iconRotation: 0,
+        currentOrder: cookieOrder ? cookieOrder : "dateAdded",
+        iconRotation: cookieOrder && (cookieOrder === "name" || cookieOrder === "dateAdded") ? 0 : 180,
         items: [
-            { name: "Name", callbackName: "name", selected: false },
-            { name: "Date Added", callbackName: "dateAdded", selected: true },
+            { name: "Name", callbackName: "name", selected: cookieOrder && cookieOrder === "name" ? true : false },
+            { name: "Date Added", callbackName: "dateAdded", selected: !cookieOrder || cookieOrder === "dateAdded" ? true : false },
         ],
     });
 
@@ -93,6 +94,9 @@ const Albums = () => {
 
     // Called when a different sort order is selected from the popup
     const handleSortChange = (newOrder) => {
+        // Save order in cookies
+        setLocalStorage("spot_albumOrder", newOrder);
+
         setOrderSettings({
             currentOrder: newOrder,
             iconRotation: 0,
@@ -130,6 +134,9 @@ const Albums = () => {
             if (prevOrderSettings.currentOrder === "nameReversed") newOrder = "name";
             if (prevOrderSettings.currentOrder === "dateAdded") newOrder = "dateAddedReversed";
             if (prevOrderSettings.currentOrder === "dateAddedReversed") newOrder = "dateAdded";
+
+            // Save order in cookies
+            setLocalStorage("spot_albumOrder", newOrder);
 
             return { ...prevOrderSettings, currentOrder: newOrder, iconRotation: prevOrderSettings.iconRotation === 0 ? 180 : 0 };
         });
