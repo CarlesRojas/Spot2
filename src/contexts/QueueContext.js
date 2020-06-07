@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 
 import { SpotifyContext } from "../contexts/SpotifyContext";
 import { LibraryContext } from "../contexts/LibraryContext";
-import { setLocalStorage, getLocalStorage, print, areArraysIdentical } from "../Utils";
+import { setLocalStorage, getLocalStorage, areArraysIdentical } from "../Utils";
 
 // Queue Context
 export const QueueContext = createContext();

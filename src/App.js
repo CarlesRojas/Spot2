@@ -1,11 +1,11 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
 import { lerp, invlerp, print } from "./Utils";
 
+import { SpotifyContext } from "./contexts/SpotifyContext";
 import { QueueContext } from "./contexts/QueueContext";
 import { PlaybackContext } from "./contexts/PlaybackContext";
-import { LibraryContext } from "./contexts/LibraryContext";
 
 import Cover from "./components/Cover";
 import Library from "./components/Library";
@@ -27,14 +27,17 @@ const ySmall = viewHeight - heightSmall;
 
 export default function App() {
     // Get context
+    const { prev, next } = useContext(SpotifyContext);
     const { queueSongList } = useContext(QueueContext);
     const { playback } = useContext(PlaybackContext);
-    const { library } = useContext(LibraryContext);
     const { image } = playback;
 
     // State to hold weather we are dragging vertically or horizontally
     const [draggingVertically, setDraggingVertically] = useState(false);
     const [draggingHorizontally, setDraggingHorizontally] = useState(false);
+
+    // Reference to weather the cover has been moved manually or not
+    const coverHasBeenMovedManually = useRef(false);
 
     // Current X and Y
     const [currentX, setCurrentX] = useState(0);
@@ -72,7 +75,10 @@ export default function App() {
     };
 
     // Function to open the Prev
-    const showPrev = () => {
+    const showPrev = (coverMovedManually = false) => {
+        // Set cover moved manually
+        coverHasBeenMovedManually.current = coverMovedManually;
+
         // Move all to the right
         set({ xy: [currentX + viewWidth, currentY] });
         setCurrentX(currentX + viewWidth);
@@ -81,15 +87,14 @@ export default function App() {
         let indexOfMax = leftPositions.indexOf(Math.max(...leftPositions));
         setLeftPositions(leftPositions.map((x, i) => (i === indexOfMax ? x - viewWidth * 3 : x)));
         setCoversState((prevValue) => {
-            switch (prevValue) {
-                case "prev":
-                    return "next";
-                case "curr":
-                    return "prev";
-                case "next":
-                    return "curr";
-            }
+            // Update images
+            if (prevValue === "prev") return "next";
+            else if (prevValue === "curr") return "prev";
+            else if (prevValue === "next") return "curr";
         });
+
+        // Skip to previous song if done manually
+        if (coverMovedManually) prev();
     };
 
     // Function to cancel the Next opening
@@ -98,7 +103,10 @@ export default function App() {
     };
 
     // Function to open the Next
-    const showNext = () => {
+    const showNext = (coverMovedManually = false) => {
+        // Set cover moved manually
+        coverHasBeenMovedManually.current = coverMovedManually;
+
         // Move all to the left
         set({ xy: [currentX - viewWidth, currentY] });
         setCurrentX(currentX - viewWidth);
@@ -107,15 +115,14 @@ export default function App() {
         let indexOfMin = leftPositions.indexOf(Math.min(...leftPositions));
         setLeftPositions(leftPositions.map((x, i) => (i === indexOfMin ? x + viewWidth * 3 : x)));
         setCoversState((prevValue) => {
-            switch (prevValue) {
-                case "prev":
-                    return "curr";
-                case "curr":
-                    return "next";
-                case "next":
-                    return "prev";
-            }
+            // Update images
+            if (prevValue === "prev") return "curr";
+            else if (prevValue === "curr") return "next";
+            else if (prevValue === "next") return "prev";
         });
+
+        // Skip to next song if done manually
+        if (coverMovedManually) next();
     };
 
     // Drag Hook
@@ -145,8 +152,8 @@ export default function App() {
             if (draggingHorizontally) {
                 // If user releases after the threshold we open, othersie close it
                 if (last) {
-                    if (vx >= 0) mx > viewWidth * 0.25 || vx > 0.5 ? showPrev() : cancelShowPrev();
-                    else mx < -viewWidth * 0.25 || vx < -0.5 ? showNext() : cancelShowNext();
+                    if (vx >= 0) mx > viewWidth * 0.25 || vx > 0.5 ? showPrev(true) : cancelShowPrev();
+                    else mx < -viewWidth * 0.25 || vx < -0.5 ? showNext(true) : cancelShowNext();
                 }
                 // If user keeps dragging -> move panel following the position
                 else set({ xy: [mx, currentY], immediate: false, config: config.stiff });
@@ -239,17 +246,10 @@ export default function App() {
 
     // Change the state of the covers
     useEffect(() => {
-        switch (coversState) {
-            case "prev":
-                setCoversStateValues({ prev: "next", curr: "prev", next: "curr" });
-                break;
-            case "curr":
-                setCoversStateValues({ prev: "prev", curr: "curr", next: "next" });
-                break;
-            case "next":
-                setCoversStateValues({ prev: "curr", curr: "next", next: "prev" });
-                break;
-        }
+        // Update state values
+        if (coversState === "prev") setCoversStateValues({ prev: "next", curr: "prev", next: "curr" });
+        else if (coversState === "curr") setCoversStateValues({ prev: "prev", curr: "curr", next: "next" });
+        else if (coversState === "next") setCoversStateValues({ prev: "curr", curr: "next", next: "prev" });
     }, [coversState]);
 
     // Set the covers when the current song changes
@@ -266,33 +266,54 @@ export default function App() {
         var prevIndex = currentIndex > 0 ? currentIndex - 1 : repeat ? queueSongList.length - 1 : "";
         var nextIndex = currentIndex < queueSongList.length - 1 ? currentIndex + 1 : repeat ? 0 : "";
 
-        if ("songs" in library && queueSongList[prevIndex] in library.songs) {
-            //print("");
-            //print("Prev: " + library.songs[queueSongList[prevIndex]].name);
-            //print("Curr: " + library.songs[queueSongList[currentIndex]].name);
-            //print("Next: " + library.songs[queueSongList[nextIndex]].name);
-            //print("");
-        }
+        // Cover has been moved manually so just update the images
+        if (coverHasBeenMovedManually.current) {
+            coverHasBeenMovedManually.current = false;
 
-        switch (coversState) {
-            case "prev":
+            // Update images
+            if (coversState === "prev")
                 setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
-                break;
-            case "curr":
+            else if (coversState === "curr")
                 setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
-                break;
-            case "next":
+            else if (coversState === "next")
                 setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
-                break;
         }
 
-        // Check if we need to go to next or previous
-        if (songID === coverSongID[coversStateValues["next"]]) {
-            print("GO NEXT   PlaybackNewSong: " + songID + " NextSong:" + coverSongID[coversStateValues["next"]]);
+        // Change to next song
+        else if (songID === coverSongID[coversStateValues["next"]]) {
             showNext();
-        } else if (songID === coverSongID[coversStateValues["prev"]]) {
-            print("GO NEXT   PlaybackNewSong: " + songID + " NextSong:" + coverSongID[coversStateValues["prev"]]);
+
+            // Update images
+            if (coversState === "prev")
+                setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
+            else if (coversState === "curr")
+                setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
+            else if (coversState === "next")
+                setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
+        }
+
+        // Change to  previous song
+        else if (songID === coverSongID[coversStateValues["prev"]]) {
             showPrev();
+
+            // Update images
+            if (coversState === "prev")
+                setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
+            else if (coversState === "curr")
+                setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
+            else if (coversState === "next")
+                setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
+        }
+
+        // Do not move the covers
+        else {
+            // Update images
+            if (coversState === "prev")
+                setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
+            else if (coversState === "curr")
+                setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
+            else if (coversState === "next")
+                setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
         }
     }, [queueSongList, playback]);
 

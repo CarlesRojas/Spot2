@@ -5,7 +5,7 @@ import { useDrag } from "react-use-gesture";
 import { LibraryContext } from "../contexts/LibraryContext";
 import { ProfileContext } from "../contexts/ProfileContext";
 
-import { prettifyName, print } from "../Utils";
+import { prettifyName } from "../Utils";
 
 // Icons
 import AlbumIcon from "../resources/albumSmall.svg";

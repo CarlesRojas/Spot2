@@ -1,5 +1,4 @@
 import React, { createContext, useState, useEffect, useRef } from "react";
-import { print } from "../Utils";
 
 // Icons
 import ArtistEmpty from "../resources/ArtistEmpty.svg";

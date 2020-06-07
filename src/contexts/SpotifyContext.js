@@ -233,24 +233,35 @@ export default class SpotifyContextProvider extends Component {
     // Pause Song
     pause = () => {
         return new Promise((resolve, reject) => {
-            window.spotifyAPI.pause().then(
-                () => {
-                    resolve();
-                },
-                (err) => {
-                    if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                    else console.error(err);
-                    reject();
-                }
-            );
+            window.spotifyAPI.pause().then(resolve, (err) => {
+                if (err.status === 401) window.location.assign(window.serverLocation + "login");
+                else console.error(err);
+                reject();
+            });
         });
     };
 
     // Previous Song CARLES
-    prev = () => {};
+    prev = () => {
+        return new Promise((resolve, reject) => {
+            window.spotifyAPI.skipToPrevious().then(resolve, (err) => {
+                if (err.status === 401) window.location.assign(window.serverLocation + "login");
+                else console.error(err);
+                reject();
+            });
+        });
+    };
 
     // Next Song
-    next = () => {};
+    next = () => {
+        return new Promise((resolve, reject) => {
+            window.spotifyAPI.skipToNext().then(resolve, (err) => {
+                if (err.status === 401) window.location.assign(window.serverLocation + "login");
+                else console.error(err);
+                reject();
+            });
+        });
+    };
 
     // Rewind to any point in the Song
     rewind = (milliseconds) => {};
@@ -335,6 +346,8 @@ export default class SpotifyContextProvider extends Component {
                         createPlaylist: this.createPlaylist,
                         addSongsToPlaylist: this.addSongsToPlaylist,
                         removeSongsFromPlaylist: this.removeSongsFromPlaylist,
+                        prev: this.prev,
+                        next: this.next,
                     }}
                 >
                     {this.props.children}

@@ -4,7 +4,7 @@ import { LibraryContext } from "../contexts/LibraryContext";
 import { PopupContext } from "../contexts/PopupContext";
 
 import SongList from "./SongList";
-import { useEventListener, print } from "../Utils";
+import { useEventListener } from "../Utils";
 
 import SortIcon from "../resources/sort.svg";
 import SpotifyColor from "../resources/SpotifyColor.svg";
