@@ -4,6 +4,7 @@ import { QueueContext } from "../contexts/QueueContext";
 import { PlaybackContext } from "../contexts/PlaybackContext";
 
 import SongItem from "./SongItem";
+import { setLocalStorage } from "../Utils";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;
@@ -91,11 +92,17 @@ const SongList = (props) => {
         if (skeleton) return;
         setPlaybackContext({
             id: listID,
-            likedSongs: listType === "likedSongs",
             playlist: listType === "playlist",
             artist: listType === "artist",
             album: listType === "album",
         });
+
+        // Save info in local storage
+        setLocalStorage("spot_playbackContext_listID", listID);
+        setLocalStorage("spot_playbackContext_playlist", listType === "playlist");
+        setLocalStorage("spot_playbackContext_artist", listType === "artist");
+        setLocalStorage("spot_playbackContext_album", listType === "album");
+
         playSongInContext(listOrder, listID, "songs", listOrder.indexOf(id));
     };
 

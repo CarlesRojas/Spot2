@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useReducer, useRef } from "react";
-import { print } from "../Utils";
+import { print, getLocalStorage } from "../Utils";
 
 // Playback Context
 export const PlaybackContext = createContext();
@@ -51,7 +51,17 @@ const PlaybackContextProvider = (props) => {
     const [progressState, updateProgressState] = useReducer(ProgressStateReducer, { playing: false, duration: 0, progress: 0, percentage: 0 });
 
     // State for keeping track of the currently played context
-    const [playbackContext, setPlaybackContext] = useState({ id: "", likedSongs: false, playlist: false, artist: false, album: false });
+    const cookieListID = getLocalStorage("spot_playbackContext_listID");
+    const cookiePlaylist = getLocalStorage("spot_playbackContext_playlist");
+    const cookieArtist = getLocalStorage("spot_playbackContext_artist");
+    const cookieAlbum = getLocalStorage("spot_playbackContext_album");
+
+    const [playbackContext, setPlaybackContext] = useState({
+        id: cookieListID ? cookieListID : "",
+        playlist: cookiePlaylist ? cookiePlaylist : false,
+        artist: cookieArtist ? cookieArtist : false,
+        album: cookieAlbum ? cookieAlbum : false,
+    });
 
     // Set an interval to update the song progress
     useEffect(() => {
