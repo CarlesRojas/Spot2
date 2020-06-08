@@ -58,11 +58,11 @@ const Playlist = () => {
 
     // State
     const [scrollTop, setScrollTop] = useState(0);
-    const [listOrder, setListOrder] = useState(getListOrder(library.playlists, "dateAdded"));
+    const listOrder = useRef(getListOrder(library.playlists, "dateAdded"));
 
     // Update order when the library or the order changes
     useEffect(() => {
-        setListOrder(getListOrder(library.playlists, orderSettings.currentOrder));
+        listOrder.current = getListOrder(library.playlists, orderSettings.currentOrder);
     }, [library, orderSettings.currentOrder]);
 
     // Handle when the list is scrolled
@@ -141,7 +141,7 @@ const Playlist = () => {
         );
     };
 
-    const list = listOrder;
+    const list = listOrder.current;
     const numRows = list.length > 0 ? Math.ceil(list.length / 2) : 20;
 
     const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) * 2 - 10);

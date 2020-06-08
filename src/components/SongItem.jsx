@@ -11,7 +11,7 @@ import { prettifyName, print } from "../Utils";
 import AlbumIcon from "../resources/albumSmall.svg";
 import ArtistIcon from "../resources/artistSmall.svg";
 import AddIcon from "../resources/add.svg";
-/*import SortIcon from "../resources/hamburger.svg"; CARLES */
+import SortIcon from "../resources/hamburger.svg";
 import RemoveIcon from "../resources/remove.svg";
 
 // Size of the viewport
@@ -22,7 +22,7 @@ const scrollBarWidth = 5; // 5px
 const listMargin = 1.5 * 16; // 1.5rem
 
 const SongItem = (props) => {
-    const { height, id, name, album, artist, albumID, artistID, selected, skeleton, actions, onSongClicked } = props;
+    const { height, id, name, album, artist, albumID, artistID, selected, skeleton, actions, onSongClicked, itemSpring, sortBind, sortIndex } = props;
 
     // Get contexts
     const { openProfile } = useContext(ProfileContext);
@@ -229,6 +229,20 @@ const SongItem = (props) => {
         } else if (type === "remove") {
             icon = RemoveIcon;
             importantID = id;
+        } else if (type === "sort") {
+            icon = SortIcon;
+            importantID = null;
+
+            return (
+                <button
+                    key={index}
+                    {...sortBind(sortIndex)}
+                    className="songItem_actionButton songItem_sortButton"
+                    style={{ right: index * iconWidth + listMargin / 2 + "px" }}
+                >
+                    <img className="songItem_icon" src={icon} alt="" />
+                </button>
+            );
         }
 
         return (
@@ -243,25 +257,33 @@ const SongItem = (props) => {
         );
     });
 
-    return (
-        <a.div className="songItem_wrapper" {...dragBind()} style={{ x, width: width + "px" }}>
-            <button
-                className="songItem_button"
-                onClick={() => onSongClicked(id, skeleton)}
-                style={{ height: height + "px", width: nameWidth, left: nameLeftOffset + "px" }}
-            >
-                <p className={"songItem_name " + (skeleton ? "songItem_skeletonName" : "") + (selected ? " songItem_selectedName" : "")}>
-                    {skeleton ? "-" : prettifyName(name)}
-                </p>
-                <p className={"songItem_info " + (skeleton ? "songItem_skeletonInfo" : "")}>
-                    {skeleton ? "-" : prettifyName(album)}
-                    <strong> · </strong>
-                    {skeleton ? "-" : prettifyName(artist)}
-                </p>
-            </button>
+    // Style for the this item
+    var sortWrapperStyle = {
+        transform: itemSpring ? itemSpring.y.to((y) => `translate3d(0px,${y}px,0px)`) : null,
+        zIndex: itemSpring ? itemSpring.zIndex : null,
+    };
 
-            {leftButtons}
-            {rightButtons}
+    return (
+        <a.div className={itemSpring ? "songItem_sortableWrapper" : ""} style={sortWrapperStyle}>
+            <a.div className="songItem_wrapper" /*{...dragBind()} */ style={{ x, width: width + "px" }}>
+                <button
+                    className="songItem_button"
+                    onClick={() => onSongClicked(id, skeleton)}
+                    style={{ height: height + "px", width: nameWidth, left: nameLeftOffset + "px" }}
+                >
+                    <p className={"songItem_name " + (skeleton ? "songItem_skeletonName" : "") + (selected ? " songItem_selectedName" : "")}>
+                        {skeleton ? "-" : prettifyName(name)}
+                    </p>
+                    <p className={"songItem_info " + (skeleton ? "songItem_skeletonInfo" : "")}>
+                        {skeleton ? "-" : prettifyName(album)}
+                        <strong> · </strong>
+                        {skeleton ? "-" : prettifyName(artist)}
+                    </p>
+                </button>
+
+                {leftButtons}
+                {rightButtons}
+            </a.div>
         </a.div>
     );
 };

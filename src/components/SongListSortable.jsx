@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
+import { useDrag } from "react-use-gesture";
+import { useSprings } from "react-spring";
 
 import { QueueContext } from "../contexts/QueueContext";
 import { PlaybackContext } from "../contexts/PlaybackContext";
 
 import SongItem from "./SongItem";
-import { setLocalStorage } from "../Utils";
+import { setLocalStorage, clamp, move, print } from "../Utils";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;
@@ -54,7 +56,13 @@ const getListOrder = (list, order) => {
         .map((x) => x["songID"]);
 };
 
-const SongList = (props) => {
+// Returns fitting styles for dragged/idle items
+const getItemStyle = (order, down, originalIndex, currIndex, y) => (index) =>
+    down && index === originalIndex
+        ? { y: currIndex * rowHeight + y, zIndex: "520", immediate: (n) => n === "y" || n === "zIndex" }
+        : { y: order.indexOf(index) * rowHeight, zIndex: "515", immediate: false };
+
+const SongListSortable = (props) => {
     // Get context
     const { playSongInContext } = useContext(QueueContext);
     const { playback, setPlaybackContext } = useContext(PlaybackContext);
@@ -62,19 +70,36 @@ const SongList = (props) => {
     // Get props
     const { songList, actions, order, listID, listType } = props;
 
-    // State
-    const [scrollTop, setScrollTop] = useState(0);
-    const listOrder = useRef(getListOrder(songList, order));
+    // Referencets
+    const listOrderIDs = useRef([]);
+    const listOrderIndexs = useRef([]);
 
-    // Update order when the library or the order changes
     useEffect(() => {
-        listOrder.current = getListOrder(songList, order);
+        listOrderIDs.current = getListOrder(songList, order);
+        listOrderIndexs.current = listOrderIDs.current.map((_, index) => index);
+        setSprings(getItemStyle(listOrderIndexs.current));
     }, [songList, order]);
+
+    // Springs for sorting items
+    const [springs, setSprings] = useSprings(Object.keys(songList).length, getItemStyle(listOrderIndexs.current));
+
+    const bind = useDrag(({ args: [originalIndex], down, movement: [, y] }) => {
+        const currIndex = listOrderIndexs.current.indexOf(originalIndex);
+        const currRow = clamp(Math.round((currIndex * rowHeight + y) / rowHeight), 0, Object.keys(songList).length - 1);
+        const newOrderIDs = move(listOrderIDs.current, currIndex, currRow);
+        const newOrderIndexs = move(listOrderIndexs.current, currIndex, currRow);
+
+        // Feed springs new style data, they'll animate the view without causing a single render
+        setSprings(getItemStyle(newOrderIndexs, down, originalIndex, currIndex, y));
+        if (!down) {
+            listOrderIDs.current = newOrderIDs;
+            listOrderIndexs.current = newOrderIndexs;
+        }
+    });
 
     // Handle when the list is scrolled
     const handleScroll = (event) => {
         window.PubSub.emit("onCloseSongActions");
-        setScrollTop(event.target.scrollTop);
     };
 
     /* CARLES DELETE SONG
@@ -103,12 +128,13 @@ const SongList = (props) => {
         setLocalStorage("spot_playbackContext_artist", listType === "artist");
         setLocalStorage("spot_playbackContext_album", listType === "album");
 
-        playSongInContext(listOrder.current, listID, "songs", listOrder.current.indexOf(id));
+        playSongInContext(listOrderIDs.current, listID, "songs", listOrderIDs.current.indexOf(id));
     };
 
     // Create the component from an element in the array
     const createItem = (elem, skeleton) => {
-        const { id, name, album, artist, albumID, artistID } = elem;
+        const { id, name, album, artist, albumID, artistID, index } = elem;
+        const spring = springs[index];
 
         return (
             <SongItem
@@ -124,43 +150,37 @@ const SongList = (props) => {
                 skeleton={skeleton}
                 actions={actions}
                 onSongClicked={onSongClicked}
-                itemSpring={null}
-                sortBind={() => {}}
-                sortIndex={null}
+                itemSpring={spring}
+                sortBind={bind}
+                sortIndex={index}
                 /*onDelete={() => this.handleDeleteSong(id)} CARLES DELETE SONG*/
             />
         );
     };
 
-    const list = listOrder.current;
+    const list = listOrderIDs.current;
     const numRows = list.length > 0 ? list.length : 20;
-
-    const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - 20);
-    const endIndex = Math.min(startIndex + 40, numRows);
     const totalHeight = rowHeight * numRows;
-    const paddingTop = startIndex * rowHeight;
 
     // List to be rendered
     const renderedItems = [];
-    let index = startIndex;
+    let index = 0;
 
     // Add all items that will be shown
-    while (index < endIndex) {
+    while (index < list.length) {
         if (index < list.length && songList && list[index] in songList) {
             var { songID, name, albumID, artistID, albumName, artistName } = songList[list[index]];
-            renderedItems.push(createItem({ id: songID, name, album: albumName, artist: artistName, albumID, artistID }, false));
+            renderedItems.push(createItem({ id: songID, name, album: albumName, artist: artistName, albumID, artistID, index }, false));
         } else {
-            renderedItems.push(createItem({ id: index, name: "", album: "", artist: "", albumID: "", artistID: "" }, true));
+            renderedItems.push(createItem({ id: index, name: "", album: "", artist: "", albumID: "", artistID: "", index }, true));
         }
         ++index;
     }
 
     return (
         <div className="songList_scroll" onScroll={handleScroll}>
-            <div style={{ height: totalHeight - paddingTop, paddingTop: paddingTop }}>
-                <ol className="songList_list">{renderedItems}</ol>
-            </div>
+            <div style={{ height: totalHeight }}>{renderedItems}</div>
         </div>
     );
 };
-export default SongList;
+export default SongListSortable;

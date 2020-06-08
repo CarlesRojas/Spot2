@@ -7,6 +7,7 @@ import { LibraryContext } from "../contexts/LibraryContext";
 
 import { prettifyName, print } from "../Utils";
 import SongList from "../components/SongList";
+import SongListSortable from "../components/SongListSortable";
 import HorizontalList from "../components/HorizontalList";
 
 // Icons
@@ -308,9 +309,14 @@ const ProfileContextProvider = (props) => {
     };
 
     // Playlist song list
-    /*<SongListSortable songList={playlistState.songList} playbackState={playbackState} actions={playlistActions} order={"dateAdded"} listenToOrderChange={false} /> CARLES*/
     var playlistSongListObject = (
-        <SongList songList={playlistState.songList} actions={playlistActions} order={"dateAdded"} listID={playlistState.id} listType={"playlist"} />
+        <SongListSortable
+            songList={playlistState.songList}
+            actions={playlistActions}
+            order={"dateAdded"}
+            listID={playlistState.id}
+            listType={"playlist"}
+        />
     );
 
     // Artist song list
@@ -488,8 +494,8 @@ const playlistActions = {
     },
     // Items in reverse order (first one is in the right)
     right: {
-        numberOfActionsAlwaysVisible: 0, // CARLES IT WAS 1
-        list: ["remove" /*"sort" CARLES*/],
+        numberOfActionsAlwaysVisible: 1,
+        list: ["remove", "sort"],
     },
 };
 

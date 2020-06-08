@@ -170,7 +170,7 @@ export default function App() {
         height: xy.to((x, y) => lerp(heightBig, heightSmall, invlerp(yBig, ySmall, y))),
     };
 
-    // Style for the scurrent song
+    // Style for the current song
     var currStyle = {
         transform: xy.to((x, y) => `translate3d(${x}px,${y}px,0px)`),
         left: leftPositions[1] + "px",

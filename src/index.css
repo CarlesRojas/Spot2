@@ -628,6 +628,12 @@ button {
 /*      ITEM SONG                          */
 /* ####################################### */
 
+.songItem_sortableWrapper {
+    background: none;
+    left: 0.75rem;
+    position: absolute;
+}
+
 .songItem_wrapper {
     position: relative;
     background: none;
@@ -724,6 +730,10 @@ button {
     background: transparent;
     opacity: var(--icons-low-opacity);
     pointer-events: all;
+}
+
+.songItem_sortButton {
+    touch-action: none;
 }
 
 .songItem_icon {

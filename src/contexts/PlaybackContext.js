@@ -3,8 +3,9 @@ import { print, getLocalStorage } from "../Utils";
 
 // Playback Context
 export const PlaybackContext = createContext();
-const updateProgressInterval = 5000; // CARLES Change to 15
+//const updateProgressInterval = 5000; ROJAS // CARLES Change to 15
 
+/* ROJAS
 const ProgressStateReducer = (progressState, action) => {
     switch (action.type) {
         case "set":
@@ -23,6 +24,7 @@ const ProgressStateReducer = (progressState, action) => {
             return progressState;
     }
 };
+*/
 
 const PlaybackContextProvider = (props) => {
     // Playback state
@@ -47,8 +49,10 @@ const PlaybackContextProvider = (props) => {
         image: null,
     });
 
+    /* ROJAS
     // State for the song progress control
     const [progressState, updateProgressState] = useReducer(ProgressStateReducer, { playing: false, duration: 0, progress: 0, percentage: 0 });
+    */
 
     // State for keeping track of the currently played context
     const cookieListID = getLocalStorage("spot_playbackContext_listID");
@@ -63,6 +67,7 @@ const PlaybackContextProvider = (props) => {
         album: cookieAlbum ? cookieAlbum : false,
     });
 
+    /* ROJAS
     // Set an interval to update the song progress
     useEffect(() => {
         // Create an interval
@@ -73,6 +78,7 @@ const PlaybackContextProvider = (props) => {
         // Clean interval on component unmount
         return () => clearInterval(progressInterval);
     }, []);
+    */
 
     // Check if the playback has changed
     const playbackHasChanged = (newPlayback) => {
@@ -103,12 +109,14 @@ const PlaybackContextProvider = (props) => {
                             image: response.item.album.images.length > 0 ? response.item.album.images[0].url : null,
                         };
 
+                        /* ROJAS
                         var newProgressState = {
                             playing: response.is_playing,
                             duration: response.item.duration_ms,
                             progress: response.progress_ms,
                             percentage: (response.progress_ms / response.item.duration_ms) * 100,
                         };
+                        */
 
                         // Set the playback
                         if (playbackHasChanged(newPlayback)) {
@@ -116,8 +124,10 @@ const PlaybackContextProvider = (props) => {
                             setPlayback(newPlayback);
                         }
 
+                        /* ROJAS
                         // Set the progress state
                         updateProgressState({ type: "set", newProgressState });
+                        */
 
                         // Set the media controls outide the browser
                         setMediaSession(response);
@@ -137,14 +147,18 @@ const PlaybackContextProvider = (props) => {
                         image: null,
                     };
 
+                    /* ROJAS
                     var newProgressState = { playing: false, duration: 0, progress: 0, percentage: 0 };
+                    */
 
                     // Set the playback
                     lastKnownPlayback.current = newPlayback;
                     setPlayback(newPlayback);
 
+                    /* ROJAS
                     // Set the progress state
                     updateProgressState({ type: "set", newProgressState });
+                    */
                 }
             );
         }, 200);
@@ -198,7 +212,7 @@ const PlaybackContextProvider = (props) => {
     }, []);
 
     return (
-        <PlaybackContext.Provider value={{ playback, handlePlaybackChange, progressState, playbackContext, setPlaybackContext }}>
+        <PlaybackContext.Provider value={{ playback, handlePlaybackChange /*, progressState ROJAS */, playbackContext, setPlaybackContext }}>
             {props.children}
         </PlaybackContext.Provider>
     );
