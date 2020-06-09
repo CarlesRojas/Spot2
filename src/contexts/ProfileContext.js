@@ -310,13 +310,7 @@ const ProfileContextProvider = (props) => {
 
     // Playlist song list
     var playlistSongListObject = (
-        <SongListSortable
-            songList={playlistState.songList}
-            actions={playlistActions}
-            order={"dateAdded"}
-            listID={playlistState.id}
-            listType={"playlist"}
-        />
+        <SongListSortable songList={playlistState.songList} actions={playlistActions} listID={playlistState.id} listType={"playlist"} />
     );
 
     // Artist song list

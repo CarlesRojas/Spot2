@@ -5,6 +5,8 @@ import ArtistEmpty from "../resources/ArtistEmpty.svg";
 import AlbumEmpty from "../resources/AlbumEmpty.svg";
 import PlaylistEmpty from "../resources/PlaylistEmpty.svg";
 
+import { move, print } from "../Utils";
+
 // Library Context
 export const LibraryContext = createContext();
 
@@ -204,6 +206,7 @@ const LibraryContextProvider = (props) => {
             playlistInfo["name"] = playlist.name;
             playlistInfo["image"] = playlist.images.length ? playlist.images[0].url : PlaylistEmpty;
             playlistInfo["songs"] = {};
+            playlistInfo["songOrder"] = [];
             targetLibraryObject.playlists[playlistID] = playlistInfo;
         }
     };
@@ -221,6 +224,7 @@ const LibraryContextProvider = (props) => {
                         var songID = items[i].track.id;
                         if (songID in targetLibraryObject.songs && playlist in targetLibraryObject.playlists) {
                             targetLibraryObject.playlists[playlist].songs[songID] = null;
+                            targetLibraryObject.playlists[playlist].songOrder.push(songID);
                         }
                     }
 
@@ -265,9 +269,29 @@ const LibraryContextProvider = (props) => {
             if (playlistID in library.playlists) {
                 var libraryCopy = { ...library };
                 libraryCopy.playlists[playlistID].songs = {};
+                libraryCopy.playlists[playlistID].songOrder = [];
 
                 getPlaylistSongs(playlistID, 0, libraryCopy);
                 if (latestSnapshotID) libraryCopy.playlists[playlistID].snapshotID = latestSnapshotID;
+
+                setLibrary(libraryCopy);
+            }
+            resolve();
+        });
+    };
+
+    // Reorder the songs in a playlist
+    const reorderSongsInPlaylist = (playlistID, rangeStart, insertBefore, latestSnapshotID) => {
+        return new Promise((resolve) => {
+            if (playlistID in library.playlists) {
+                var libraryCopy = { ...library };
+                print(libraryCopy.playlists[playlistID]);
+                libraryCopy.playlists[playlistID].songOrder = move(libraryCopy.playlists[playlistID].songOrder, rangeStart, insertBefore);
+
+                if (latestSnapshotID) libraryCopy.playlists[playlistID].snapshotID = latestSnapshotID;
+
+                print(libraryCopy.playlists[playlistID]);
+                print("");
 
                 setLibrary(libraryCopy);
             }
@@ -282,6 +306,7 @@ const LibraryContextProvider = (props) => {
                 getUserLibrary,
                 addNewPlaylistToLibrary,
                 onPlaylistSongsChange,
+                reorderSongsInPlaylist,
             }}
         >
             {props.children}

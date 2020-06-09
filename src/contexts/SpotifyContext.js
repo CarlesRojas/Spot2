@@ -312,7 +312,7 @@ export default class SpotifyContextProvider extends Component {
                 latestSnapshotID = await window.spotifyAPI.removeTracksFromPlaylist(playlistID, currentTrackURIs);
             }
 
-            this.context.onPlaylistSongsChange(playlistID, latestSnapshotID).then(resolve);
+            this.context.onPlaylistSongsChange(playlistID, latestSnapshotID.snapshot_id).then(resolve);
         });
     };
 
@@ -329,9 +329,26 @@ export default class SpotifyContextProvider extends Component {
                 latestSnapshotID = await window.spotifyAPI.addTracksToPlaylist(playlistID, currentTrackURIs, options);
             }
 
-            this.context.onPlaylistSongsChange(playlistID, latestSnapshotID).then(resolve);
+            this.context.onPlaylistSongsChange(playlistID, latestSnapshotID.snapshot_id).then(resolve);
         });
     };
+
+    // Move a song inside a playlist
+    moveSongInsidePlaylist = (playlistID, indexBeforeMoving, targetIndex) => {
+        return new Promise(async (resolve) => {
+            var latestSnapshotID = this.context.library.playlists[playlistID].snapshotID;
+            var insertBefore = targetIndex > indexBeforeMoving ? targetIndex + 1 : targetIndex;
+
+            latestSnapshotID = await window.spotifyAPI.reorderTracksInPlaylist(playlistID, indexBeforeMoving, insertBefore, {
+                snapshot_id: latestSnapshotID,
+            });
+            this.context.reorderSongsInPlaylist(playlistID, indexBeforeMoving, targetIndex, latestSnapshotID.snapshot_id).then(resolve);
+        });
+    };
+
+    //##############################################
+    //       REACT LIFE CYCLE METHODS
+    //##############################################
 
     // Renders this component
     render() {
@@ -343,11 +360,12 @@ export default class SpotifyContextProvider extends Component {
                         ...this.state,
                         play: this.play,
                         pause: this.pause,
+                        prev: this.prev,
+                        next: this.next,
                         createPlaylist: this.createPlaylist,
                         addSongsToPlaylist: this.addSongsToPlaylist,
                         removeSongsFromPlaylist: this.removeSongsFromPlaylist,
-                        prev: this.prev,
-                        next: this.next,
+                        moveSongInsidePlaylist: this.moveSongInsidePlaylist,
                     }}
                 >
                     {this.props.children}

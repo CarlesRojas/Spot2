@@ -103,6 +103,7 @@ const SongList = (props) => {
         setLocalStorage("spot_playbackContext_artist", listType === "artist");
         setLocalStorage("spot_playbackContext_album", listType === "album");
 
+        // Carles add context
         playSongInContext(listOrder.current, listID, "songs", listOrder.current.indexOf(id));
     };
 

@@ -91,7 +91,7 @@ const SongItem = (props) => {
 
     // Drag Hook
     const dragBind = useDrag(
-        ({ first, last, vxvy: [vx, vy], movement: [mx], cancel, canceled }) => {
+        ({ first, last, vxvy: [vx, vy], movement: [mx], cancel, canceled, down }) => {
             if (first) {
                 window.PubSub.emit("onCloseSongActions", id);
                 setDraggingVertically(Math.abs(vy) >= Math.abs(vx));
@@ -142,7 +142,16 @@ const SongItem = (props) => {
 
             // Wrong direction
             else if (wrong_direction) {
-                cancel();
+                if (position === "left") {
+                    showLeftActions();
+                    cancel();
+                } else if (position === "right") {
+                    showRightActions();
+                    cancel();
+                } else if (position === "normal") {
+                    showName();
+                    cancel();
+                }
             }
         },
         { initial: () => [currentX, 0], filterTaps: true, rubberband: true }
@@ -265,7 +274,7 @@ const SongItem = (props) => {
 
     return (
         <a.div className={itemSpring ? "songItem_sortableWrapper" : ""} style={sortWrapperStyle}>
-            <a.div className="songItem_wrapper" /*{...dragBind()} */ style={{ x, width: width + "px" }}>
+            <a.div className="songItem_wrapper" {...dragBind()} style={{ x, width: width + "px" }}>
                 <button
                     className="songItem_button"
                     onClick={() => onSongClicked(id, skeleton)}
