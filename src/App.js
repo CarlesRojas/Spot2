@@ -33,8 +33,7 @@ export default function App() {
     const { image } = playback;
 
     // State to hold weather we are dragging vertically or horizontally
-    const [draggingVertically, setDraggingVertically] = useState(false);
-    const [draggingHorizontally, setDraggingHorizontally] = useState(false);
+    const draggingVertically = useRef(false);
 
     // Reference to weather the cover has been moved manually or not
     const coverHasBeenMovedManually = useRef(false);
@@ -129,14 +128,12 @@ export default function App() {
     const bind = useDrag(
         ({ first, last, vxvy: [vx, vy], movement: [mx, my], cancel }) => {
             if (first) {
-                var verticalMovement = Math.abs(vy) >= Math.abs(vx);
-                setDraggingVertically(verticalMovement);
-                setDraggingHorizontally(!verticalMovement);
+                draggingVertically.current = Math.abs(vy) >= Math.abs(vx);
                 window.PubSub.emit("onCloseSongActions");
             }
 
             // Dragging Vertically
-            if (draggingVertically) {
+            if (draggingVertically.current) {
                 const wrong_direction = my < yBig || my > ySmall;
                 if (wrong_direction) cancel();
 
@@ -150,7 +147,7 @@ export default function App() {
             }
 
             // Dragging Vertically
-            if (draggingHorizontally) {
+            else {
                 // If user releases after the threshold we open, othersie close it
                 if (last) {
                     if (vx >= 0) mx > viewWidth * 0.25 || vx > 0.5 ? showPrev(true) : cancelShowPrev();

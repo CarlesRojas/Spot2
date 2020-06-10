@@ -30,7 +30,7 @@ const SongListSortable = (props) => {
     // Get props
     const { songList, actions, listID, listType } = props;
 
-    // Referencets
+    // References
     const listOrderIDs = useRef([]);
     const listOrderIndexs = useRef([]);
     useEffect(() => {
@@ -41,21 +41,31 @@ const SongListSortable = (props) => {
         setSprings(getItemStyle(listOrderIndexs.current));
     }, [songList]);
 
+    // State to hold weather we are dragging vertically or horizontally
+    const draggingVertically = useRef(false);
+
     // Springs for sorting items
     const [springs, setSprings] = useSprings(Object.keys(songList).length, getItemStyle(listOrderIndexs.current));
 
-    const bind = useDrag(({ args: [originalIndex], down, movement: [, y] }) => {
-        const indexBeforeMoving = listOrderIndexs.current.indexOf(originalIndex);
-        const targetIndex = clamp(Math.round((indexBeforeMoving * rowHeight + y) / rowHeight), 0, Object.keys(songList).length - 1);
-        const newOrderIndexs = move(listOrderIndexs.current, indexBeforeMoving, targetIndex);
+    const bind = useDrag(
+        ({ args: [originalIndex], first, down, vxvy: [vx, vy], movement: [, y] }) => {
+            if (first) draggingVertically.current = Math.abs(vy) >= Math.abs(vx);
 
-        // Feed springs new style data, they'll animate the view without causing a single render
-        setSprings(getItemStyle(newOrderIndexs, down, originalIndex, indexBeforeMoving, y));
-        if (!down && indexBeforeMoving != targetIndex) {
-            listOrderIndexs.current = newOrderIndexs;
-            moveSongInsidePlaylist(listID, indexBeforeMoving, targetIndex);
-        }
-    });
+            if (draggingVertically.current) {
+                const indexBeforeMoving = listOrderIndexs.current.indexOf(originalIndex);
+                const targetIndex = clamp(Math.round((indexBeforeMoving * rowHeight + y) / rowHeight), 0, Object.keys(songList).length - 1);
+                const newOrderIndexs = move(listOrderIndexs.current, indexBeforeMoving, targetIndex);
+
+                // Feed springs new style data, they'll animate the view without causing a single render
+                setSprings(getItemStyle(newOrderIndexs, down, originalIndex, indexBeforeMoving, y));
+                if (!down && indexBeforeMoving != targetIndex) {
+                    listOrderIndexs.current = newOrderIndexs;
+                    moveSongInsidePlaylist(listID, indexBeforeMoving, targetIndex);
+                }
+            }
+        },
+        { filterTaps: true, rubberband: true }
+    );
 
     // Handle when the list is scrolled
     const handleScroll = (event) => {

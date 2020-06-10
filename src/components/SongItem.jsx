@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useSpring, a, config } from "react-spring";
 import { useDrag } from "react-use-gesture";
 
@@ -47,7 +47,11 @@ const SongItem = (props) => {
     // Spring hook
     const [position, setPosition] = useState("normal"); // "normal", "left", "right"
     const [currentX, setCurrentX] = useState(normalX);
-    const [draggingVertically, setDraggingVertically] = useState(false);
+
+    // State to hold weather we are dragging vertically or horizontally
+    const draggingVertically = useRef(false);
+
+    // Springs for the song actions
     const [{ x }, set] = useSpring(() => ({ x: normalX, config: { clamp: true } }));
 
     // Efect to subscribe to events
@@ -94,13 +98,13 @@ const SongItem = (props) => {
         ({ first, last, vxvy: [vx, vy], movement: [mx], cancel, canceled, down }) => {
             if (first) {
                 window.PubSub.emit("onCloseSongActions", id);
-                setDraggingVertically(Math.abs(vy) >= Math.abs(vx));
+                draggingVertically.current = Math.abs(vy) >= Math.abs(vx);
             }
 
             const wrong_direction = (position === "left" && vx > 0) || (position === "right" && vx < 0);
 
             // Dragging Horizontally
-            if (!first && !draggingVertically && !wrong_direction) {
+            if (!first && !draggingVertically.current && !wrong_direction) {
                 // If user releases after the threshold to the left we open, othersie close it
                 if (!canceled && last && vx < -0.5) {
                     if (position === "left") showName();
