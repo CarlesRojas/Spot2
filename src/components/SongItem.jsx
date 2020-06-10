@@ -45,7 +45,8 @@ const SongItem = (props) => {
     const rightX = (hiddenLeftIcons + hiddenRightIcons) * -iconWidth;
 
     // Spring hook
-    const [position, setPosition] = useState("normal"); // "normal", "left", "right"
+
+    const position = useRef("normal"); // "normal", "left", "right"
     const [currentX, setCurrentX] = useState(normalX);
 
     // State to hold weather we are dragging vertically or horizontally
@@ -60,12 +61,12 @@ const SongItem = (props) => {
         const hideActions = (ignoreID) => {
             if (ignoreID && ignoreID === id) return;
             setCurrentX(normalX);
-            setPosition("normal");
+            position.current = "normal";
             set({ x: normalX });
         };
 
         // Only subscribe if the actions are open
-        if (position !== "normal") window.PubSub.sub("onCloseSongActions", hideActions);
+        if (position.current !== "normal") window.PubSub.sub("onCloseSongActions", hideActions);
 
         return () => {
             window.PubSub.unsub("onCloseSongActions", hideActions);
@@ -75,21 +76,33 @@ const SongItem = (props) => {
     // Function to show the name
     const showName = () => {
         setCurrentX(normalX);
-        setPosition("normal");
+        position.current = "normal";
         set({ x: normalX });
     };
 
     // Function to show the left actions
     const showLeftActions = () => {
+        // Do nothing if there is no hidden actions
+        if (hiddenLeftIcons <= 0) {
+            showName();
+            return;
+        }
+
         setCurrentX(leftX);
-        setPosition("left");
+        position.current = "left";
         set({ x: leftX });
     };
 
     // Function to show the right actions
     const showRightActions = () => {
+        // Do nothing if there is no hidden actions
+        if (hiddenRightIcons <= 0) {
+            showName();
+            return;
+        }
+
         setCurrentX(rightX);
-        setPosition("right");
+        position.current = "right";
         set({ x: rightX });
     };
 
@@ -101,41 +114,41 @@ const SongItem = (props) => {
                 draggingVertically.current = Math.abs(vy) >= Math.abs(vx);
             }
 
-            const wrong_direction = (position === "left" && vx > 0) || (position === "right" && vx < 0);
+            const wrong_direction = (position.current === "left" && vx > 0) || (position.current === "right" && vx < 0);
 
             // Dragging Horizontally
             if (!first && !draggingVertically.current && !wrong_direction) {
                 // If user releases after the threshold to the left we open, othersie close it
                 if (!canceled && last && vx < -0.5) {
-                    if (position === "left") showName();
-                    else if (position === "normal") showRightActions();
+                    if (position.current === "left") showName();
+                    else if (position.current === "normal") showRightActions();
                 }
 
                 // If user releases after the threshold to the right we open, othersie close it
                 else if (!canceled && last && vx > 0.5) {
-                    if (position === "right") showName();
-                    else if (position === "normal") showLeftActions();
+                    if (position.current === "right") showName();
+                    else if (position.current === "normal") showLeftActions();
                 }
                 // Cancel the movement
                 else if (!canceled && last) {
-                    if (position === "left") showLeftActions();
-                    else if (position === "normal") showName();
+                    if (position.current === "left") showLeftActions();
+                    else if (position.current === "normal") showName();
                     else showRightActions();
                 }
 
                 // If user keeps dragging -> move panel following the position
                 else {
                     // If the position goes to next stage -> cancel drag and move
-                    if (position === "left" && mx <= normalX) {
+                    if (position.current === "left" && mx <= normalX) {
                         showName();
                         cancel();
-                    } else if (position === "right" && mx >= normalX) {
+                    } else if (position.current === "right" && mx >= normalX) {
                         showName();
                         cancel();
-                    } else if (position === "normal" && mx >= leftX) {
+                    } else if (position.current === "normal" && mx >= leftX) {
                         showLeftActions();
                         cancel();
-                    } else if (position === "normal" && mx <= rightX) {
+                    } else if (position.current === "normal" && mx <= rightX) {
                         showRightActions();
                         cancel();
                     } else if (!canceled) {
@@ -146,13 +159,13 @@ const SongItem = (props) => {
 
             // Wrong direction
             else if (wrong_direction) {
-                if (position === "left") {
+                if (position.current === "left") {
                     showLeftActions();
                     cancel();
-                } else if (position === "right") {
+                } else if (position.current === "right") {
                     showRightActions();
                     cancel();
-                } else if (position === "normal") {
+                } else if (position.current === "normal") {
                     showName();
                     cancel();
                 }
