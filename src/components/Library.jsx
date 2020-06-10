@@ -103,8 +103,8 @@ const Library = () => {
             if (wrong_direction) cancel();
 
             // If user releases after the threshold we open, othersie close it
-            if (last && vx < -0.5) showNextSection();
-            else if (last && vx > 0.5) showPrevSection();
+            if (last && vx < -0.25) showNextSection();
+            else if (last && vx > 0.25) showPrevSection();
             else if (last) showSection(currentSection);
             // If user keeps dragging -> move panel following the position
             else if (!wrong_direction) set({ x: mx, immediate: false, config: config.stiff });

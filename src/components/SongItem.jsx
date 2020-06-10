@@ -46,7 +46,7 @@ const SongItem = (props) => {
 
     // Spring hook
 
-    const position = useRef("normal"); // "normal", "left", "right"
+    const [position, setPosition] = useState("normal"); // "normal", "left", "right"
     const [currentX, setCurrentX] = useState(normalX);
 
     // State to hold weather we are dragging vertically or horizontally
@@ -61,12 +61,12 @@ const SongItem = (props) => {
         const hideActions = (ignoreID) => {
             if (ignoreID && ignoreID === id) return;
             setCurrentX(normalX);
-            position.current = "normal";
+            setPosition("normal");
             set({ x: normalX });
         };
 
         // Only subscribe if the actions are open
-        if (position.current !== "normal") window.PubSub.sub("onCloseSongActions", hideActions);
+        if (position !== "normal") window.PubSub.sub("onCloseSongActions", hideActions);
 
         return () => {
             window.PubSub.unsub("onCloseSongActions", hideActions);
@@ -76,7 +76,7 @@ const SongItem = (props) => {
     // Function to show the name
     const showName = () => {
         setCurrentX(normalX);
-        position.current = "normal";
+        setPosition("normal");
         set({ x: normalX });
     };
 
@@ -89,7 +89,7 @@ const SongItem = (props) => {
         }
 
         setCurrentX(leftX);
-        position.current = "left";
+        setPosition("left");
         set({ x: leftX });
     };
 
@@ -102,7 +102,7 @@ const SongItem = (props) => {
         }
 
         setCurrentX(rightX);
-        position.current = "right";
+        setPosition("right");
         set({ x: rightX });
     };
 
@@ -114,41 +114,41 @@ const SongItem = (props) => {
                 draggingVertically.current = Math.abs(vy) >= Math.abs(vx);
             }
 
-            const wrong_direction = (position.current === "left" && vx > 0) || (position.current === "right" && vx < 0);
+            const wrong_direction = (position === "left" && vx > 0) || (position === "right" && vx < 0);
 
             // Dragging Horizontally
             if (!first && !draggingVertically.current && !wrong_direction) {
                 // If user releases after the threshold to the left we open, othersie close it
                 if (!canceled && last && vx < -0.5) {
-                    if (position.current === "left") showName();
-                    else if (position.current === "normal") showRightActions();
+                    if (position === "left") showName();
+                    else if (position === "normal") showRightActions();
                 }
 
                 // If user releases after the threshold to the right we open, othersie close it
                 else if (!canceled && last && vx > 0.5) {
-                    if (position.current === "right") showName();
-                    else if (position.current === "normal") showLeftActions();
+                    if (position === "right") showName();
+                    else if (position === "normal") showLeftActions();
                 }
                 // Cancel the movement
                 else if (!canceled && last) {
-                    if (position.current === "left") showLeftActions();
-                    else if (position.current === "normal") showName();
+                    if (position === "left") showLeftActions();
+                    else if (position === "normal") showName();
                     else showRightActions();
                 }
 
                 // If user keeps dragging -> move panel following the position
                 else {
                     // If the position goes to next stage -> cancel drag and move
-                    if (position.current === "left" && mx <= normalX) {
+                    if (position === "left" && mx <= normalX) {
                         showName();
                         cancel();
-                    } else if (position.current === "right" && mx >= normalX) {
+                    } else if (position === "right" && mx >= normalX) {
                         showName();
                         cancel();
-                    } else if (position.current === "normal" && mx >= leftX) {
+                    } else if (position === "normal" && mx >= leftX) {
                         showLeftActions();
                         cancel();
-                    } else if (position.current === "normal" && mx <= rightX) {
+                    } else if (position === "normal" && mx <= rightX) {
                         showRightActions();
                         cancel();
                     } else if (!canceled) {
@@ -159,13 +159,13 @@ const SongItem = (props) => {
 
             // Wrong direction
             else if (wrong_direction) {
-                if (position.current === "left") {
+                if (position === "left") {
                     showLeftActions();
                     cancel();
-                } else if (position.current === "right") {
+                } else if (position === "right") {
                     showRightActions();
                     cancel();
-                } else if (position.current === "normal") {
+                } else if (position === "normal") {
                     showName();
                     cancel();
                 }
