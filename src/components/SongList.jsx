@@ -4,7 +4,7 @@ import { QueueContext } from "../contexts/QueueContext";
 import { PlaybackContext } from "../contexts/PlaybackContext";
 
 import SongItem from "./SongItem";
-import { setLocalStorage } from "../Utils";
+import { setLocalStorage, useForceUpdate } from "../Utils";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;
@@ -66,9 +66,13 @@ const SongList = (props) => {
     const [scrollTop, setScrollTop] = useState(0);
     const listOrder = useRef(getListOrder(songList, order));
 
+    // Hook for forcing an update
+    const forceUpdate = useForceUpdate();
+
     // Update order when the library or the order changes
     useEffect(() => {
         listOrder.current = getListOrder(songList, order);
+        forceUpdate();
     }, [songList, order]);
 
     // Handle when the list is scrolled

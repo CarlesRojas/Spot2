@@ -5,7 +5,7 @@ import { LibraryContext } from "../contexts/LibraryContext";
 import { PlaybackContext } from "../contexts/PlaybackContext";
 import { PopupContext } from "../contexts/PopupContext";
 import AlbumArtistItem from "./AlbumArtistItem";
-import { useEventListener, setLocalStorage, getLocalStorage } from "../Utils";
+import { useEventListener, setLocalStorage, getLocalStorage, useForceUpdate } from "../Utils";
 
 // Size of the viewport
 const viewWidth = window.innerWidth;
@@ -70,7 +70,7 @@ const Artists = () => {
     const cookieOrder = getLocalStorage("spot_artistOrder");
     const [orderSettings, setOrderSettings] = useState({
         currentOrder: cookieOrder ? cookieOrder : "dateAdded",
-        iconRotation: cookieOrder && (cookieOrder === "name" || cookieOrder === "dateAdded") ? 0 : 180,
+        iconRotation: !cookieOrder || cookieOrder === "name" || cookieOrder === "dateAdded" ? 0 : 180,
         items: [
             { name: "Name", callbackName: "name", selected: cookieOrder && cookieOrder === "name" ? true : false },
             { name: "Date Added", callbackName: "dateAdded", selected: !cookieOrder || cookieOrder === "dateAdded" ? true : false },
@@ -81,9 +81,13 @@ const Artists = () => {
     const [scrollTop, setScrollTop] = useState(0);
     const listOrder = useRef(getListOrder(library.artists, "dateAdded"));
 
+    // Hook for forcing an update
+    const forceUpdate = useForceUpdate();
+
     // Update order when the library or the order changes
     useEffect(() => {
         listOrder.current = getListOrder(library.artists, orderSettings.currentOrder);
+        forceUpdate();
     }, [library.artists, orderSettings.currentOrder]);
 
     // Handle when the list is scrolled

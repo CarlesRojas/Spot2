@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
 
 // #######################################
@@ -171,20 +171,11 @@ export const areArraysIdentical = (a, b) => {
 };
 
 // #######################################
-//      PREVENT DEFAULT HOOK
+//      FORCE UPDATE HOOK
 // #######################################
 
-export const usePreventScroll = (preventScrollRef) => {
-    useEffect(() => {
-        const preventScrolling = (e) => {
-            if (preventScrollRef.current) {
-                e.preventDefault();
-            }
-        };
-
-        document.addEventListener("touchmove", preventScrolling, {
-            passive: false,
-        });
-        return () => document.removeEventListener("touchmove", preventScrolling);
-    }, []);
+// Forces a functional component to re-render
+export const useForceUpdate = () => {
+    const [value, setValue] = useState(0); // integer state
+    return () => setValue((value) => ++value); // update the state to force render
 };

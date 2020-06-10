@@ -22,7 +22,7 @@ const Songs = () => {
     const cookieOrder = getLocalStorage("spot_songOrder");
     const [orderSettings, setOrderSettings] = useState({
         currentOrder: cookieOrder ? cookieOrder : "dateAdded",
-        iconRotation: cookieOrder && (cookieOrder === "name" || cookieOrder === "dateAdded") ? 0 : 180,
+        iconRotation: !cookieOrder || cookieOrder === "name" || cookieOrder === "dateAdded" ? 0 : 180,
         items: [
             { name: "Name", callbackName: "name", selected: cookieOrder && cookieOrder === "name" ? true : false },
             { name: "Date Added", callbackName: "dateAdded", selected: !cookieOrder || cookieOrder === "dateAdded" ? true : false },
