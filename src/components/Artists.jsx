@@ -88,6 +88,7 @@ const Artists = () => {
     useEffect(() => {
         listOrder.current = getListOrder(library.artists, orderSettings.currentOrder);
         forceUpdate();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [library.artists, orderSettings.currentOrder]);
 
     // Handle when the list is scrolled

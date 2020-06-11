@@ -45,7 +45,7 @@ const LibraryContextProvider = (props) => {
     // Get the user's library
     const getUserSongs = (offset) => {
         var limit = 50;
-        window.spotifyAPI.getMySavedTracks({ offset: offset, limit: limit }).then(
+        document.spotifyAPI.getMySavedTracks({ offset: offset, limit: limit }).then(
             (response) => {
                 const { items, next } = response;
 
@@ -143,7 +143,7 @@ const LibraryContextProvider = (props) => {
             return;
         }
 
-        window.spotifyAPI.getArtists(curr).then(
+        document.spotifyAPI.getArtists(curr).then(
             (response) => {
                 for (let i = 0; i < response.artists.length; i++) {
                     var artistID = response.artists[i].id;
@@ -165,7 +165,7 @@ const LibraryContextProvider = (props) => {
     const getUserPlaylists = (offset) => {
         var limit = 50;
 
-        window.spotifyAPI.getUserPlaylists({ offset: offset, limit: limit }).then(
+        document.spotifyAPI.getUserPlaylists({ offset: offset, limit: limit }).then(
             (response) => {
                 const { items, next } = response;
 
@@ -215,7 +215,7 @@ const LibraryContextProvider = (props) => {
     const getPlaylistSongs = (playlist, offset, targetLibraryObject) => {
         return new Promise((resolve, reject) => {
             var limit = 100;
-            window.spotifyAPI.getPlaylistTracks(playlist, { fields: "items(track(id))", offset: offset, limit: limit }).then(
+            document.spotifyAPI.getPlaylistTracks(playlist, { fields: "items(track(id))", offset: offset, limit: limit }).then(
                 (response) => {
                     const { items, next } = response;
 
@@ -285,13 +285,11 @@ const LibraryContextProvider = (props) => {
         return new Promise((resolve) => {
             if (playlistID in library.playlists) {
                 var libraryCopy = { ...library };
-                print(libraryCopy.playlists[playlistID]);
                 libraryCopy.playlists[playlistID].songOrder = move(libraryCopy.playlists[playlistID].songOrder, rangeStart, insertBefore);
 
                 if (latestSnapshotID) libraryCopy.playlists[playlistID].snapshotID = latestSnapshotID;
 
-                print(libraryCopy.playlists[playlistID]);
-                print("");
+                print("REORDER");
 
                 setLibrary(libraryCopy);
             }

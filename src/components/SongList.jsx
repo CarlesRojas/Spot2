@@ -73,6 +73,7 @@ const SongList = (props) => {
     useEffect(() => {
         listOrder.current = getListOrder(songList, order);
         forceUpdate();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [songList, order]);
 
     // Handle when the list is scrolled

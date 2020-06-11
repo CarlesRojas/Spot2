@@ -167,7 +167,7 @@ export default class SpotifyContextProvider extends Component {
             () => {
                 const { deviceID } = this.state;
                 // Start playing on Spot
-                window.spotifyAPI.transferMyPlayback([deviceID], { play: true }).then(
+                document.spotifyAPI.transferMyPlayback([deviceID], { play: true }).then(
                     () => {
                         print("Now Playing on Spot");
                         window.PubSub.emit("onPlaybackChange");
@@ -189,7 +189,7 @@ export default class SpotifyContextProvider extends Component {
     // Get user id
     getUserID = () => {
         return new Promise((resolve, reject) => {
-            window.spotifyAPI.getMe({}).then(
+            document.spotifyAPI.getMe({}).then(
                 (response) => {
                     this.setState((prevState) => {
                         return {
@@ -217,7 +217,7 @@ export default class SpotifyContextProvider extends Component {
             };
 
         return new Promise((resolve, reject) => {
-            window.spotifyAPI.play(playOptions).then(
+            document.spotifyAPI.play(playOptions).then(
                 () => {
                     resolve();
                 },
@@ -233,7 +233,7 @@ export default class SpotifyContextProvider extends Component {
     // Pause Song
     pause = () => {
         return new Promise((resolve, reject) => {
-            window.spotifyAPI.pause().then(resolve, (err) => {
+            document.spotifyAPI.pause().then(resolve, (err) => {
                 if (err.status === 401) window.location.assign(window.serverLocation + "login");
                 else console.error(err);
                 reject();
@@ -244,7 +244,7 @@ export default class SpotifyContextProvider extends Component {
     // Previous Song
     prev = () => {
         return new Promise((resolve, reject) => {
-            window.spotifyAPI.skipToPrevious().then(resolve, (err) => {
+            document.spotifyAPI.skipToPrevious().then(resolve, (err) => {
                 if (err.status === 401) window.location.assign(window.serverLocation + "login");
                 else console.error(err);
                 reject();
@@ -255,7 +255,7 @@ export default class SpotifyContextProvider extends Component {
     // Next Song
     next = () => {
         return new Promise((resolve, reject) => {
-            window.spotifyAPI.skipToNext().then(resolve, (err) => {
+            document.spotifyAPI.skipToNext().then(resolve, (err) => {
                 if (err.status === 401) window.location.assign(window.serverLocation + "login");
                 else console.error(err);
                 reject();
@@ -278,10 +278,10 @@ export default class SpotifyContextProvider extends Component {
 
         // Create playlsit
         return new Promise((resolve, reject) => {
-            window.spotifyAPI.createPlaylist(userID, { name: playlistName, public: false, description: "A playlist used by Spot as a queue" }).then(
+            document.spotifyAPI.createPlaylist(userID, { name: playlistName, public: false, description: "A playlist used by Spot as a queue" }).then(
                 (response) => {
                     // Set the image
-                    window.spotifyAPI.uploadCustomPlaylistCoverImage(response.id, getQueueImageInBase64()).then(
+                    document.spotifyAPI.uploadCustomPlaylistCoverImage(response.id, getQueueImageInBase64()).then(
                         () => {
                             this.context.addNewPlaylistToLibrary(response).then((id) => resolve(id));
                         },
@@ -309,7 +309,7 @@ export default class SpotifyContextProvider extends Component {
             var latestSnapshotID = null;
             for (let i = 0; i < trackURIs.length; i += 100) {
                 const currentTrackURIs = trackURIs.slice(i, i + 100 < trackURIs.length ? i + 100 : trackURIs.length);
-                latestSnapshotID = await window.spotifyAPI.removeTracksFromPlaylist(playlistID, currentTrackURIs);
+                latestSnapshotID = await document.spotifyAPI.removeTracksFromPlaylist(playlistID, currentTrackURIs);
             }
 
             this.context.onPlaylistSongsChange(playlistID, latestSnapshotID.snapshot_id).then(resolve);
@@ -326,7 +326,7 @@ export default class SpotifyContextProvider extends Component {
             var latestSnapshotID = null;
             for (let i = 0; i < trackURIs.length; i += 100) {
                 const currentTrackURIs = trackURIs.slice(i, i + 100 < trackURIs.length ? i + 100 : trackURIs.length);
-                latestSnapshotID = await window.spotifyAPI.addTracksToPlaylist(playlistID, currentTrackURIs, options);
+                latestSnapshotID = await document.spotifyAPI.addTracksToPlaylist(playlistID, currentTrackURIs, options);
             }
 
             this.context.onPlaylistSongsChange(playlistID, latestSnapshotID.snapshot_id).then(resolve);
@@ -339,7 +339,7 @@ export default class SpotifyContextProvider extends Component {
             var latestSnapshotID = this.context.library.playlists[playlistID].snapshotID;
             var insertBefore = targetIndex > indexBeforeMoving ? targetIndex + 1 : targetIndex;
 
-            latestSnapshotID = await window.spotifyAPI.reorderTracksInPlaylist(playlistID, indexBeforeMoving, insertBefore, {
+            latestSnapshotID = await document.spotifyAPI.reorderTracksInPlaylist(playlistID, indexBeforeMoving, insertBefore, {
                 snapshot_id: latestSnapshotID,
             });
             this.context.reorderSongsInPlaylist(playlistID, indexBeforeMoving, targetIndex, latestSnapshotID.snapshot_id).then(resolve);

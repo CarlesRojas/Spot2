@@ -6,8 +6,8 @@ import SpotifyWebApi from "spotify-web-api-js";
 // #######################################
 
 export const setSpotifyAccessToken = (accessToken) => {
-    window.spotifyAPI = new SpotifyWebApi();
-    window.spotifyAPI.setAccessToken(accessToken);
+    if (!("spotifyAPI" in document)) document.spotifyAPI = new SpotifyWebApi();
+    document.spotifyAPI.setAccessToken(accessToken);
 };
 
 // #######################################
@@ -176,6 +176,6 @@ export const areArraysIdentical = (a, b) => {
 
 // Forces a functional component to re-render
 export const useForceUpdate = () => {
-    const [value, setValue] = useState(0); // integer state
+    const [, setValue] = useState(0); // integer state
     return () => setValue((value) => ++value); // update the state to force render
 };

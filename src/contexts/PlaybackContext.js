@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useReducer, useRef } from "react";
+import React, { createContext, useState, useEffect, /* useReducer,*/ useRef } from "react";
 import { print, getLocalStorage } from "../Utils";
 
 // Playback Context
@@ -96,7 +96,7 @@ const PlaybackContextProvider = (props) => {
     // Obtains the current playback state for the user
     const handlePlaybackChange = () => {
         window.setTimeout(() => {
-            window.spotifyAPI.getMyCurrentPlaybackState().then(
+            document.spotifyAPI.getMyCurrentPlaybackState().then(
                 (response) => {
                     if (response) {
                         var newPlayback = {
