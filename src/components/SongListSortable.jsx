@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useEffect, useContext, useRef } from "react";
 import { useDrag } from "react-use-gesture";
 import { useSprings } from "react-spring";
 
@@ -9,12 +9,16 @@ import { LibraryContext } from "../contexts/LibraryContext";
 import { SpotifyContext } from "../contexts/SpotifyContext";
 
 import SongItem from "./SongItem";
-import { setLocalStorage, clamp, move, print } from "../Utils";
+import { setLocalStorage, clamp, move } from "../Utils";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;
 const rowHeight = viewHeight / 11;
-const autoScrollSpeed = 2;
+
+// Autoscroll settings
+const scrollMinSpeed = 2;
+const scrollMaxSpeed = 25;
+const scrollAccelerateEveryXFremes = 10;
 
 // Returns fitting styles for dragged/idle items
 const getItemStyle = (order, down, originalIndex, indexBeforeMoving, y) => (index) => {
@@ -44,48 +48,44 @@ const SongListSortable = (props) => {
             listOrderIndexs.current = listOrderIDs.current.map((_, index) => index);
             setSprings(getItemStyle(listOrderIndexs.current));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [songList]);
 
     // Scroll container reference and scroll elements
     const scrollDOM = useRef(null);
     const scrollTimeout = useRef(null);
     const indexBeingMoved = useRef({ originalIndex: null, indexBeforeMoving: null, y: null, order: [], dispY: 0 });
-    /*
-    const scrollTimeout = useRef(null);
-    useEffect(() => {
-        const scrollDown = () => {
-            scrollDOM.current.scrollBy(0, 1);
-            scrollTimeout.current = setTimeout(scrollDown, 10);
-            setSprings(getItemStyle(null, true, 0, currIndex)(0));
-        };
-        scrollDown();
-        return () => {
-            clearTimeout(scrollTimeout.current);
-            scrollTimeout.current = null;
-        };
-    }, []);
-    */
+    const isScrolling = useRef({ up: false, down: false });
+    const totalScrollFrames = useRef(0);
 
-    const scroll = () => {
+    // Function to autoscroll when sorting
+    const scroll = (scrollDown) => {
         const { originalIndex, indexBeforeMoving, y, dispY } = indexBeingMoved.current;
+        isScrolling.current = { up: !scrollDown, down: scrollDown };
+
+        // Get current scroll speed
+        totalScrollFrames.current = totalScrollFrames.current + 1;
+        var scrollSpeed = Math.min(scrollMinSpeed + Math.floor(totalScrollFrames.current / scrollAccelerateEveryXFremes), scrollMaxSpeed);
 
         // Get constants
         const containerHeight = scrollDOM.current.offsetHeight;
+        const currScrollTop = scrollDOM.current.scrollTop;
         const numRows = list.length > 0 ? list.length : 20;
         const totalHeight = rowHeight * numRows;
         const maxScroll = totalHeight - containerHeight;
 
-        // Get new values
-        const newDispY = dispY + autoScrollSpeed;
-        if (newDispY <= -(indexBeforeMoving * rowHeight) || newDispY >= maxScroll - indexBeforeMoving * rowHeight) {
-            clearTimeout(scrollTimeout.current);
-            scrollTimeout.current = null;
+        // Get new displacement value
+        const newDispY = dispY + scrollSpeed * (scrollDown ? 1 : -1);
+
+        // Prevent autoscroll past the min and max
+        if ((!scrollDown && currScrollTop <= 0) || (scrollDown && currScrollTop >= maxScroll)) {
+            stopScrolling();
             return;
         }
 
         // Scroll the container and set recursive timeout for next scroll
-        scrollDOM.current.scrollBy(0, autoScrollSpeed);
-        scrollTimeout.current = setTimeout(scroll, 10);
+        scrollDOM.current.scrollBy(0, scrollSpeed * (scrollDown ? 1 : -1));
+        scrollTimeout.current = setTimeout(() => scroll(scrollDown), 10);
 
         // Get the current position and new order
         const targetIndex = clamp(Math.round((indexBeforeMoving * rowHeight + y + newDispY) / rowHeight), 0, Object.keys(songList).length - 1);
@@ -98,7 +98,10 @@ const SongListSortable = (props) => {
         setSprings(getItemStyle(newOrderIndexs, true, originalIndex, indexBeforeMoving, y + newDispY));
     };
 
+    // Function to stop autoscrolling
     const stopScrolling = () => {
+        isScrolling.current = { up: false, down: false };
+        totalScrollFrames.current = 0;
         clearTimeout(scrollTimeout.current);
         scrollTimeout.current = null;
     };
@@ -111,21 +114,20 @@ const SongListSortable = (props) => {
 
     const bind = useDrag(
         ({ args: [originalIndex], first, down, vxvy: [vx, vy], movement: [, y], delta: [, yDelta] }) => {
-            if (first) draggingVertically.current = Math.abs(vy) >= Math.abs(vx);
+            // Check drag direction and reset indexBeingMoved
+            if (first) {
+                draggingVertically.current = Math.abs(vy) >= Math.abs(vx);
+                indexBeingMoved.current = { originalIndex: null, indexBeforeMoving: null, y: null, order: [], dispY: 0 };
+            }
 
+            // Only if is dragging vertically
             if (draggingVertically.current) {
                 var currentY = y + indexBeingMoved.current.dispY;
 
                 // Reorder accordingly
                 const indexBeforeMoving = listOrderIndexs.current.indexOf(originalIndex);
                 const targetIndex = clamp(Math.round((indexBeforeMoving * rowHeight + currentY) / rowHeight), 0, Object.keys(songList).length - 1);
-                var newOrderIndexs = listOrderIndexs.current;
-
-                // Add autoscroll displacement and prevent item to be moved above first or last rows
-                /*
-                var currentY = currentY < -rowHeight * indexBeforeMoving ? -rowHeight * indexBeforeMoving : currentY;
-                currentY = currentY > rowHeight * (indexBeforeMoving + 1) ? rowHeight * (indexBeforeMoving + 1) : currentY;
-                */
+                var newOrderIndexs = move(listOrderIndexs.current, indexBeforeMoving, targetIndex);
 
                 // Get info about container
                 const containerHeight = scrollDOM.current.offsetHeight;
@@ -134,35 +136,34 @@ const SongListSortable = (props) => {
                 const maxScroll = totalHeight - containerHeight;
                 const yTop = currentY + rowHeight * indexBeforeMoving;
                 const currScrollTop = scrollDOM.current.scrollTop;
-                const scrollDiference = yTop + rowHeight - currScrollTop - (containerHeight - rowHeight);
+                const scrollDownDiference = yTop + rowHeight - currScrollTop - containerHeight;
+                const scrollUpDiference = currScrollTop - yTop;
 
                 // Cancel scroll if drag changes direction
-                if (vy < 0) stopScrolling();
+                if ((isScrolling.current.down && vy < 0) || (isScrolling.current.up && vy > 0)) stopScrolling();
 
-                // Set the new scroll info
-                if (scrollDiference > 0 && !scrollTimeout.current && currScrollTop < maxScroll) scroll();
-                else if (scrollDiference <= 0) {
+                // Set the container to scroll
+                if (scrollDownDiference >= 0 && !scrollTimeout.current && currScrollTop < maxScroll) scroll(true);
+                else if (scrollUpDiference >= 0 && !scrollTimeout.current && currScrollTop > 0) scroll(false);
+                // If it is not scrolling
+                else if (scrollDownDiference < 0 && scrollUpDiference < 0) {
                     // Set current moved row properties
                     indexBeingMoved.current = {
                         originalIndex,
                         indexBeforeMoving,
                         y,
-                        order: newOrderIndexs,
+                        order: listOrderIndexs.current,
                         dispY: indexBeingMoved.current.dispY,
                     };
 
-                    print("");
-                    print(currentY);
-                    print(-indexBeforeMoving * rowHeight + " " + (maxScroll - indexBeforeMoving * rowHeight));
-                    //const currMaxScroll = Math.max(maxScroll + rowHeight, maxScroll - indexBeforeMoving * rowHeight);
-                    //currentY = clamp(currentY, -(indexBeforeMoving * rowHeight), currMaxScroll);
-
                     // Feed springs new style data, they'll animate the view without causing a single render
-                    newOrderIndexs = move(listOrderIndexs.current, indexBeforeMoving, targetIndex);
                     setSprings(getItemStyle(newOrderIndexs, down, originalIndex, indexBeforeMoving, currentY));
                 }
 
                 if (!down && indexBeforeMoving !== targetIndex) {
+                    // Feed springs new style data, they'll animate the view without causing a single render
+                    setSprings(getItemStyle(newOrderIndexs, down, originalIndex, indexBeforeMoving, currentY));
+
                     // Reset autoscroll
                     stopScrolling();
                     indexBeingMoved.current = { originalIndex: null, indexBeforeMoving: null, y: null, order: [], dispY: 0 };

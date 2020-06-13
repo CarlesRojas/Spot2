@@ -5,7 +5,7 @@ import ArtistEmpty from "../resources/ArtistEmpty.svg";
 import AlbumEmpty from "../resources/AlbumEmpty.svg";
 import PlaylistEmpty from "../resources/PlaylistEmpty.svg";
 
-import { move, print } from "../Utils";
+import { move } from "../Utils";
 
 // Library Context
 export const LibraryContext = createContext();
@@ -288,9 +288,6 @@ const LibraryContextProvider = (props) => {
                 libraryCopy.playlists[playlistID].songOrder = move(libraryCopy.playlists[playlistID].songOrder, rangeStart, insertBefore);
 
                 if (latestSnapshotID) libraryCopy.playlists[playlistID].snapshotID = latestSnapshotID;
-
-                print("REORDER");
-
                 setLibrary(libraryCopy);
             }
             resolve();
