@@ -2,12 +2,17 @@ import { useRef, useEffect, useState } from "react";
 import SpotifyWebApi from "spotify-web-api-js";
 
 // #######################################
-//      INTERPOLATIONS
+//      SPOTIFY
 // #######################################
 
 export const setSpotifyAccessToken = (accessToken) => {
     if (!("spotifyAPI" in document)) document.spotifyAPI = new SpotifyWebApi();
     document.spotifyAPI.setAccessToken(accessToken);
+};
+
+export const handleSpotifyAPIError = (error) => {
+    if (error.status === 401) window.location.assign(window.serverLocation + "login");
+    /*else if (err.status === 404) this.transferPlayer(deviceID);*/ else console.error(error);
 };
 
 // #######################################

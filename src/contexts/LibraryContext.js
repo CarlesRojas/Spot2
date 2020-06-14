@@ -5,7 +5,7 @@ import ArtistEmpty from "../resources/ArtistEmpty.svg";
 import AlbumEmpty from "../resources/AlbumEmpty.svg";
 import PlaylistEmpty from "../resources/PlaylistEmpty.svg";
 
-import { move } from "../Utils";
+import { move, print, handleSpotifyAPIError } from "../Utils";
 
 // Library Context
 export const LibraryContext = createContext();
@@ -45,24 +45,18 @@ const LibraryContextProvider = (props) => {
     // Get the user's library
     const getUserSongs = (offset) => {
         var limit = 50;
-        document.spotifyAPI.getMySavedTracks({ offset: offset, limit: limit }).then(
-            (response) => {
-                const { items, next } = response;
+        document.spotifyAPI.getMySavedTracks({ offset: offset, limit: limit }).then((response) => {
+            const { items, next } = response;
 
-                for (let i = 0; i < items.length; i++) parseAndSaveSavedTracks(items[i]);
+            for (let i = 0; i < items.length; i++) parseAndSaveSavedTracks(items[i]);
 
-                if (next) getUserSongs((offset += 50));
-                else {
-                    // Get artists images
-                    var artists = Object.keys(window.library.artists);
-                    getArtistsImages(artists, 0);
-                }
-            },
-            (err) => {
-                if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                else console.error(err);
+            if (next) getUserSongs((offset += 50));
+            else {
+                // Get artists images
+                var artists = Object.keys(window.library.artists);
+                getArtistsImages(artists, 0);
             }
-        );
+        }, handleSpotifyAPIError);
     };
 
     // Parse song info (To keep only what will be used)
@@ -143,53 +137,41 @@ const LibraryContextProvider = (props) => {
             return;
         }
 
-        document.spotifyAPI.getArtists(curr).then(
-            (response) => {
-                for (let i = 0; i < response.artists.length; i++) {
-                    var artistID = response.artists[i].id;
-                    if (artistID in window.library.artists) {
-                        var url = response.artists[i]["images"].length ? response.artists[i]["images"][0].url : ArtistEmpty;
-                        window.library.artists[artistID]["image"] = url;
-                    }
+        document.spotifyAPI.getArtists(curr).then((response) => {
+            for (let i = 0; i < response.artists.length; i++) {
+                var artistID = response.artists[i].id;
+                if (artistID in window.library.artists) {
+                    var url = response.artists[i]["images"].length ? response.artists[i]["images"][0].url : ArtistEmpty;
+                    window.library.artists[artistID]["image"] = url;
                 }
-                getArtistsImages(artists, offset + limit);
-            },
-            (err) => {
-                if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                else console.error(err);
             }
-        );
+            getArtistsImages(artists, offset + limit);
+        }, handleSpotifyAPIError);
     };
 
     // Gets the user playlists
     const getUserPlaylists = (offset) => {
         var limit = 50;
 
-        document.spotifyAPI.getUserPlaylists({ offset: offset, limit: limit }).then(
-            (response) => {
-                const { items, next } = response;
+        document.spotifyAPI.getUserPlaylists({ offset: offset, limit: limit }).then((response) => {
+            const { items, next } = response;
 
-                for (let i = 0; i < items.length; i++) parseAndSavePlaylists(items[i], i, window.library);
+            for (let i = 0; i < items.length; i++) parseAndSavePlaylists(items[i], i, window.library);
 
-                if (next) getUserPlaylists((offset += limit));
-                else {
-                    // Get the songs in each playlist
-                    var playlists = Object.keys(window.library.playlists);
-                    let promises = [];
-                    for (var i = 0; i < playlists.length; ++i) promises.push(getPlaylistSongs(playlists[i], 0, window.library));
+            if (next) getUserPlaylists((offset += limit));
+            else {
+                // Get the songs in each playlist
+                var playlists = Object.keys(window.library.playlists);
+                let promises = [];
+                for (var i = 0; i < playlists.length; ++i) promises.push(getPlaylistSongs(playlists[i], 0, window.library));
 
-                    // Wait until all the playlist songs are fetched
-                    Promise.all(promises).then(() => {
-                        // Set the library
-                        setLibrary(window.library);
-                    });
-                }
-            },
-            (err) => {
-                if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                else console.error(err);
+                // Wait until all the playlist songs are fetched
+                Promise.all(promises).then(() => {
+                    // Set the library
+                    setLibrary(window.library);
+                });
             }
-        );
+        }, handleSpotifyAPIError);
     };
 
     // Parse and save playlists to the library
@@ -215,7 +197,8 @@ const LibraryContextProvider = (props) => {
     const getPlaylistSongs = (playlist, offset, targetLibraryObject) => {
         return new Promise((resolve, reject) => {
             var limit = 100;
-            document.spotifyAPI.getPlaylistTracks(playlist, { fields: "items(track(id))", offset: offset, limit: limit }).then(
+
+            document.spotifyAPI.getPlaylistTracks(playlist, { fields: "items(track(id)), next", offset: offset, limit: limit }).then(
                 (response) => {
                     const { items, next } = response;
 
@@ -228,12 +211,18 @@ const LibraryContextProvider = (props) => {
                         }
                     }
 
-                    if (next) getPlaylistSongs(playlist, (offset += limit), window.library);
-                    else resolve();
+                    if (next) {
+                        getPlaylistSongs(playlist, (offset += limit), window.library).then(
+                            () => resolve(),
+                            (err) => {
+                                handleSpotifyAPIError(err);
+                                reject();
+                            }
+                        );
+                    } else resolve();
                 },
                 (err) => {
-                    if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                    else console.error(err);
+                    handleSpotifyAPIError(err);
                     reject();
                 }
             );

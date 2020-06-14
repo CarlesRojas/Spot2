@@ -16,7 +16,7 @@ const viewHeight = window.innerHeight;
 const rowHeight = viewHeight / 11;
 
 // Autoscroll settings
-const scrollMinSpeed = 2;
+const scrollMinSpeed = 5;
 const scrollMaxSpeed = 25;
 const scrollAccelerateEveryXFremes = 10;
 
@@ -27,6 +27,7 @@ const getItemStyle = (order, down, originalIndex, indexBeforeMoving, y) => (inde
         ? { y: indexBeforeMoving * rowHeight + y, zIndex: "520", immediate: (n) => n === "y" || n === "zIndex" }
         : { y: order.indexOf(index) * rowHeight, zIndex: "515", immediate: false };
 };
+
 const SongListSortable = (props) => {
     // Get context
     const { playSongInContext } = useContext(QueueContext);

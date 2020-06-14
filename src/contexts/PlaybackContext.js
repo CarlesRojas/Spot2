@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, /* useReducer,*/ useRef } from "react";
-import { print, getLocalStorage } from "../Utils";
+import { print, getLocalStorage, handleSpotifyAPIError } from "../Utils";
 
 // Playback Context
 export const PlaybackContext = createContext();
@@ -134,8 +134,7 @@ const PlaybackContextProvider = (props) => {
                     }
                 },
                 (err) => {
-                    if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                    else console.error(err);
+                    handleSpotifyAPIError(err);
 
                     var newPlayback = {
                         playing: false,

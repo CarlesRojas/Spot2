@@ -1,6 +1,7 @@
 import React, { Component, createContext } from "react";
 import Script from "react-load-script";
-import { setCookie, getCookie, print, getHashParams, setSpotifyAccessToken } from "../Utils";
+
+import { setCookie, getCookie, print, getHashParams, setSpotifyAccessToken, handleSpotifyAPIError } from "../Utils";
 import { getQueueImageInBase64 } from "../resources/SpotQueueImage";
 
 import { LibraryContext } from "./LibraryContext";
@@ -167,17 +168,10 @@ export default class SpotifyContextProvider extends Component {
             () => {
                 const { deviceID } = this.state;
                 // Start playing on Spot
-                document.spotifyAPI.transferMyPlayback([deviceID], { play: true }).then(
-                    () => {
-                        print("Now Playing on Spot");
-                        window.PubSub.emit("onPlaybackChange");
-                    },
-                    (err) => {
-                        if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                        else if (err.status === 404) this.transferPlayer(deviceID);
-                        else console.error(err);
-                    }
-                );
+                document.spotifyAPI.transferMyPlayback([deviceID], { play: true }).then(() => {
+                    print("Now Playing on Spot");
+                    window.PubSub.emit("onPlaybackChange");
+                }, handleSpotifyAPIError);
             }
         );
     };
@@ -199,8 +193,7 @@ export default class SpotifyContextProvider extends Component {
                     }, resolve(response.id));
                 },
                 (err) => {
-                    if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                    else console.error(err);
+                    handleSpotifyAPIError(err);
                     reject();
                 }
             );
@@ -222,8 +215,7 @@ export default class SpotifyContextProvider extends Component {
                     resolve();
                 },
                 (err) => {
-                    if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                    else console.error(err);
+                    handleSpotifyAPIError(err);
                     reject();
                 }
             );
@@ -234,8 +226,7 @@ export default class SpotifyContextProvider extends Component {
     pause = () => {
         return new Promise((resolve, reject) => {
             document.spotifyAPI.pause().then(resolve, (err) => {
-                if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                else console.error(err);
+                handleSpotifyAPIError(err);
                 reject();
             });
         });
@@ -245,8 +236,7 @@ export default class SpotifyContextProvider extends Component {
     prev = () => {
         return new Promise((resolve, reject) => {
             document.spotifyAPI.skipToPrevious().then(resolve, (err) => {
-                if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                else console.error(err);
+                handleSpotifyAPIError(err);
                 reject();
             });
         });
@@ -256,8 +246,7 @@ export default class SpotifyContextProvider extends Component {
     next = () => {
         return new Promise((resolve, reject) => {
             document.spotifyAPI.skipToNext().then(resolve, (err) => {
-                if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                else console.error(err);
+                handleSpotifyAPIError(err);
                 reject();
             });
         });
@@ -286,15 +275,13 @@ export default class SpotifyContextProvider extends Component {
                             this.context.addNewPlaylistToLibrary(response).then((id) => resolve(id));
                         },
                         (err) => {
-                            if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                            else console.error(err);
+                            handleSpotifyAPIError(err);
                             reject();
                         }
                     );
                 },
                 (err) => {
-                    if (err.status === 401) window.location.assign(window.serverLocation + "login");
-                    else console.error(err);
+                    handleSpotifyAPIError(err);
                     reject();
                 }
             );
