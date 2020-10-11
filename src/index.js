@@ -10,12 +10,13 @@ import ProfileContextProvider from "./contexts/ProfileContext";
 import QueueContextProvider from "./contexts/QueueContext";
 
 import App from "./App";
-
 import "./index.css";
+
+var debug = true;
 
 // Pubsub and soptify api
 window.PubSub = new EventsPubSub();
-window.serverLocation = "https://ec2-18-191-231-228.us-east-2.compute.amazonaws.com:443/"; //"http://localhost:443/";
+window.serverLocation = debug ? "http://localhost:8888/" : "https://ec2-18-191-231-228.us-east-2.compute.amazonaws.com:443/";
 
 // Disable right click
 document.oncontextmenu = () => false;
