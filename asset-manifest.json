@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/Spot2/static/css/main.a9991d6d.chunk.css",
-    "main.js": "/Spot2/static/js/main.ff108eeb.chunk.js",
-    "main.js.map": "/Spot2/static/js/main.ff108eeb.chunk.js.map",
+    "main.css": "/Spot2/static/css/main.a6b6c661.chunk.css",
+    "main.js": "/Spot2/static/js/main.84c32145.chunk.js",
+    "main.js.map": "/Spot2/static/js/main.84c32145.chunk.js.map",
     "runtime-main.js": "/Spot2/static/js/runtime-main.122b1756.js",
     "runtime-main.js.map": "/Spot2/static/js/runtime-main.122b1756.js.map",
-    "static/js/2.f7599ab1.chunk.js": "/Spot2/static/js/2.f7599ab1.chunk.js",
-    "static/js/2.f7599ab1.chunk.js.map": "/Spot2/static/js/2.f7599ab1.chunk.js.map",
+    "static/js/2.9ad25fa5.chunk.js": "/Spot2/static/js/2.9ad25fa5.chunk.js",
+    "static/js/2.9ad25fa5.chunk.js.map": "/Spot2/static/js/2.9ad25fa5.chunk.js.map",
     "index.html": "/Spot2/index.html",
-    "precache-manifest.6cc1f6c917fb7b12a7c956c1c86b2ae9.js": "/Spot2/precache-manifest.6cc1f6c917fb7b12a7c956c1c86b2ae9.js",
+    "precache-manifest.25d1c0d1c9ed1f69a9158adb9a378bc0.js": "/Spot2/precache-manifest.25d1c0d1c9ed1f69a9158adb9a378bc0.js",
     "service-worker.js": "/Spot2/service-worker.js",
-    "static/css/main.a9991d6d.chunk.css.map": "/Spot2/static/css/main.a9991d6d.chunk.css.map",
-    "static/js/2.f7599ab1.chunk.js.LICENSE.txt": "/Spot2/static/js/2.f7599ab1.chunk.js.LICENSE.txt",
+    "static/css/main.a6b6c661.chunk.css.map": "/Spot2/static/css/main.a6b6c661.chunk.css.map",
+    "static/js/2.9ad25fa5.chunk.js.LICENSE.txt": "/Spot2/static/js/2.9ad25fa5.chunk.js.LICENSE.txt",
     "static/media/AlbumEmpty.png": "/Spot2/static/media/AlbumEmpty.7efc6d76.png",
     "static/media/AlbumEmpty.svg": "/Spot2/static/media/AlbumEmpty.decc1a55.svg",
     "static/media/ArtistEmpty.svg": "/Spot2/static/media/ArtistEmpty.4525d834.svg",
@@ -22,15 +22,17 @@
     "static/media/albumSmall.svg": "/Spot2/static/media/albumSmall.108d6185.svg",
     "static/media/artist.svg": "/Spot2/static/media/artist.ebf63a8f.svg",
     "static/media/artistSmall.svg": "/Spot2/static/media/artistSmall.725bfc20.svg",
+    "static/media/hamburger.svg": "/Spot2/static/media/hamburger.1d590135.svg",
     "static/media/playlist.svg": "/Spot2/static/media/playlist.2f0e110f.svg",
+    "static/media/queue.svg": "/Spot2/static/media/queue.68e29892.svg",
     "static/media/remove.svg": "/Spot2/static/media/remove.2e238fe4.svg",
     "static/media/song.svg": "/Spot2/static/media/song.cd4eb311.svg",
     "static/media/sort.svg": "/Spot2/static/media/sort.ec3074d9.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.122b1756.js",
-    "static/js/2.f7599ab1.chunk.js",
-    "static/css/main.a9991d6d.chunk.css",
-    "static/js/main.ff108eeb.chunk.js"
+    "static/js/2.9ad25fa5.chunk.js",
+    "static/css/main.a6b6c661.chunk.css",
+    "static/js/main.84c32145.chunk.js"
   ]
 }
