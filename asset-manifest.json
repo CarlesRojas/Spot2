@@ -1,0 +1,36 @@
+{
+  "files": {
+    "main.css": "/CarlesRojas/Spot2/static/css/main.a9991d6d.chunk.css",
+    "main.js": "/CarlesRojas/Spot2/static/js/main.ff108eeb.chunk.js",
+    "main.js.map": "/CarlesRojas/Spot2/static/js/main.ff108eeb.chunk.js.map",
+    "runtime-main.js": "/CarlesRojas/Spot2/static/js/runtime-main.1277db9f.js",
+    "runtime-main.js.map": "/CarlesRojas/Spot2/static/js/runtime-main.1277db9f.js.map",
+    "static/js/2.f7599ab1.chunk.js": "/CarlesRojas/Spot2/static/js/2.f7599ab1.chunk.js",
+    "static/js/2.f7599ab1.chunk.js.map": "/CarlesRojas/Spot2/static/js/2.f7599ab1.chunk.js.map",
+    "index.html": "/CarlesRojas/Spot2/index.html",
+    "precache-manifest.f934b6a61cec82aed252c128fdddfc5e.js": "/CarlesRojas/Spot2/precache-manifest.f934b6a61cec82aed252c128fdddfc5e.js",
+    "service-worker.js": "/CarlesRojas/Spot2/service-worker.js",
+    "static/css/main.a9991d6d.chunk.css.map": "/CarlesRojas/Spot2/static/css/main.a9991d6d.chunk.css.map",
+    "static/js/2.f7599ab1.chunk.js.LICENSE.txt": "/CarlesRojas/Spot2/static/js/2.f7599ab1.chunk.js.LICENSE.txt",
+    "static/media/AlbumEmpty.png": "/CarlesRojas/Spot2/static/media/AlbumEmpty.7efc6d76.png",
+    "static/media/AlbumEmpty.svg": "/CarlesRojas/Spot2/static/media/AlbumEmpty.decc1a55.svg",
+    "static/media/ArtistEmpty.svg": "/CarlesRojas/Spot2/static/media/ArtistEmpty.4525d834.svg",
+    "static/media/PlaylistEmpty.svg": "/CarlesRojas/Spot2/static/media/PlaylistEmpty.501e8bcd.svg",
+    "static/media/SpotifyColor.svg": "/CarlesRojas/Spot2/static/media/SpotifyColor.c361b87f.svg",
+    "static/media/add.svg": "/CarlesRojas/Spot2/static/media/add.21878009.svg",
+    "static/media/album.svg": "/CarlesRojas/Spot2/static/media/album.2c421742.svg",
+    "static/media/albumSmall.svg": "/CarlesRojas/Spot2/static/media/albumSmall.108d6185.svg",
+    "static/media/artist.svg": "/CarlesRojas/Spot2/static/media/artist.ebf63a8f.svg",
+    "static/media/artistSmall.svg": "/CarlesRojas/Spot2/static/media/artistSmall.725bfc20.svg",
+    "static/media/playlist.svg": "/CarlesRojas/Spot2/static/media/playlist.2f0e110f.svg",
+    "static/media/remove.svg": "/CarlesRojas/Spot2/static/media/remove.2e238fe4.svg",
+    "static/media/song.svg": "/CarlesRojas/Spot2/static/media/song.cd4eb311.svg",
+    "static/media/sort.svg": "/CarlesRojas/Spot2/static/media/sort.ec3074d9.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.1277db9f.js",
+    "static/js/2.f7599ab1.chunk.js",
+    "static/css/main.a9991d6d.chunk.css",
+    "static/js/main.ff108eeb.chunk.js"
+  ]
+}
