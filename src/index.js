@@ -15,7 +15,7 @@ import "./index.css";
 
 // Pubsub and soptify api
 window.PubSub = new EventsPubSub();
-window.serverLocation = "http://localhost:8888/";
+window.serverLocation = "http://ec2-18-191-231-228.us-east-2.compute.amazonaws.com:8888/"; //"http://localhost:8888/";
 
 // Disable right click
 document.oncontextmenu = () => false;
