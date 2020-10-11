@@ -11,7 +11,7 @@ import Cover from "./components/Cover";
 import Library from "./components/Library";
 
 // Icons
-import AlbumEmpty from "./resources/AlbumEmpty.png";
+import AlbumEmpty from "./resources/albumEmpty.png";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;

@@ -20,7 +20,7 @@ import AlbumIcon from "../resources/album.svg";
 import ArtistIcon from "../resources/artist.svg";
 import PlaylistIcon from "../resources/playlist.svg";
 import QueueIcon from "../resources/queue.svg";
-import AlbumEmpty from "../resources/AlbumEmpty.png";
+import AlbumEmpty from "../resources/albumEmpty.png";
 
 // Size of the viewport
 const viewWidth = window.innerWidth;
