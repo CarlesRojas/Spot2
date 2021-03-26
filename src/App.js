@@ -11,7 +11,7 @@ import Cover from "./components/Cover";
 import Library from "./components/Library";
 
 // Icons
-import AlbumEmpty from "./resources/albumEmpty.png";
+import AlbumEmpty from "./resources/AlbumEmpty.png";
 
 // Size of the viewport
 const viewHeight = window.innerHeight;
@@ -271,12 +271,9 @@ export default function App() {
             coverHasBeenMovedManually.current = false;
 
             // Update images
-            if (coversState === "prev")
-                setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
-            else if (coversState === "curr")
-                setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
-            else if (coversState === "next")
-                setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
+            if (coversState === "prev") setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
+            else if (coversState === "curr") setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
+            else if (coversState === "next") setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
         }
 
         // Change to next song
@@ -284,12 +281,9 @@ export default function App() {
             showNext();
 
             // Update images
-            if (coversState === "prev")
-                setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
-            else if (coversState === "curr")
-                setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
-            else if (coversState === "next")
-                setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
+            if (coversState === "prev") setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
+            else if (coversState === "curr") setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
+            else if (coversState === "next") setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
         }
 
         // Change to  previous song
@@ -297,23 +291,17 @@ export default function App() {
             showPrev();
 
             // Update images
-            if (coversState === "prev")
-                setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
-            else if (coversState === "curr")
-                setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
-            else if (coversState === "next")
-                setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
+            if (coversState === "prev") setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
+            else if (coversState === "curr") setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
+            else if (coversState === "next") setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
         }
 
         // Do not move the covers
         else {
             // Update images
-            if (coversState === "prev")
-                setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
-            else if (coversState === "curr")
-                setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
-            else if (coversState === "next")
-                setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
+            if (coversState === "prev") setCoverSongID({ prev: queueSongList[currentIndex], curr: queueSongList[nextIndex], next: queueSongList[prevIndex] });
+            else if (coversState === "curr") setCoverSongID({ prev: queueSongList[prevIndex], curr: queueSongList[currentIndex], next: queueSongList[nextIndex] });
+            else if (coversState === "next") setCoverSongID({ prev: queueSongList[nextIndex], curr: queueSongList[prevIndex], next: queueSongList[currentIndex] });
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -323,10 +311,7 @@ export default function App() {
         <>
             <div className="app_backgrounWrapper">
                 <div className="app_background" style={{ backgroundImage: "url(" + targetImageBot + ")" }} />
-                <div
-                    className={"app_background" + (topImageIsTransparent ? " app_backgroundTransparent" : "")}
-                    style={{ backgroundImage: "url(" + targetImageTop + ")" }}
-                />
+                <div className={"app_background" + (topImageIsTransparent ? " app_backgroundTransparent" : "")} style={{ backgroundImage: "url(" + targetImageTop + ")" }} />
             </div>
             <a.div className="app_library" style={libraryStyle}>
                 <Library></Library>

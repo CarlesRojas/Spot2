@@ -20,7 +20,7 @@ import AlbumIcon from "../resources/album.svg";
 import ArtistIcon from "../resources/artist.svg";
 import PlaylistIcon from "../resources/playlist.svg";
 import QueueIcon from "../resources/queue.svg";
-import AlbumEmpty from "../resources/albumEmpty.png";
+import AlbumEmpty from "../resources/AlbumEmpty.png";
 
 // Size of the viewport
 const viewWidth = window.innerWidth;
@@ -77,8 +77,7 @@ const Library = () => {
     const showNextSection = () => {
         if (currentSection === "queue") return;
 
-        const nextSection =
-            currentSection === "song" ? "album" : currentSection === "album" ? "artist" : currentSection === "artist" ? "playlist" : "queue";
+        const nextSection = currentSection === "song" ? "album" : currentSection === "album" ? "artist" : currentSection === "artist" ? "playlist" : "queue";
         set({ x: sections[nextSection].x });
         setCurrentX(sections[nextSection].x);
         setCurrentSection(nextSection);
@@ -88,8 +87,7 @@ const Library = () => {
     const showPrevSection = () => {
         if (currentSection === "song") return;
 
-        const prevSection =
-            currentSection === "queue" ? "playlist" : currentSection === "playlist" ? "artist" : currentSection === "artist" ? "album" : "song";
+        const prevSection = currentSection === "queue" ? "playlist" : currentSection === "playlist" ? "artist" : currentSection === "artist" ? "album" : "song";
         set({ x: sections[prevSection].x });
         setCurrentX(sections[prevSection].x);
         setCurrentSection(prevSection);
