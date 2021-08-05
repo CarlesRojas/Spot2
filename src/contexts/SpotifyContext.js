@@ -293,13 +293,13 @@ export default class SpotifyContextProvider extends Component {
         return new Promise(async (resolve) => {
             const trackURIs = songIDs.map((id) => `spotify:track:${id}`);
 
-            var latestSnapshotID = null;
+            var latestSnapshotID = { snapshot_id: null };
             for (let i = 0; i < trackURIs.length; i += 100) {
                 const currentTrackURIs = trackURIs.slice(i, i + 100 < trackURIs.length ? i + 100 : trackURIs.length);
                 latestSnapshotID = await document.spotifyAPI.removeTracksFromPlaylist(playlistID, currentTrackURIs);
             }
 
-            this.context.onPlaylistSongsChange(playlistID, latestSnapshotID.snapshot_id).then(resolve);
+            if (latestSnapshotID && "snapshot_id" in latestSnapshotID) this.context.onPlaylistSongsChange(playlistID, latestSnapshotID.snapshot_id).then(resolve);
         });
     };
 

@@ -5,7 +5,7 @@ import ArtistEmpty from "../resources/ArtistEmpty.svg";
 import AlbumEmpty from "../resources/AlbumEmpty.svg";
 import PlaylistEmpty from "../resources/PlaylistEmpty.svg";
 
-import { move, print, handleSpotifyAPIError } from "../Utils";
+import { move, handleSpotifyAPIError } from "../Utils";
 
 // Library Context
 export const LibraryContext = createContext();
